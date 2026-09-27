@@ -8,13 +8,18 @@ type BrandLockupProps = {
 };
 
 const sizes = {
-  sm: { mark: 22, text: "text-base", gap: "gap-2", radius: "rounded-md" },
-  md: { mark: 36, text: "text-xl md:text-2xl", gap: "gap-2.5", radius: "rounded-[10px]" },
-  lg: { mark: 48, text: "text-3xl md:text-4xl", gap: "gap-3", radius: "rounded-xl" },
-  hero: { mark: 72, text: "text-5xl sm:text-7xl md:text-8xl", gap: "gap-4 md:gap-5", radius: "rounded-2xl" },
+  sm: { mark: 22, text: "text-base", gap: "gap-1", radius: "rounded-md" },
+  md: { mark: 34, text: "text-xl md:text-2xl", gap: "gap-1.5", radius: "rounded-lg" },
+  lg: { mark: 44, text: "text-3xl md:text-4xl", gap: "gap-2", radius: "rounded-xl" },
+  hero: {
+    mark: 64,
+    text: "text-5xl sm:text-7xl md:text-8xl",
+    gap: "gap-2 md:gap-3",
+    radius: "rounded-2xl",
+  },
 } as const;
 
-/** Geometric R mark first, then the word "Rakhuno". */
+/** Geometric R mark replaces the letter R → reads as "Rakhuno". */
 export function BrandLockup({ href = "/", size = "md", className = "" }: BrandLockupProps) {
   const s = sizes[size];
   const inner = (
@@ -24,10 +29,10 @@ export function BrandLockup({ href = "/", size = "md", className = "" }: BrandLo
         alt=""
         width={s.mark}
         height={s.mark}
-        className={s.radius}
+        className={`${s.radius} shrink-0`}
         priority={size === "hero" || size === "md"}
       />
-      <span className={`font-display font-semibold tracking-tight ${s.text}`}>Rakhuno</span>
+      <span className={`font-display font-semibold tracking-tight ${s.text}`}>akhuno</span>
     </span>
   );
 
