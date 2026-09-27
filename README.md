@@ -20,11 +20,27 @@ npm run dev
 
 ## Deploy
 
+### Cloudflare Workers (current production)
+
 ```bash
 npm run deploy
 ```
 
 Requires Wrangler auth and Cloudflare bindings (see `wrangler.jsonc`).
+
+### Railway
+
+```bash
+# after linking the GitHub repo in Railway
+npm run build && npm run start
+```
+
+Set env vars in Railway:
+
+- `BREVO_API_KEY`
+- `BREVO_LIST_ID` (e.g. `3`)
+
+Leads fall back to log/CSV when Cloudflare KV is unavailable.
 
 ## Notes
 
