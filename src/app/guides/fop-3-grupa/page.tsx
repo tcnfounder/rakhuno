@@ -74,6 +74,7 @@ export default function Page() {
       <ArticleLayout
         title="ФОП 3 група — коротко"
         description="Популярний формат для послуг. Головне — зрозумілі рахунки клієнтам і не губити податкові строки."
+        path="/guides/fop-3-grupa"
         related={[
           { href: "/guides/rahunok-faktura", label: "Рахунок-фактура для ФОП" },
           { href: "/guides/yedynyy-podatok", label: "Єдиний податок: коли платити" },

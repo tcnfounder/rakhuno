@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { Onest, Unbounded } from "next/font/google";
+import { Analytics } from "@/components/Analytics";
 import { JsonLd, organizationLd, softwareLd } from "@/components/JsonLd";
 import "./globals.css";
+
+const googleVerification = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION?.trim();
 
 const display = Unbounded({
   variable: "--font-display",
@@ -56,6 +59,9 @@ export const metadata: Metadata = {
     description: "Створіть рахунок-фактуру за 2 хвилини. Email-нагадування про податки.",
     images: ["/brand/og-default.png"],
   },
+  ...(googleVerification
+    ? { verification: { google: googleVerification } }
+    : {}),
 };
 
 export default function RootLayout({
@@ -67,6 +73,7 @@ export default function RootLayout({
     <html lang="uk">
       <body className={`${display.variable} ${body.variable} antialiased`}>
         <JsonLd data={[organizationLd, softwareLd]} />
+        <Analytics />
         {children}
       </body>
     </html>

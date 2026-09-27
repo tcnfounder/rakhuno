@@ -4,11 +4,13 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { SiteShell } from "@/components/SiteShell";
 
 export const metadata: Metadata = {
-  title: "Гіди для ФОП",
-  description: "Рахунок-фактура, ФОП 3 група, єдиний податок — короткі гіди від Rakhuno.",
+  title: "Гіди для ФОП: рахунок, податки, 3 група",
+  description:
+    "Практичні гіди Rakhuno: рахунок-фактура, рахунок онлайн, ФОП 3 група, єдиний податок і чекліст податків.",
   alternates: { canonical: "https://rakhuno.com/guides" },
   openGraph: {
     title: "Гіди для ФОП · Rakhuno",
+    description: "Рахунок-фактура, податки й ФОП 3 група — коротко, потім одразу до PDF.",
     url: "https://rakhuno.com/guides",
   },
 };
