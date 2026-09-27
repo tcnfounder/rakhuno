@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 
 type BrandLockupProps = {
@@ -14,19 +13,24 @@ const textSize = {
   hero: "text-5xl sm:text-7xl md:text-8xl",
 } as const;
 
-/** Geometric R + akhuno — same height, baseline-aligned as one word. */
+/**
+ * Geometric R + "akhuno" as one word.
+ * R height is always 1em of the wordmark font-size — equal everywhere.
+ */
 export function BrandLockup({ href = "/", size = "md", className = "" }: BrandLockupProps) {
   const inner = (
     <span
       className={`inline-flex items-end font-display font-semibold leading-none tracking-tight text-paper ${textSize[size]} ${className}`}
     >
-      <Image
+      {/* native img: Next/Image ignores em height reliably */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
         src="/brand/r-letter.webp"
         alt=""
-        width={90}
-        height={100}
-        className="block h-[1em] w-auto shrink-0"
-        priority={size === "hero" || size === "md"}
+        aria-hidden
+        draggable={false}
+        className="block shrink-0 select-none"
+        style={{ height: "1em", width: "auto" }}
       />
       <span className="leading-none">akhuno</span>
     </span>
