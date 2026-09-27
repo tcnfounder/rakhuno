@@ -1,6 +1,6 @@
 # Rakhuno — Brevo drip (hazır kurulum)
 
-Sender: **Rakhuno** `<info@jettfy.com>` (veya `info@rakhuno.com` doğrulanınca)  
+Sender: **Rakhuno** `<info@rakhuno.com>` (Brevo sender id **2**; yedek: `info@jettfy.com`)  
 List: **Rakhuno Leads** (id `3`)  
 Logo: `https://rakhuno.com/brand/mark.webp`  
 Accent: `#c6f26d` on `#07110e`
