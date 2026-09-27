@@ -45,33 +45,13 @@ Bitince: invoice sayfasından kendi mailinle fatura çıkar →
 
 ## Domain / sender durumu
 
-| Domain | Durum | Not |
-|--------|--------|-----|
-| `rakhuno.com` | authenticated + verified | Cloudflare DNS hazır |
-| `jettfy.com` | Brevo’da eklendi, DNS bekliyor | Cloudflare zone hazır (pending NS) |
-| Sender `info@rakhuno.com` | active (id **2**) | Şablonlarda bunu kullan |
-| Sender `info@jettfy.com` | active (id **1**) | jettfy auth bitene kadar yedek |
-
-### jettfy.com’u bitirmek (tek adım — nameserver)
-
-Cloudflare’da zone + Brevo kayıtları hazır. Registrar **Atak Domain**. NS’leri şunlara çek:
-
-1. [atakdomain.com](https://www.atakdomain.com) → Hesabım → **Domainlerim** → `jettfy.com` → **Yönet** → **DNS Yönetimi**
-2. Nameserver’ları kaydet:
-   - `dave.ns.cloudflare.com`
-   - `paislee.ns.cloudflare.com`
-3. Yayılınca (genelde dakikalar–birkaç saat) Brevo’da **Authenticate** `jettfy.com`  
-   veya haber ver; ben API ile authenticate ederim.
-
-**Plan B (NS değiştirmeden):** Güzelhosting Zone Editor’a şunları ekle:
-
-| Tip | Host | Değer |
-|-----|------|-------|
-| CNAME | `brevo1._domainkey` | `b1.jettfy-com.dkim.brevo.com` |
-| CNAME | `brevo2._domainkey` | `b2.jettfy-com.dkim.brevo.com` |
-| TXT | `@` | `brevo-code:d78afb7184a50cb597e1c52d4fa0ca23` |
-| TXT | `_dmarc` | `v=DMARC1; p=none; rua=mailto:rua@dmarc.brevo.com` |
-| TXT | `@` (SPF yoksa yeni) | `v=spf1 include:_spf.google.com include:spf.brevo.com ~all` |
+| Domain / sender | Durum | Not |
+|-----------------|--------|-----|
+| `rakhuno.com` | authenticated + verified | Rakhuno drip |
+| `zaryadnastantsiya.com.ua` | authenticated + verified | Зарядна станція / reklam-mail |
+| Sender `info@rakhuno.com` | active (id **2**) | Rakhuno şablonları |
+| Sender `info@zaryadnastantsiya.com.ua` | active (id **3**) | Zaryadna gönderici |
+| Sender `info@jettfy.com` | active (id **1**) | eski yedek; Rakhuno için kullanma |
 
 ---
 
@@ -80,4 +60,4 @@ Cloudflare’da zone + Brevo kayıtları hazır. Registrar **Atak Domain**. NS�
 1. https://rakhuno.com/invoice  
 2. Email’ine fatura oluştur  
 3. Inbox / Spam → **«Ваш рахунок у Rakhuno + що далі»**  
-4. From satırında `via brevosend.com` olmamalı (`info@rakhuno.com` ile)
+4. From: `info@rakhuno.com` — `via brevosend.com` olmamalı
