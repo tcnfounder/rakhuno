@@ -4669,7 +4669,7 @@
       "format": "cjs"
     },
     ".open-next/server-functions/default/.next/server/chunks/[root-of-the-server]__04og8dk._.js": {
-      "bytes": 8912,
+      "bytes": 8960,
       "imports": [
         {
           "path": "fs/promises",
@@ -8328,7 +8328,7 @@
           "bytesInOutput": 1347
         },
         ".open-next/server-functions/default/.next/server/chunks/[root-of-the-server]__04og8dk._.js": {
-          "bytesInOutput": 9186
+          "bytesInOutput": 9235
         },
         ".open-next/server-functions/default/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.prod.js": {
           "bytesInOutput": 197329
@@ -8559,7 +8559,7 @@
           "bytesInOutput": 59638
         }
       },
-      "bytes": 4138913
+      "bytes": 4138962
     }
   }
 }

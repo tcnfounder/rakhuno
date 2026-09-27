@@ -29,13 +29,19 @@ async function storeLead(email: string, source: string) {
       return "kv";
     }
   } catch {
-    // Local `next dev` has no Workers runtime — fall back to CSV.
+    // Local `next dev` / preview without bindings.
   }
 
-  const dir = path.join(process.cwd(), "data");
-  await mkdir(dir, { recursive: true });
-  await appendFile(path.join(dir, "leads.csv"), `${stamp},${email},${source}\n`, "utf8");
-  return "csv";
+  try {
+    const dir = path.join(process.cwd(), "data");
+    await mkdir(dir, { recursive: true });
+    await appendFile(path.join(dir, "leads.csv"), `${stamp},${email},${source}\n`, "utf8");
+    return "csv";
+  } catch {
+    // Workers without KV/fs — accept lead to unblock PDF; connect Brevo next.
+    console.log("[lead]", value);
+    return "log";
+  }
 }
 
 export async function POST(req: NextRequest) {
