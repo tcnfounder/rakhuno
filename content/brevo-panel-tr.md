@@ -35,11 +35,15 @@ Bitince: invoice sayfasından kendi mailinle fatura çıkar →
 
 ---
 
-## Railway env (zaten olmalı)
+## Railway env (zorunlu — yoksa invoice Brevo’ya gitmez)
 
-- `BREVO_API_KEY` = API key  
+Railway → Rakhuno service → **Variables**:
+
+- `BREVO_API_KEY` = Brevo API key  
 - `BREVO_LIST_ID` = `3`  
 - `BREVO_WELCOME_TEMPLATE_ID` = `1` (opsiyonel; default 1)
+
+Kaydet → redeploy. Test: invoice’tan mail gönder → API cevabında `"brevo":"brevo"` / `"welcome":"sent"` olmalı (`"skipped"` değil).
 
 ---
 

@@ -26,15 +26,27 @@ function isValidEmail(email: string) {
 }
 
 async function getEnv(): Promise<WorkerEnv> {
+  // Railway (and other Node hosts) set secrets on process.env. Cloudflare
+  // Workers may expose the same names via getCloudflareContext. Prefer
+  // bindings when present, but always fall back to process.env so a
+  // successful CF context without Brevo secrets does not skip mailing.
+  const fromProcess: WorkerEnv = {
+    BREVO_API_KEY: process.env.BREVO_API_KEY,
+    BREVO_LIST_ID: process.env.BREVO_LIST_ID,
+    BREVO_WELCOME_TEMPLATE_ID: process.env.BREVO_WELCOME_TEMPLATE_ID,
+  };
   try {
     const { env } = await getCloudflareContext({ async: true });
-    return env as WorkerEnv;
-  } catch {
+    const cf = env as WorkerEnv;
     return {
-      BREVO_API_KEY: process.env.BREVO_API_KEY,
-      BREVO_LIST_ID: process.env.BREVO_LIST_ID,
-      BREVO_WELCOME_TEMPLATE_ID: process.env.BREVO_WELCOME_TEMPLATE_ID,
+      LEADS: cf.LEADS,
+      BREVO_API_KEY: cf.BREVO_API_KEY || fromProcess.BREVO_API_KEY,
+      BREVO_LIST_ID: cf.BREVO_LIST_ID || fromProcess.BREVO_LIST_ID,
+      BREVO_WELCOME_TEMPLATE_ID:
+        cf.BREVO_WELCOME_TEMPLATE_ID || fromProcess.BREVO_WELCOME_TEMPLATE_ID,
     };
+  } catch {
+    return fromProcess;
   }
 }
 
