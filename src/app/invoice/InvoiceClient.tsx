@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, ReactNode, useEffect, useMemo, useState } from "react";
+import { FormEvent, ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 import {
   InvoiceData,
@@ -49,6 +49,7 @@ const inputClass =
   "field-input w-full rounded-lg border border-white/15 bg-[#0c1a15] px-3.5 py-3 text-[15px] leading-snug text-paper shadow-[inset_0_1px_0_rgba(255,255,255,0.03)] outline-none transition placeholder:text-muted/80 focus:border-signal focus:ring-1 focus:ring-signal/40";
 
 export default function InvoiceClient() {
+  const previewRef = useRef<HTMLDivElement>(null);
   const [email, setEmail] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -125,6 +126,12 @@ export default function InvoiceClient() {
     }
   }
 
+  async function makePdf() {
+    const node = previewRef.current;
+    if (!node) throw new Error("preview_missing");
+    await downloadInvoicePdf(data, node);
+  }
+
   async function unlockAndDownload(e: FormEvent) {
     e.preventDefault();
     setError("");
@@ -157,7 +164,7 @@ export default function InvoiceClient() {
       }
 
       persistProfile();
-      downloadInvoicePdf(data);
+      await makePdf();
       bumpInvoiceCounter(data.number);
       setUnlocked(true);
       setOkMsg("PDF готовий. Email збережено для нагадувань.");
@@ -168,14 +175,21 @@ export default function InvoiceClient() {
     }
   }
 
-  function downloadAgain() {
+  async function downloadAgain() {
     const invalid = validateInvoice(data);
     if (invalid) {
       setError(invalid);
       return;
     }
-    downloadInvoicePdf(data);
-    setOkMsg("PDF завантажено знову.");
+    setBusy(true);
+    try {
+      await makePdf();
+      setOkMsg("PDF завантажено знову.");
+    } catch {
+      setError("Не вдалося створити PDF.");
+    } finally {
+      setBusy(false);
+    }
   }
 
   function startNewInvoice() {
@@ -281,7 +295,7 @@ export default function InvoiceClient() {
                     />
                   </Field>
                 </div>
-                <Field label="IBAN">
+                <Field label="IBAN" hint="обовʼязково">
                   <input
                     className={`${inputClass} font-mono tracking-wide`}
                     autoComplete="off"
@@ -487,35 +501,45 @@ export default function InvoiceClient() {
           <section className="md:sticky md:top-6 md:self-start print:static">
             <p className="mb-3 text-sm text-muted print:hidden">Попередній перегляд</p>
             <div
+              ref={previewRef}
               className="rounded-sm bg-white p-6 text-[#111] shadow-[0_20px_60px_rgba(0,0,0,0.35)] sm:p-8 print:shadow-none"
               style={{ fontFamily: "Arial, Helvetica, sans-serif" }}
             >
               <div className="flex items-start justify-between gap-4 border-b border-neutral-200 pb-4">
-                <div>
-                  <p className="text-2xl font-bold tracking-tight">Rakhuno</p>
-                  <p className="mt-1 text-sm text-neutral-600">Рахунок-фактура</p>
+                <div className="min-w-0 pr-3">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-neutral-500">
+                    Рахунок-фактура
+                  </p>
+                  <p className="mt-2 text-xl font-bold leading-snug tracking-tight">
+                    {data.sellerName.trim() || "ФОП (вкажіть ПІБ)"}
+                  </p>
+                  {data.sellerTaxId ? (
+                    <p className="mt-1 text-sm text-neutral-600">ІПН/ЄДРПОУ: {data.sellerTaxId}</p>
+                  ) : null}
                 </div>
-                <div className="text-right text-sm">
+                <div className="shrink-0 text-right text-sm">
                   <p>
                     <span className="text-neutral-500">№ </span>
                     {data.number || "—"}
                   </p>
-                  <p className="mt-1">{formatDateUk(data.date)}</p>
+                  <p className="mt-1">від {formatDateUk(data.date)}</p>
                 </div>
               </div>
 
               <div className="mt-6 grid gap-6 sm:grid-cols-2">
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-wide text-neutral-500">Виконавець</p>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-neutral-500">
+                    Постачальник
+                  </p>
                   <p className="mt-2 font-semibold">{data.sellerName || "—"}</p>
-                  {data.fopGroup ? <p className="text-sm text-neutral-600">ФОП {data.fopGroup} група</p> : null}
-                  {data.sellerTaxId ? <p className="text-sm">ІПН/ЄДРПОУ: {data.sellerTaxId}</p> : null}
                   {data.sellerAddress ? <p className="text-sm">{data.sellerAddress}</p> : null}
                   {data.sellerIban ? <p className="text-sm">IBAN: {data.sellerIban}</p> : null}
-                  {data.sellerBank ? <p className="text-sm">{data.sellerBank}</p> : null}
+                  {data.sellerBank ? <p className="text-sm">Банк: {data.sellerBank}</p> : null}
                 </div>
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-wide text-neutral-500">Замовник</p>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-neutral-500">
+                    Платник / замовник
+                  </p>
                   <p className="mt-2 font-semibold">{data.buyerName || "—"}</p>
                   {data.buyerTaxId ? <p className="text-sm">ІПН/ЄДРПОУ: {data.buyerTaxId}</p> : null}
                   {data.buyerAddress ? <p className="text-sm">{data.buyerAddress}</p> : null}
@@ -525,6 +549,7 @@ export default function InvoiceClient() {
               <table className="mt-8 w-full text-left text-sm">
                 <thead>
                   <tr className="border-b border-neutral-200 text-neutral-500">
+                    <th className="py-2 pr-2 font-medium">№</th>
                     <th className="py-2 font-medium">Опис</th>
                     <th className="py-2 font-medium">К-сть</th>
                     <th className="py-2 font-medium">Ціна</th>
@@ -532,21 +557,24 @@ export default function InvoiceClient() {
                   </tr>
                 </thead>
                 <tbody>
-                  {data.items.map((item) => (
-                    <tr key={item.id} className="border-b border-neutral-100">
+                  {data.items.map((item, index) => (
+                    <tr key={item.id} className="border-b border-neutral-100 align-top">
+                      <td className="py-2 pr-2 text-neutral-500">{index + 1}</td>
                       <td className="py-2 pr-2">{item.description || "—"}</td>
                       <td className="py-2">{item.qty || "0"}</td>
-                      <td className="py-2">{item.price === "" ? "—" : formatUah(Number(item.price.replace(",", ".")) || 0)}</td>
+                      <td className="py-2">
+                        {item.price === "" ? "—" : formatUah(parseAmount(item.price))}
+                      </td>
                       <td className="py-2">{formatUah(calcLine(item))}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
 
-              <p className="mt-6 text-right text-lg font-bold">Разом: {formatUah(total)}</p>
+              <p className="mt-6 text-right text-lg font-bold">До сплати: {formatUah(total)}</p>
               {data.note ? <p className="mt-6 text-sm text-neutral-600">Примітка: {data.note}</p> : null}
-              <p className="mt-10 text-[11px] text-neutral-400">
-                Згенеровано в Rakhuno. Не є податковою консультацією.
+              <p className="mt-10 text-[10px] text-neutral-400">
+                Документ сформовано через rakhuno.com. Не є податковою консультацією.
               </p>
             </div>
           </section>

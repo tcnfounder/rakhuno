@@ -134,6 +134,9 @@ export function saveSellerProfile(data: SellerProfile) {
 
 export function validateInvoice(data: InvoiceData): string | null {
   if (!data.sellerName.trim()) return "Вкажіть ПІБ ФОП (виконавець).";
+  if (!data.sellerIban.trim() || data.sellerIban.replace(/\s/g, "").length < 15) {
+    return "Вкажіть IBAN для оплати.";
+  }
   if (!data.buyerName.trim()) return "Вкажіть замовника.";
   const lines = data.items.filter((i) => i.description.trim());
   if (!lines.length) return "Додайте хоча б одну позицію з описом.";
