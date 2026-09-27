@@ -5,6 +5,10 @@ export const metadata: Metadata = {
   title: "Податки ФОП: чекліст",
   description: "Короткий чекліст податків для ФОП: рахунок, строки, документи. Без зайвої теорії.",
   alternates: { canonical: "https://rakhuno.com/guides/podatky-fop" },
+  openGraph: {
+    title: "Податки ФОП: чекліст · Rakhuno",
+    url: "https://rakhuno.com/guides/podatky-fop",
+  },
 };
 
 export default function Page() {

@@ -5,6 +5,10 @@ export const metadata: Metadata = {
   title: "ФОП 3 група — коротко",
   description: "Кому підходить ФОП 3 група, що пам’ятати про податки та рахунки клієнтам.",
   alternates: { canonical: "https://rakhuno.com/guides/fop-3-grupa" },
+  openGraph: {
+    title: "ФОП 3 група — коротко · Rakhuno",
+    url: "https://rakhuno.com/guides/fop-3-grupa",
+  },
 };
 
 export default function Page() {

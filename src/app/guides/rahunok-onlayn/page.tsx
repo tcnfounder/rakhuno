@@ -5,6 +5,10 @@ export const metadata: Metadata = {
   title: "Рахунок онлайн для ФОП",
   description: "Як виставити рахунок онлайн за 2 хвилини: реквізити ФОП, PDF, email-нагадування.",
   alternates: { canonical: "https://rakhuno.com/guides/rahunok-onlayn" },
+  openGraph: {
+    title: "Рахунок онлайн для ФОП · Rakhuno",
+    url: "https://rakhuno.com/guides/rahunok-onlayn",
+  },
 };
 
 export default function Page() {

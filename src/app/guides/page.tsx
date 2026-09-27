@@ -5,6 +5,11 @@ import { SiteShell } from "@/components/SiteShell";
 export const metadata: Metadata = {
   title: "Гіди для ФОП",
   description: "Рахунок-фактура, ФОП 3 група, єдиний податок — короткі гіди від Rakhuno.",
+  alternates: { canonical: "https://rakhuno.com/guides" },
+  openGraph: {
+    title: "Гіди для ФОП · Rakhuno",
+    url: "https://rakhuno.com/guides",
+  },
 };
 
 const guides = [

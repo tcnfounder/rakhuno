@@ -11,6 +11,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/guides/yedynyy-podatok",
     "/guides/podatky-fop",
     "/guides/rahunok-onlayn",
+    "/privacy",
+    "/terms",
   ];
   return paths.map((path, i) => ({
     url: `${base}${path}`,

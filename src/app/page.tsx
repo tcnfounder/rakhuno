@@ -1,7 +1,19 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { BrandLockup } from "@/components/BrandLockup";
+import { JsonLd } from "@/components/JsonLd";
+import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "https://rakhuno.com" },
+  openGraph: {
+    url: "https://rakhuno.com",
+    title: "Rakhuno — простий рахунок для ФОП",
+    description: "Створіть рахунок-фактуру за 2 хвилини. Email-нагадування про податки.",
+  },
+};
 
 const steps = [
   {
@@ -9,24 +21,57 @@ const steps = [
     title: "Заповніть рахунок",
     text: "ПІБ ФОП, IBAN і позиції — прямо в документі на екрані.",
     icon: "/brand/step-1.webp",
+    alt: "Іконка: заповнення рахунку-фактури",
   },
   {
     n: "02",
     title: "Отримайте PDF",
     text: "Email — і рахунок одразу завантажується клієнту.",
     icon: "/brand/step-2.webp",
+    alt: "Іконка: завантаження PDF рахунку",
   },
   {
     n: "03",
     title: "Не пропустіть податки",
     text: "Нагадування в inbox перед типовим строком сплати.",
     icon: "/brand/step-3.webp",
+    alt: "Іконка: email-нагадування про податки",
   },
 ];
+
+const faqs = [
+  {
+    q: "Як створити рахунок-фактуру онлайн?",
+    a: "Відкрийте Rakhuno → Рахунок, вкажіть дані ФОП та позиції, залиште email — PDF завантажиться одразу.",
+  },
+  {
+    q: "Чи потрібен Checkbox або Медок?",
+    a: "Ні. Rakhuno — легкий онлайн-рахунок для ФОП без важкої бухгалтерії.",
+  },
+  {
+    q: "Що з податками?",
+    a: "Ми лише нагадуємо типові строки (єдиний податок, ЄСВ). Це не податкова консультація.",
+  },
+  {
+    q: "Чи безкоштовно?",
+    a: "Так. Створення рахунку-фактури та PDF зараз безкоштовні.",
+  },
+];
+
+const faqLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map((f) => ({
+    "@type": "Question",
+    name: f.q,
+    acceptedAnswer: { "@type": "Answer", text: f.a },
+  })),
+};
 
 export default function HomePage() {
   return (
     <main className="min-h-screen bg-ink text-paper">
+      <JsonLd data={faqLd} />
       <section className="relative min-h-[100svh] overflow-hidden">
         <video
           className="absolute inset-0 h-full w-full object-cover"
@@ -34,6 +79,7 @@ export default function HomePage() {
           muted
           loop
           playsInline
+          preload="metadata"
           poster="/brand/hero.webp"
           aria-hidden
         >
@@ -50,11 +96,11 @@ export default function HomePage() {
                 <BrandLockup size="hero" href="" />
               </div>
               <h1 className="rise rise-delay-1 mt-6 max-w-3xl font-display text-2xl font-medium leading-tight sm:text-4xl md:text-5xl">
-                Простий рахунок для ФОП
+                Простий рахунок-фактура для ФОП
               </h1>
               <p className="rise rise-delay-2 mt-5 max-w-xl text-base leading-relaxed text-paper/85 sm:text-lg">
-                Рахунок-фактура за 2 хвилини. Нагадування про єдиний податок у email. Без важкої
-                бухгалтерії.
+                Онлайн рахунок за 2 хвилини. PDF клієнту одразу. Email-нагадування про єдиний податок
+                і ЄСВ — без важкої бухгалтерії.
               </p>
               <div className="rise rise-delay-3 mt-8 flex flex-wrap items-center gap-3">
                 <Link
@@ -82,19 +128,19 @@ export default function HomePage() {
             Три кроки до рахунку
           </h2>
 
-          <div className="mt-12 grid gap-8 md:grid-cols-3 md:gap-6">
+          <div className="mt-12 grid gap-10 md:grid-cols-3 md:gap-8">
             {steps.map((step, i) => (
               <article
                 key={step.n}
                 className="step-rise flex flex-col"
                 style={{ animationDelay: `${0.1 * i}s` }}
               >
-                <div className="relative aspect-square overflow-hidden rounded-2xl bg-ink-2 ring-1 ring-white/5">
+                <div className="relative h-16 w-16 overflow-hidden rounded-xl bg-ink-2 ring-1 ring-white/5 sm:h-20 sm:w-20">
                   <Image
                     src={step.icon}
-                    alt=""
+                    alt={step.alt}
                     fill
-                    sizes="(max-width: 768px) 100vw, 280px"
+                    sizes="80px"
                     className="object-cover"
                   />
                 </div>
@@ -132,8 +178,9 @@ export default function HomePage() {
               muted
               loop
               playsInline
+              preload="metadata"
               poster="/brand/invoice.webp"
-              aria-hidden
+              aria-label="Демонстрація редагування рахунку-фактури"
             >
               <source src="/brand/invoice.mp4" type="video/mp4" />
             </video>
@@ -147,7 +194,7 @@ export default function HomePage() {
           <div className="relative order-2 min-h-[280px] overflow-hidden lg:order-1 lg:min-h-[420px]">
             <Image
               src="/brand/reminder.webp"
-              alt="Нагадування про податки"
+              alt="Email-нагадування про податки для ФОП"
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"
               className="img-pan object-cover"
@@ -180,10 +227,27 @@ export default function HomePage() {
         </div>
       </section>
 
+      <section id="faq" className="border-t border-line px-5 py-16 md:px-10 md:py-24">
+        <div className="mx-auto max-w-content">
+          <p className="font-display text-sm uppercase tracking-[0.18em] text-signal">FAQ</p>
+          <h2 className="mt-3 font-display text-3xl font-semibold md:text-5xl">Часті питання</h2>
+          <div className="mt-12 max-w-3xl divide-y divide-line">
+            {faqs.map((f) => (
+              <div key={f.q} className="py-6">
+                <h3 className="font-display text-xl text-paper">{f.q}</h3>
+                <p className="mt-2 text-mist">{f.a}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="border-t border-line px-5 py-16 md:px-10">
         <div className="mx-auto flex max-w-content flex-col items-start justify-between gap-6 md:flex-row md:items-center">
           <div>
-            <h2 className="font-display text-2xl font-semibold md:text-3xl">Готові виставити рахунок?</h2>
+            <h2 className="font-display text-2xl font-semibold md:text-3xl">
+              Готові виставити рахунок?
+            </h2>
             <p className="mt-2 text-mist">Безкоштовно. PDF одразу. Email — для нагадувань.</p>
           </div>
           <Link
@@ -195,25 +259,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <footer className="border-t border-line px-5 py-10 text-sm text-muted md:px-10">
-        <div className="mx-auto flex max-w-content flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-3">
-            <BrandLockup size="sm" href="/" />
-            <span>© {new Date().getFullYear()}</span>
-          </div>
-          <div className="flex flex-wrap gap-4">
-            <Link href="/guides" className="hover:text-signal">
-              Гіди
-            </Link>
-            <Link href="/invoice" className="hover:text-signal">
-              Рахунок
-            </Link>
-          </div>
-          <p className="max-w-lg">
-            Не є податковою консультацією. Строки загальні; перевіряйте актуальні вимоги ДПС.
-          </p>
-        </div>
-      </footer>
+      <SiteFooter />
     </main>
   );
 }

@@ -5,6 +5,10 @@ export const metadata: Metadata = {
   title: "Єдиний податок: коли платити",
   description: "Типові строки єдиного податку для ФОП і як налаштувати email-нагадування в Rakhuno.",
   alternates: { canonical: "https://rakhuno.com/guides/yedynyy-podatok" },
+  openGraph: {
+    title: "Єдиний податок: коли платити · Rakhuno",
+    url: "https://rakhuno.com/guides/yedynyy-podatok",
+  },
 };
 
 export default function Page() {

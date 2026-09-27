@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Onest, Unbounded } from "next/font/google";
+import { JsonLd, organizationLd, softwareLd } from "@/components/JsonLd";
 import "./globals.css";
 
 const display = Unbounded({
@@ -37,18 +38,23 @@ export const metadata: Metadata = {
     title: "Rakhuno — простий рахунок для ФОП",
     description:
       "Створіть рахунок-фактуру за 2 хвилини. Email-нагадування про податки.",
-    url: "https://rakhuno.com",
     siteName: "Rakhuno",
     locale: "uk_UA",
     type: "website",
-    images: [{ url: "/brand/mark.webp", width: 256, height: 256, alt: "Rakhuno" }],
+    images: [
+      {
+        url: "/brand/og-default.png",
+        width: 1200,
+        height: 630,
+        alt: "Rakhuno — простий рахунок-фактура для ФОП",
+      },
+    ],
   },
   twitter: {
-    card: "summary",
-    images: ["/brand/mark.webp"],
-  },
-  alternates: {
-    canonical: "https://rakhuno.com",
+    card: "summary_large_image",
+    title: "Rakhuno — простий рахунок для ФОП",
+    description: "Створіть рахунок-фактуру за 2 хвилини. Email-нагадування про податки.",
+    images: ["/brand/og-default.png"],
   },
 };
 
@@ -60,6 +66,7 @@ export default function RootLayout({
   return (
     <html lang="uk">
       <body className={`${display.variable} ${body.variable} antialiased`}>
+        <JsonLd data={[organizationLd, softwareLd]} />
         {children}
       </body>
     </html>

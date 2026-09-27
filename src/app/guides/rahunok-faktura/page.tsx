@@ -6,6 +6,10 @@ export const metadata: Metadata = {
   description:
     "Що таке рахунок-фактура, які реквізити потрібні ФОП і як швидко зібрати PDF в Rakhuno.",
   alternates: { canonical: "https://rakhuno.com/guides/rahunok-faktura" },
+  openGraph: {
+    title: "Рахунок-фактура для ФОП · Rakhuno",
+    url: "https://rakhuno.com/guides/rahunok-faktura",
+  },
 };
 
 export default function Page() {
