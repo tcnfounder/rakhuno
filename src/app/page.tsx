@@ -6,16 +6,19 @@ export default function HomePage() {
   return (
     <main className="min-h-screen bg-ink text-paper">
       <section className="relative min-h-[100svh] overflow-hidden">
-        <Image
-          src="/brand/hero.webp"
-          alt=""
-          fill
-          priority
-          sizes="100vw"
-          className="img-pan object-cover object-center"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/80 to-ink/30" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_75%_15%,rgba(198,242,109,0.16),transparent_50%)]" />
+        <video
+          className="absolute inset-0 h-full w-full object-cover"
+          autoPlay
+          muted
+          loop
+          playsInline
+          poster="/brand/hero.webp"
+          aria-hidden
+        >
+          <source src="/brand/hero.mp4" type="video/mp4" />
+        </video>
+        <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/80 to-ink/35" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_75%_15%,rgba(198,242,109,0.14),transparent_50%)]" />
 
         <div className="relative z-10 flex min-h-[100svh] flex-col">
           <SiteHeader />
@@ -50,66 +53,90 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section id="yak-pratsyuye" className="border-t border-line">
+      <section id="yak-pratsyuye" className="border-t border-line px-5 py-20 md:px-10 md:py-28">
+        <div className="mx-auto max-w-content">
+          <p className="font-display text-sm uppercase tracking-[0.18em] text-signal">Як це працює</p>
+          <h2 className="mt-3 max-w-2xl font-display text-3xl font-semibold md:text-5xl">
+            Три кроки. Без зайвого.
+          </h2>
+          <div className="mt-12 grid gap-8 md:grid-cols-3">
+            {[
+              {
+                n: "01",
+                t: "Заповніть документ",
+                d: "ПІБ ФОП, IBAN, позиції — як у звичайному рахунку.",
+              },
+              {
+                n: "02",
+                t: "Залиште email",
+                d: "Отримаєте PDF і потрапите в календар нагадувань.",
+              },
+              {
+                n: "03",
+                t: "Не пропустіть податки",
+                d: "Лист за кілька днів до типового строку сплати.",
+              },
+            ].map((step, i) => (
+              <div
+                key={step.n}
+                className="step-rise border-t border-line pt-6"
+                style={{ animationDelay: `${0.12 * i}s` }}
+              >
+                <p className="font-display text-sm text-signal">{step.n}</p>
+                <h3 className="mt-3 font-display text-2xl">{step.t}</h3>
+                <p className="mt-3 text-mist">{step.d}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="border-t border-line">
         <div className="mx-auto grid max-w-content lg:grid-cols-2">
           <div className="flex flex-col justify-center px-5 py-16 md:px-10 md:py-24">
-            <p className="font-display text-sm uppercase tracking-[0.18em] text-signal">Процес</p>
+            <p className="font-display text-sm uppercase tracking-[0.18em] text-signal">Рахунок</p>
             <h2 className="mt-3 font-display text-3xl font-semibold md:text-5xl">
-              Один інструмент. Дві справи.
+              Документ, який можна надіслати клієнту
             </h2>
             <p className="mt-4 max-w-xl text-mist">
-              Виставляєте рахунок клієнту. Ми нагадуємо, коли платити податки. Все інше — пізніше.
+              Редагуєте живий рахунок на екрані. PDF виглядає так само — з вашим ПІБ, не з логотипом
+              сервісу як заголовком.
             </p>
-            <ol className="mt-10 space-y-8">
-              {[
-                {
-                  n: "01",
-                  t: "Заповніть реквізити",
-                  d: "ФОП, ІПН, IBAN, послуги — звичні поля українською.",
-                },
-                {
-                  n: "02",
-                  t: "Залиште email",
-                  d: "Отримаєте PDF і календар нагадувань для вашої групи ФОП.",
-                },
-                {
-                  n: "03",
-                  t: "Не пропустіть податки",
-                  d: "Лист за 3 дні до строку. Pro відкриє автоматичні нагадування.",
-                },
-              ].map((item) => (
-                <li key={item.n} className="border-t border-line pt-5">
-                  <p className="font-display text-sm text-signal">{item.n}</p>
-                  <h3 className="mt-2 font-display text-xl">{item.t}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-mist">{item.d}</p>
-                </li>
-              ))}
-            </ol>
+            <Link
+              href="/invoice"
+              className="mt-8 inline-flex w-fit rounded-full bg-signal px-6 py-3 font-semibold text-ink transition hover:bg-white"
+            >
+              Відкрити рахунок
+            </Link>
           </div>
-          <div className="relative min-h-[320px] overflow-hidden bg-ink-2 lg:min-h-full">
-            <Image
-              src="/brand/invoice.webp"
-              alt="Рахунок на столі — атмосфера Rakhuno"
-              fill
-              sizes="(max-width: 1024px) 100vw, 50vw"
-              className="object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-ink/50 via-transparent to-transparent lg:from-ink/30" />
+          <div className="relative min-h-[280px] overflow-hidden bg-ink-2 lg:min-h-[420px]">
+            <video
+              className="absolute inset-0 h-full w-full object-cover"
+              autoPlay
+              muted
+              loop
+              playsInline
+              poster="/brand/invoice.webp"
+              aria-hidden
+            >
+              <source src="/brand/invoice.mp4" type="video/mp4" />
+            </video>
+            <div className="absolute inset-0 bg-gradient-to-r from-ink/40 via-transparent to-transparent" />
           </div>
         </div>
       </section>
 
       <section id="podatky" className="border-t border-line bg-ink-2">
         <div className="mx-auto grid max-w-content lg:grid-cols-2">
-          <div className="relative order-2 min-h-[320px] overflow-hidden lg:order-1 lg:min-h-full">
+          <div className="relative order-2 min-h-[280px] overflow-hidden lg:order-1 lg:min-h-[420px]">
             <Image
               src="/brand/reminder.webp"
-              alt="Нагадування про податки в email"
+              alt="Нагадування про податки"
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"
-              className="object-cover"
+              className="img-pan object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-l from-ink-2/60 via-transparent to-transparent lg:from-ink-2/40" />
+            <div className="absolute inset-0 bg-gradient-to-l from-ink-2/50 via-transparent to-transparent" />
           </div>
           <div className="order-1 flex flex-col justify-center px-5 py-16 md:px-10 md:py-24 lg:order-2">
             <p className="font-display text-sm uppercase tracking-[0.18em] text-signal">Email</p>
@@ -117,29 +144,22 @@ export default function HomePage() {
               Нагадування, не консультація
             </h2>
             <p className="mt-4 max-w-xl text-mist">
-              Rakhuno не замінює бухгалтера. Ми лише нагадуємо типові строки для ФОП 2–3 групи — щоб ви
-              не забули відкрити календар.
+              Rakhuno лише нагадує типові строки для ФОП 2–3 групи. Бухгалтера не замінює.
             </p>
             <ul className="mt-10 space-y-4">
               <li className="flex gap-3 border-b border-line pb-4">
                 <span className="text-signal">→</span>
-                <span>Єдиний податок — типове вікно сплати</span>
+                <span>Єдиний податок</span>
               </li>
               <li className="flex gap-3 border-b border-line pb-4">
                 <span className="text-signal">→</span>
-                <span>ЄСВ — щомісячні / квартальні нагадування</span>
+                <span>ЄСВ</span>
               </li>
-              <li className="flex gap-3 pb-4">
+              <li className="flex gap-3">
                 <span className="text-signal">→</span>
                 <span>Декларація — сезонні листи</span>
               </li>
             </ul>
-            <Link
-              href="/invoice"
-              className="mt-8 inline-flex w-fit rounded-full bg-signal px-6 py-3 font-semibold text-ink transition hover:bg-white"
-            >
-              Почати з рахунку
-            </Link>
           </div>
         </div>
       </section>
@@ -161,7 +181,10 @@ export default function HomePage() {
 
       <footer className="border-t border-line px-5 py-10 text-sm text-muted md:px-10">
         <div className="mx-auto flex max-w-content flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} Rakhuno</p>
+          <p className="flex items-center gap-2">
+            <Image src="/brand/mark.webp" alt="" width={22} height={22} className="rounded" />
+            © {new Date().getFullYear()} Rakhuno
+          </p>
           <div className="flex flex-wrap gap-4">
             <Link href="/guides" className="hover:text-signal">
               Гіди

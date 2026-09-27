@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { SiteHeader } from "@/components/SiteHeader";
+import { SiteShell } from "@/components/SiteShell";
 
 export const metadata: Metadata = {
   title: "Гіди для ФОП",
@@ -37,29 +37,24 @@ const guides = [
 
 export default function GuidesIndexPage() {
   return (
-    <main className="min-h-screen bg-ink">
-      <div className="grid-atmosphere min-h-screen">
-        <SiteHeader />
-        <section className="mx-auto max-w-content px-5 py-14 md:px-10">
-          <h1 className="font-display text-4xl font-semibold text-paper md:text-5xl">Гіди для ФОП</h1>
-          <p className="mt-4 max-w-2xl text-mist">
-            Короткі сторінки під пошукові запити. Потім — у Rakhuno створити рахунок і підписатися на
-            нагадування.
-          </p>
-          <div className="mt-12 space-y-6">
-            {guides.map((g) => (
-              <Link
-                key={g.href}
-                href={g.href}
-                className="block border-t border-line pt-5 transition hover:border-signal"
-              >
-                <h2 className="font-display text-2xl text-paper">{g.title}</h2>
-                <p className="mt-2 text-mist">{g.blurb}</p>
-              </Link>
-            ))}
-          </div>
-        </section>
+    <SiteShell>
+      <h1 className="font-display text-4xl font-semibold text-paper md:text-5xl">Гіди для ФОП</h1>
+      <p className="mt-4 max-w-2xl text-mist">
+        Короткі сторінки під пошукові запити. Потім — у Rakhuno створити рахунок і підписатися на
+        нагадування.
+      </p>
+      <div className="mt-12 max-w-3xl space-y-6">
+        {guides.map((g) => (
+          <Link
+            key={g.href}
+            href={g.href}
+            className="block border-t border-line pt-5 transition hover:border-signal"
+          >
+            <h2 className="font-display text-2xl text-paper">{g.title}</h2>
+            <p className="mt-2 text-mist">{g.blurb}</p>
+          </Link>
+        ))}
       </div>
-    </main>
+    </SiteShell>
   );
 }

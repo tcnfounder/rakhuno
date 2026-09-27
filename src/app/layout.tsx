@@ -22,6 +22,10 @@ export const metadata: Metadata = {
   },
   description:
     "Створіть рахунок-фактуру за 2 хвилини. Email-нагадування про податки для ФОП. Без складної бухгалтерії.",
+  icons: {
+    icon: "/brand/mark-64.png",
+    apple: "/brand/apple-touch-icon.png",
+  },
   openGraph: {
     title: "Rakhuno — простий рахунок для ФОП",
     description:
