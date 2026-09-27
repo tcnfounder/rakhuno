@@ -51,5 +51,9 @@ Kaydet → redeploy. Test: invoice’tan mail gönder → API cevabında `"brevo
 
 1. https://rakhuno.com/invoice  
 2. Email gir → **Отримати PDF** → tarayıcıda PDF + «PDF готовий» paneli  
-3. Inbox → Welcome (PDF eki yok; bilinçli — PDF indirilir)  
-4. From: `info@rakhuno.com` — `via` uyarısı olmamalı
+3. Inbox → Welcome (PDF eki yok; bilinçli — PDF tarayıcıda iner; maildeki buton siteyi açar)  
+4. From: `info@rakhuno.com` — `via` uyarısı olmamalı  
+
+> Brevo click-tracking bazen `rakhuno.com/<uuid>` üretir. Apex’te bu path’ler 404 olurdu;  
+> artık middleware `/invoice`’a yönlendiriyor. Kalıcı çözüm: Brevo’da link branding için  
+> ayrı subdomain (`lb.rakhuno.com` → Brevo CNAME), apex değil.
