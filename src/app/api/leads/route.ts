@@ -6,6 +6,7 @@ import path from "path";
 type LeadBody = {
   email?: string;
   source?: string;
+  fopGroup?: string;
 };
 
 type LeadsKv = {
@@ -34,10 +35,15 @@ async function getEnv(): Promise<WorkerEnv> {
   }
 }
 
-async function storeLead(email: string, source: string, env: WorkerEnv) {
+async function storeLead(
+  email: string,
+  source: string,
+  env: WorkerEnv,
+  extra: { fopGroup?: string } = {},
+) {
   const stamp = new Date().toISOString();
   const key = `lead:${stamp}:${email}`;
-  const value = JSON.stringify({ email, source, at: stamp });
+  const value = JSON.stringify({ email, source, at: stamp, ...extra });
 
   if (env.LEADS) {
     await env.LEADS.put(key, value);
@@ -47,7 +53,11 @@ async function storeLead(email: string, source: string, env: WorkerEnv) {
   try {
     const dir = path.join(process.cwd(), "data");
     await mkdir(dir, { recursive: true });
-    await appendFile(path.join(dir, "leads.csv"), `${stamp},${email},${source}\n`, "utf8");
+    await appendFile(
+      path.join(dir, "leads.csv"),
+      `${stamp},${email},${source},${extra.fopGroup || ""}\n`,
+      "utf8",
+    );
     return "csv";
   } catch {
     console.log("[lead]", value);
@@ -55,7 +65,12 @@ async function storeLead(email: string, source: string, env: WorkerEnv) {
   }
 }
 
-async function pushToBrevo(email: string, source: string, env: WorkerEnv) {
+async function pushToBrevo(
+  email: string,
+  source: string,
+  env: WorkerEnv,
+  extra: { fopGroup?: string } = {},
+) {
   if (!env.BREVO_API_KEY || !env.BREVO_LIST_ID) return "skipped";
   const listId = Number(env.BREVO_LIST_ID);
   if (!Number.isFinite(listId)) return "bad_list";
@@ -74,6 +89,7 @@ async function pushToBrevo(email: string, source: string, env: WorkerEnv) {
       attributes: {
         SOURCE: source,
         SIGNUP_SITE: "rakhuno.com",
+        ...(extra.fopGroup ? { FOP_GROUP: extra.fopGroup } : {}),
       },
     }),
   });
@@ -102,8 +118,10 @@ export async function POST(req: NextRequest) {
   }
 
   const source = (body.source || "invoice").slice(0, 64);
+  const fopGroupRaw = (body.fopGroup || "").trim();
+  const fopGroup = fopGroupRaw === "2" || fopGroupRaw === "3" ? fopGroupRaw : undefined;
   const env = await getEnv();
-  const backend = await storeLead(email, source, env);
-  const brevo = await pushToBrevo(email, source, env);
+  const backend = await storeLead(email, source, env, { fopGroup });
+  const brevo = await pushToBrevo(email, source, env, { fopGroup });
   return NextResponse.json({ ok: true, backend, brevo });
 }

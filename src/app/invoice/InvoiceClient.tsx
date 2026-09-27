@@ -1,23 +1,34 @@
 "use client";
 
-import { FormEvent, useMemo, useRef, useState } from "react";
-import html2canvas from "html2canvas";
-import { jsPDF } from "jspdf";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
-import { InvoiceData, InvoiceItem, calcTotal, formatUah } from "@/lib/invoice";
-
-const emptyItem = (): InvoiceItem => ({ description: "", qty: 1, price: 0 });
-
-function todayIso() {
-  return new Date().toISOString().slice(0, 10);
-}
+import {
+  InvoiceData,
+  InvoiceItem,
+  bumpInvoiceCounter,
+  calcTotal,
+  emptyItem,
+  formatDateUk,
+  formatUah,
+  loadSellerProfile,
+  nextInvoiceNumber,
+  paymentText,
+  saveSellerProfile,
+  todayIso,
+  validateInvoice,
+} from "@/lib/invoice";
+import { downloadInvoicePdf } from "@/lib/pdf";
 
 export default function InvoiceClient() {
   const previewRef = useRef<HTMLDivElement>(null);
   const [email, setEmail] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [okMsg, setOkMsg] = useState("");
   const [unlocked, setUnlocked] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [profileSaved, setProfileSaved] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
 
   const [data, setData] = useState<InvoiceData>({
     number: "1",
@@ -32,7 +43,18 @@ export default function InvoiceClient() {
     buyerAddress: "",
     items: [emptyItem()],
     note: "Оплата протягом 5 банківських днів.",
+    fopGroup: "",
   });
+
+  useEffect(() => {
+    const profile = loadSellerProfile();
+    setData((prev) => ({
+      ...prev,
+      number: nextInvoiceNumber(),
+      ...(profile || {}),
+    }));
+    setHydrated(true);
+  }, []);
 
   const total = useMemo(() => calcTotal(data.items), [data.items]);
 
@@ -47,22 +69,76 @@ export default function InvoiceClient() {
     }));
   }
 
+  function removeItem(index: number) {
+    setData((prev) => ({
+      ...prev,
+      items: prev.items.length <= 1 ? [emptyItem()] : prev.items.filter((_, i) => i !== index),
+    }));
+  }
+
+  function persistProfile() {
+    saveSellerProfile({
+      sellerName: data.sellerName,
+      sellerTaxId: data.sellerTaxId,
+      sellerAddress: data.sellerAddress,
+      sellerIban: data.sellerIban,
+      sellerBank: data.sellerBank,
+      fopGroup: data.fopGroup,
+    });
+    setProfileSaved(true);
+    window.setTimeout(() => setProfileSaved(false), 2000);
+  }
+
+  async function copyPayment() {
+    try {
+      await navigator.clipboard.writeText(paymentText(data));
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 2000);
+    } catch {
+      setError("Не вдалося скопіювати. Скопіюйте вручну з прев’ю.");
+    }
+  }
+
+  function printPreview() {
+    window.print();
+  }
+
   async function unlockAndDownload(e: FormEvent) {
     e.preventDefault();
     setError("");
+    setOkMsg("");
+
+    const invalid = validateInvoice(data);
+    if (invalid) {
+      setError(invalid);
+      return;
+    }
+    if (!email.trim()) {
+      setError("Вкажіть email для PDF і нагадувань.");
+      return;
+    }
+
     setBusy(true);
     try {
       const res = await fetch("/api/leads", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, source: "invoice_pdf" }),
+        body: JSON.stringify({
+          email,
+          source: "invoice_pdf",
+          fopGroup: data.fopGroup || undefined,
+        }),
       });
       if (!res.ok) {
         setError("Перевірте email і спробуйте ще раз.");
         return;
       }
+
+      persistProfile();
+      downloadInvoicePdf(data);
+      bumpInvoiceCounter(data.number);
       setUnlocked(true);
-      await generatePdf();
+      setOkMsg("PDF завантажено. Ми зберегли email для нагадувань про податки.");
     } catch {
       setError("Щось пішло не так. Спробуйте ще раз.");
     } finally {
@@ -70,66 +146,131 @@ export default function InvoiceClient() {
     }
   }
 
-  async function generatePdf() {
-    const node = previewRef.current;
-    if (!node) return;
-    const canvas = await html2canvas(node, {
-      scale: 2,
-      backgroundColor: "#ffffff",
-      useCORS: true,
-    });
-    const img = canvas.toDataURL("image/png");
-    const pdf = new jsPDF({ unit: "mm", format: "a4" });
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const pageHeight = pdf.internal.pageSize.getHeight();
-    const ratio = Math.min(pageWidth / canvas.width, pageHeight / canvas.height);
-    const w = canvas.width * ratio;
-    const h = canvas.height * ratio;
-    pdf.addImage(img, "PNG", (pageWidth - w) / 2, 8, w, h);
-    pdf.save(`rakhuno-rahunok-${data.number || "draft"}.pdf`);
+  function downloadAgain() {
+    const invalid = validateInvoice(data);
+    if (invalid) {
+      setError(invalid);
+      return;
+    }
+    downloadInvoicePdf(data);
+    setOkMsg("PDF завантажено знову.");
   }
 
   const field =
     "w-full rounded-xl border border-line bg-ink-2 px-3 py-2.5 text-sm text-paper outline-none transition placeholder:text-muted focus:border-signal";
 
   return (
-    <main className="min-h-screen bg-ink">
-      <div className="grid-atmosphere min-h-screen">
-        <SiteHeader />
-        <div className="mx-auto grid max-w-content gap-10 px-5 py-10 md:grid-cols-2 md:px-10">
-          <section>
+    <main className="min-h-screen bg-ink print:bg-white">
+      <div className="grid-atmosphere min-h-screen print:bg-white print:[background-image:none]">
+        <div className="print:hidden">
+          <SiteHeader />
+        </div>
+
+        <div className="mx-auto grid max-w-content gap-10 px-5 py-10 md:grid-cols-2 md:px-10 print:block print:max-w-none print:px-0 print:py-0">
+          <section className="print:hidden">
             <h1 className="font-display text-3xl font-semibold text-paper md:text-4xl">Рахунок-фактура</h1>
-            <p className="mt-3 text-mist">Заповніть поля → залиште email → завантажте PDF. Це безкоштовно.</p>
+            <p className="mt-3 text-mist">
+              Заповніть → збережіть реквізити ФОП → email → PDF. Наступного разу поля підтягнуться самі.
+            </p>
 
             <div className="mt-8 space-y-6">
-              <div className="grid gap-3 sm:grid-cols-2">
+              <div className="grid gap-3 sm:grid-cols-3">
                 <label className="block text-sm">
                   <span className="mb-1.5 block text-muted">Номер</span>
                   <input className={field} value={data.number} onChange={(e) => update("number", e.target.value)} />
                 </label>
                 <label className="block text-sm">
                   <span className="mb-1.5 block text-muted">Дата</span>
-                  <input className={field} type="date" value={data.date} onChange={(e) => update("date", e.target.value)} />
+                  <input
+                    className={field}
+                    type="date"
+                    value={data.date}
+                    onChange={(e) => update("date", e.target.value)}
+                  />
+                </label>
+                <label className="block text-sm">
+                  <span className="mb-1.5 block text-muted">Група ФОП</span>
+                  <select
+                    className={field}
+                    value={data.fopGroup}
+                    onChange={(e) => update("fopGroup", e.target.value as InvoiceData["fopGroup"])}
+                  >
+                    <option value="">Не вказано</option>
+                    <option value="2">2 група</option>
+                    <option value="3">3 група</option>
+                  </select>
                 </label>
               </div>
 
               <div>
-                <h2 className="font-display text-lg text-signal">Виконавець (ФОП)</h2>
-                <div className="mt-3 space-y-3">
-                  <input className={field} placeholder="ПІБ ФОП" value={data.sellerName} onChange={(e) => update("sellerName", e.target.value)} />
-                  <input className={field} placeholder="ІПН / ЄДРПОУ" value={data.sellerTaxId} onChange={(e) => update("sellerTaxId", e.target.value)} />
-                  <input className={field} placeholder="Адреса" value={data.sellerAddress} onChange={(e) => update("sellerAddress", e.target.value)} />
-                  <input className={field} placeholder="IBAN" value={data.sellerIban} onChange={(e) => update("sellerIban", e.target.value)} />
-                  <input className={field} placeholder="Банк" value={data.sellerBank} onChange={(e) => update("sellerBank", e.target.value)} />
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <h2 className="font-display text-lg text-signal">Виконавець (ФОП)</h2>
+                  <button
+                    type="button"
+                    onClick={persistProfile}
+                    className="text-sm text-mist underline-offset-2 hover:text-signal hover:underline"
+                  >
+                    {profileSaved ? "Збережено ✓" : "Зберегти реквізити"}
+                  </button>
                 </div>
+                <div className="mt-3 space-y-3">
+                  <input
+                    className={field}
+                    placeholder="ПІБ ФОП"
+                    value={data.sellerName}
+                    onChange={(e) => update("sellerName", e.target.value)}
+                  />
+                  <input
+                    className={field}
+                    placeholder="ІПН / ЄДРПОУ"
+                    value={data.sellerTaxId}
+                    onChange={(e) => update("sellerTaxId", e.target.value)}
+                  />
+                  <input
+                    className={field}
+                    placeholder="Адреса"
+                    value={data.sellerAddress}
+                    onChange={(e) => update("sellerAddress", e.target.value)}
+                  />
+                  <input
+                    className={field}
+                    placeholder="IBAN UA…"
+                    value={data.sellerIban}
+                    onChange={(e) => update("sellerIban", e.target.value)}
+                  />
+                  <input
+                    className={field}
+                    placeholder="Банк"
+                    value={data.sellerBank}
+                    onChange={(e) => update("sellerBank", e.target.value)}
+                  />
+                </div>
+                {hydrated && data.sellerName ? (
+                  <p className="mt-2 text-xs text-muted">Реквізити можна зберегти в браузері для наступних рахунків.</p>
+                ) : null}
               </div>
 
               <div>
                 <h2 className="font-display text-lg text-signal">Замовник</h2>
                 <div className="mt-3 space-y-3">
-                  <input className={field} placeholder="Назва / ПІБ" value={data.buyerName} onChange={(e) => update("buyerName", e.target.value)} />
-                  <input className={field} placeholder="ІПН / ЄДРПОУ" value={data.buyerTaxId} onChange={(e) => update("buyerTaxId", e.target.value)} />
-                  <input className={field} placeholder="Адреса" value={data.buyerAddress} onChange={(e) => update("buyerAddress", e.target.value)} />
+                  <input
+                    className={field}
+                    placeholder="Назва / ПІБ"
+                    value={data.buyerName}
+                    onChange={(e) => update("buyerName", e.target.value)}
+                  />
+                  <input
+                    className={field}
+                    placeholder="ІПН / ЄДРПОУ"
+                    value={data.buyerTaxId}
+                    onChange={(e) => update("buyerTaxId", e.target.value)}
+                  />
+                  <input
+                    className={field}
+                    placeholder="Адреса"
+                    value={data.buyerAddress}
+                    onChange={(e) => update("buyerAddress", e.target.value)}
+                  />
                 </div>
               </div>
 
@@ -144,9 +285,15 @@ export default function InvoiceClient() {
                     + рядок
                   </button>
                 </div>
-                <div className="mt-3 space-y-3">
+                <div className="mt-2 hidden grid-cols-[1fr_72px_100px_36px] gap-2 text-xs text-muted sm:grid">
+                  <span>Опис</span>
+                  <span>К-сть</span>
+                  <span>Ціна</span>
+                  <span />
+                </div>
+                <div className="mt-2 space-y-3">
                   {data.items.map((item, index) => (
-                    <div key={index} className="grid gap-2 sm:grid-cols-[1fr_72px_100px]">
+                    <div key={index} className="grid gap-2 sm:grid-cols-[1fr_72px_100px_36px]">
                       <input
                         className={field}
                         placeholder="Опис послуги / товару"
@@ -158,6 +305,7 @@ export default function InvoiceClient() {
                         type="number"
                         min={0}
                         step={1}
+                        aria-label="Кількість"
                         value={item.qty}
                         onChange={(e) => updateItem(index, { qty: Number(e.target.value) })}
                       />
@@ -166,9 +314,18 @@ export default function InvoiceClient() {
                         type="number"
                         min={0}
                         step={0.01}
+                        aria-label="Ціна"
                         value={item.price}
                         onChange={(e) => updateItem(index, { price: Number(e.target.value) })}
                       />
+                      <button
+                        type="button"
+                        aria-label="Видалити рядок"
+                        onClick={() => removeItem(index)}
+                        className="rounded-xl border border-line text-mist transition hover:border-signal hover:text-signal"
+                      >
+                        ×
+                      </button>
                     </div>
                   ))}
                 </div>
@@ -177,12 +334,16 @@ export default function InvoiceClient() {
 
               <label className="block text-sm">
                 <span className="mb-1.5 block text-muted">Примітка</span>
-                <textarea className={`${field} min-h-20`} value={data.note} onChange={(e) => update("note", e.target.value)} />
+                <textarea
+                  className={`${field} min-h-20`}
+                  value={data.note}
+                  onChange={(e) => update("note", e.target.value)}
+                />
               </label>
 
-              <form onSubmit={unlockAndDownload} className="rounded-2xl border border-line bg-ink-2/80 p-4">
+              <form onSubmit={unlockAndDownload} className="border-t border-line pt-5">
                 <p className="text-sm text-mist">
-                  Email потрібен, щоб надіслати календар податкових нагадувань. PDF одразу після цього.
+                  Email потрібен для PDF і календаря податкових нагадувань. Зберігаємо його як lead.
                 </p>
                 <div className="mt-3 flex flex-col gap-3 sm:flex-row">
                   <input
@@ -192,25 +353,76 @@ export default function InvoiceClient() {
                     placeholder="you@email.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    autoComplete="email"
                   />
-                  <button
-                    type="submit"
-                    disabled={busy}
-                    className="rounded-xl bg-signal px-5 py-2.5 font-semibold text-ink transition hover:bg-white disabled:opacity-60"
-                  >
-                    {busy ? "…" : unlocked ? "Завантажити знову" : "Отримати PDF"}
-                  </button>
+                  {unlocked ? (
+                    <button
+                      type="button"
+                      onClick={downloadAgain}
+                      className="rounded-xl bg-signal px-5 py-2.5 font-semibold text-ink transition hover:bg-white"
+                    >
+                      Завантажити знову
+                    </button>
+                  ) : (
+                    <button
+                      type="submit"
+                      disabled={busy}
+                      className="rounded-xl bg-signal px-5 py-2.5 font-semibold text-ink transition hover:bg-white disabled:opacity-60"
+                    >
+                      {busy ? "…" : "Отримати PDF"}
+                    </button>
+                  )}
                 </div>
+
+                {unlocked ? (
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={copyPayment}
+                      className="rounded-full border border-line px-4 py-2 text-sm text-mist transition hover:border-signal hover:text-signal"
+                    >
+                      {copied ? "Скопійовано ✓" : "Копіювати реквізити"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={printPreview}
+                      className="rounded-full border border-line px-4 py-2 text-sm text-mist transition hover:border-signal hover:text-signal"
+                    >
+                      Друк
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setData((prev) => ({
+                          ...prev,
+                          number: nextInvoiceNumber(),
+                          date: todayIso(),
+                          buyerName: "",
+                          buyerTaxId: "",
+                          buyerAddress: "",
+                          items: [emptyItem()],
+                        }));
+                        setUnlocked(false);
+                        setOkMsg("Новий рахунок — реквізити ФОП залишились.");
+                      }}
+                      className="rounded-full border border-line px-4 py-2 text-sm text-mist transition hover:border-signal hover:text-signal"
+                    >
+                      Новий рахунок
+                    </button>
+                  </div>
+                ) : null}
+
                 {error ? <p className="mt-2 text-sm text-red-300">{error}</p> : null}
+                {okMsg ? <p className="mt-2 text-sm text-signal">{okMsg}</p> : null}
               </form>
             </div>
           </section>
 
-          <section>
-            <p className="mb-3 text-sm text-muted">Попередній перегляд</p>
+          <section className="md:sticky md:top-6 md:self-start print:static">
+            <p className="mb-3 text-sm text-muted print:hidden">Попередній перегляд</p>
             <div
               ref={previewRef}
-              className="rounded-sm bg-white p-8 text-[#111] shadow-[0_20px_60px_rgba(0,0,0,0.35)]"
+              className="rounded-sm bg-white p-8 text-[#111] shadow-[0_20px_60px_rgba(0,0,0,0.35)] print:shadow-none"
               style={{ fontFamily: "Arial, Helvetica, sans-serif" }}
             >
               <div className="flex items-start justify-between gap-4 border-b border-neutral-200 pb-4">
@@ -223,7 +435,7 @@ export default function InvoiceClient() {
                     <span className="text-neutral-500">№ </span>
                     {data.number || "—"}
                   </p>
-                  <p className="mt-1">{data.date || "—"}</p>
+                  <p className="mt-1">{formatDateUk(data.date)}</p>
                 </div>
               </div>
 
@@ -231,6 +443,7 @@ export default function InvoiceClient() {
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-wide text-neutral-500">Виконавець</p>
                   <p className="mt-2 font-semibold">{data.sellerName || "—"}</p>
+                  {data.fopGroup ? <p className="text-sm text-neutral-600">ФОП {data.fopGroup} група</p> : null}
                   {data.sellerTaxId ? <p className="text-sm">ІПН/ЄДРПОУ: {data.sellerTaxId}</p> : null}
                   {data.sellerAddress ? <p className="text-sm">{data.sellerAddress}</p> : null}
                   {data.sellerIban ? <p className="text-sm">IBAN: {data.sellerIban}</p> : null}
