@@ -14,27 +14,27 @@ const textSize = {
   hero: "text-5xl sm:text-7xl md:text-8xl",
 } as const;
 
-/** Geometric R as the first letter of "akhuno" — one wordmark. */
+/** Geometric R + akhuno — same height, baseline-aligned as one word. */
 export function BrandLockup({ href = "/", size = "md", className = "" }: BrandLockupProps) {
   const inner = (
     <span
-      className={`inline-flex items-center font-display font-semibold tracking-tight text-paper ${textSize[size]} ${className}`}
+      className={`inline-flex items-end font-display font-semibold leading-none tracking-tight text-paper ${textSize[size]} ${className}`}
     >
       <Image
         src="/brand/r-letter.webp"
         alt=""
-        width={80}
-        height={90}
-        className="relative top-[0.06em] mr-[0.02em] h-[0.86em] w-auto shrink-0"
+        width={90}
+        height={100}
+        className="block h-[1em] w-auto shrink-0"
         priority={size === "hero" || size === "md"}
       />
-      <span>akhuno</span>
+      <span className="leading-none">akhuno</span>
     </span>
   );
 
   if (!href) return inner;
   return (
-    <Link href={href} className="inline-flex" aria-label="Rakhuno">
+    <Link href={href} className="inline-flex leading-none" aria-label="Rakhuno">
       {inner}
     </Link>
   );
