@@ -23,9 +23,16 @@ export const metadata: Metadata = {
   description:
     "Створіть рахунок-фактуру за 2 хвилини. Email-нагадування про податки для ФОП. Без складної бухгалтерії.",
   icons: {
-    icon: "/brand/mark-64.png",
-    apple: "/brand/apple-touch-icon.png",
+    icon: [
+      { url: "/brand/favicon-16.png", sizes: "16x16", type: "image/png" },
+      { url: "/brand/favicon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/brand/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/brand/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    shortcut: "/brand/favicon.png",
+    apple: [{ url: "/brand/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
   },
+  manifest: "/site.webmanifest",
   openGraph: {
     title: "Rakhuno — простий рахунок для ФОП",
     description:
@@ -34,11 +41,11 @@ export const metadata: Metadata = {
     siteName: "Rakhuno",
     locale: "uk_UA",
     type: "website",
-    images: [{ url: "/brand/hero.jpg", width: 1200, height: 800, alt: "Rakhuno" }],
+    images: [{ url: "/brand/mark.webp", width: 256, height: 256, alt: "Rakhuno" }],
   },
   twitter: {
-    card: "summary_large_image",
-    images: ["/brand/hero.jpg"],
+    card: "summary",
+    images: ["/brand/mark.webp"],
   },
   alternates: {
     canonical: "https://rakhuno.com",

@@ -5,7 +5,14 @@ export function SiteHeader() {
   return (
     <header className="relative z-20 mx-auto flex w-full max-w-content items-center justify-between px-5 py-5 md:px-10">
       <Link href="/" className="flex items-center gap-2.5 text-paper">
-        <Image src="/brand/mark.webp" alt="" width={36} height={36} className="rounded-lg" priority />
+        <Image
+          src="/brand/mark.webp"
+          alt="Rakhuno"
+          width={40}
+          height={40}
+          className="rounded-[10px]"
+          priority
+        />
         <span className="font-display text-xl font-semibold tracking-tight md:text-2xl">Rakhuno</span>
       </Link>
       <nav className="flex items-center gap-3 text-sm md:gap-5">

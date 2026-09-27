@@ -58,7 +58,7 @@ export default function HomePage() {
         <div className="mx-auto max-w-content">
           <p className="font-display text-sm uppercase tracking-[0.18em] text-signal">Як це працює</p>
           <div className="mt-8">
-            <HowItWorksMotion videoSrc="/brand/how.mp4" />
+            <HowItWorksMotion videoSrc="/brand/how-promo.mp4" />
           </div>
         </div>
       </section>
