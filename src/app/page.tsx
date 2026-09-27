@@ -8,19 +8,19 @@ const steps = [
     n: "01",
     title: "Заповніть рахунок",
     text: "ПІБ ФОП, IBAN і позиції — прямо в документі на екрані.",
-    media: { type: "video" as const, src: "/brand/invoice.mp4", poster: "/brand/invoice.webp" },
+    icon: "/brand/step-1.webp",
   },
   {
     n: "02",
     title: "Отримайте PDF",
     text: "Email — і рахунок одразу завантажується клієнту.",
-    media: { type: "image" as const, src: "/brand/how-2.webp" },
+    icon: "/brand/step-2.webp",
   },
   {
     n: "03",
     title: "Не пропустіть податки",
     text: "Нагадування в inbox перед типовим строком сплати.",
-    media: { type: "image" as const, src: "/brand/reminder.webp" },
+    icon: "/brand/step-3.webp",
   },
 ];
 
