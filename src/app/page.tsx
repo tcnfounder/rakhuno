@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { SiteHeader } from "@/components/SiteHeader";
+import { HowItWorksMotion } from "@/components/HowItWorksMotion";
 
 export default function HomePage() {
   return (
@@ -53,40 +54,11 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section id="yak-pratsyuye" className="border-t border-line px-5 py-20 md:px-10 md:py-28">
+      <section id="yak-pratsyuye" className="border-t border-line px-5 py-16 md:px-10 md:py-24">
         <div className="mx-auto max-w-content">
           <p className="font-display text-sm uppercase tracking-[0.18em] text-signal">Як це працює</p>
-          <h2 className="mt-3 max-w-2xl font-display text-3xl font-semibold md:text-5xl">
-            Три кроки. Без зайвого.
-          </h2>
-          <div className="mt-12 grid gap-8 md:grid-cols-3">
-            {[
-              {
-                n: "01",
-                t: "Заповніть документ",
-                d: "ПІБ ФОП, IBAN, позиції — як у звичайному рахунку.",
-              },
-              {
-                n: "02",
-                t: "Залиште email",
-                d: "Отримаєте PDF і потрапите в календар нагадувань.",
-              },
-              {
-                n: "03",
-                t: "Не пропустіть податки",
-                d: "Лист за кілька днів до типового строку сплати.",
-              },
-            ].map((step, i) => (
-              <div
-                key={step.n}
-                className="step-rise border-t border-line pt-6"
-                style={{ animationDelay: `${0.12 * i}s` }}
-              >
-                <p className="font-display text-sm text-signal">{step.n}</p>
-                <h3 className="mt-3 font-display text-2xl">{step.t}</h3>
-                <p className="mt-3 text-mist">{step.d}</p>
-              </div>
-            ))}
+          <div className="mt-8">
+            <HowItWorksMotion videoSrc="/brand/how.mp4" />
           </div>
         </div>
       </section>
