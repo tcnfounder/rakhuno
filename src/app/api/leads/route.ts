@@ -75,32 +75,55 @@ async function pushToBrevo(
   const listId = Number(env.BREVO_LIST_ID);
   if (!Number.isFinite(listId)) return "bad_list";
 
-  const res = await fetch("https://api.brevo.com/v3/contacts", {
-    method: "POST",
-    headers: {
-      accept: "application/json",
-      "content-type": "application/json",
-      "api-key": env.BREVO_API_KEY,
+  const payload = JSON.stringify({
+    email,
+    updateEnabled: true,
+    listIds: [listId],
+    attributes: {
+      SOURCE: source,
+      SIGNUP_SITE: "rakhuno.com",
+      ...(extra.fopGroup ? { FOP_GROUP: extra.fopGroup } : {}),
     },
-    body: JSON.stringify({
-      email,
-      updateEnabled: true,
-      listIds: [listId],
-      attributes: {
-        SOURCE: source,
-        SIGNUP_SITE: "rakhuno.com",
-        ...(extra.fopGroup ? { FOP_GROUP: extra.fopGroup } : {}),
-      },
-    }),
   });
 
-  if (res.ok || res.status === 204) return "brevo";
-  // Duplicate contact still OK for our funnel
-  if (res.status === 400) {
-    const text = await res.text();
-    if (text.toLowerCase().includes("already")) return "brevo_exists";
+  let lastStatus = 0;
+  let lastBody = "";
+
+  for (let attempt = 0; attempt < 4; attempt++) {
+    if (attempt > 0) {
+      await new Promise((r) => setTimeout(r, 250 * attempt));
+    }
+
+    const res = await fetch("https://api.brevo.com/v3/contacts", {
+      method: "POST",
+      headers: {
+        accept: "application/json",
+        "content-type": "application/json",
+        "api-key": env.BREVO_API_KEY,
+      },
+      body: payload,
+    });
+
+    if (res.ok || res.status === 204) return "brevo";
+
+    lastStatus = res.status;
+    lastBody = await res.text();
+
+    if (res.status === 400 && lastBody.toLowerCase().includes("already")) {
+      return "brevo_exists";
+    }
+
+    // Authorized-IP flaps / transient errors — retry
+    const retryable =
+      res.status === 401 ||
+      res.status === 429 ||
+      res.status >= 500 ||
+      lastBody.toLowerCase().includes("unrecognised ip") ||
+      lastBody.toLowerCase().includes("unauthorized");
+    if (!retryable) break;
   }
-  console.error("[brevo]", res.status, await res.text());
+
+  console.error("[brevo]", lastStatus, lastBody);
   return "brevo_error";
 }
 
