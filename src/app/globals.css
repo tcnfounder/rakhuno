@@ -132,3 +132,11 @@ body {
   box-shadow: 0 0 0 1000px #0c1a15 inset;
   transition: background-color 9999s ease-in-out 0s;
 }
+
+/* Keep paper-invoice inputs fully visible (html2canvas + browsers) */
+input.appearance-none,
+textarea.appearance-none {
+  -webkit-appearance: none;
+  appearance: none;
+  overflow: visible;
+}

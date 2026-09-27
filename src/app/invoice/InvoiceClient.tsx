@@ -46,7 +46,7 @@ function SoftField({
 }
 
 const paperInput =
-  "w-full border-0 border-b border-neutral-200 bg-transparent px-0 py-2 text-[15px] text-neutral-900 outline-none transition placeholder:text-neutral-400 focus:border-neutral-900";
+  "w-full appearance-none border-0 border-b border-neutral-200 bg-transparent px-0 py-2.5 text-[15px] leading-[1.45] text-neutral-900 outline-none transition placeholder:text-neutral-400 focus:border-neutral-900 min-h-[2.5rem] overflow-visible";
 
 export default function InvoiceClient() {
   const previewRef = useRef<HTMLDivElement>(null);
