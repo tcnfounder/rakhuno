@@ -10,7 +10,7 @@ export type FopGroup = "2" | "3" | "";
 export type InvoiceData = {
   number: string;
   date: string;
-  /** Optional FOP logo as data URL (square crop, stored locally). */
+  /** Optional FOP logo as data URL (aspect preserved, stored locally). */
   sellerLogo: string;
   sellerName: string;
   sellerTaxId: string;

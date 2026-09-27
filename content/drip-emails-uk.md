@@ -61,10 +61,10 @@ CTA button style:
 **Body (BODY yerine):**
 
 ```html
-<p style="margin:0 0 14px;">Дякуємо. PDF уже має бути у вас.</p>
+<p style="margin:0 0 14px;">Дякуємо. <strong>PDF завантажується у вашому браузері</strong> (папка «Завантаження») — у цьому листі вкладення немає.</p>
 <p style="margin:0 0 14px;">Rakhuno також нагадує <strong>типові строки податків для ФОП</strong> — це не консультація, лише календар у inbox.</p>
-<p style="margin:0 0 18px;">Далі надішлемо короткі поради щодо рахунку та єдиного податку.</p>
-<a href="https://rakhuno.com/invoice" style="display:inline-block;background:#c6f26d;color:#07110e;text-decoration:none;font-weight:700;padding:12px 20px;border-radius:999px;">Створити ще один рахунок</a>
+<p style="margin:0 0 18px;">Кнопка нижче знову відкриває конструктор рахунку на сайті (не скачує PDF повторно).</p>
+<a href="https://rakhuno.com/invoice" style="display:inline-block;background:#c6f26d;color:#07110e;text-decoration:none;font-weight:700;padding:12px 20px;border-radius:999px;">Відкрити конструктор рахунку</a>
 ```
 
 ---
