@@ -227,6 +227,46 @@ export default function HomePage() {
         </div>
       </section>
 
+      <section id="gidy" className="border-t border-line px-5 py-16 md:px-10 md:py-24">
+        <div className="mx-auto max-w-content">
+          <p className="font-display text-sm uppercase tracking-[0.18em] text-signal">Гіди</p>
+          <h2 className="mt-3 max-w-2xl font-display text-3xl font-semibold md:text-5xl">
+            Коротко про рахунок і ФОП
+          </h2>
+          <p className="mt-4 max-w-xl text-mist">
+            Практичні сторінки під типові запити — потім одразу до рахунку в Rakhuno.
+          </p>
+          <ul className="mt-10 max-w-3xl space-y-5">
+            <li className="border-t border-line pt-5">
+              <Link
+                href="/guides/rahunok-faktura"
+                className="font-display text-xl text-paper transition hover:text-signal md:text-2xl"
+              >
+                Рахунок-фактура для ФОП
+              </Link>
+              <p className="mt-2 text-mist">Реквізити, різниця з актом, PDF онлайн за кілька хвилин.</p>
+            </li>
+            <li className="border-t border-line pt-5">
+              <Link
+                href="/guides/fop-3-grupa"
+                className="font-display text-xl text-paper transition hover:text-signal md:text-2xl"
+              >
+                ФОП 3 група — коротко
+              </Link>
+              <p className="mt-2 text-mist">Кому підходить, рахунки клієнтам, що не забути про податки.</p>
+            </li>
+            <li className="border-t border-line pt-5">
+              <Link
+                href="/guides"
+                className="text-signal underline-offset-2 transition hover:underline"
+              >
+                Усі гіди →
+              </Link>
+            </li>
+          </ul>
+        </div>
+      </section>
+
       <section id="faq" className="border-t border-line px-5 py-16 md:px-10 md:py-24">
         <div className="mx-auto max-w-content">
           <p className="font-display text-sm uppercase tracking-[0.18em] text-signal">FAQ</p>
