@@ -3,7 +3,10 @@
   "name": "rakhuno",
   "main": ".open-next/worker.js",
   "compatibility_date": "2026-09-27",
-  "compatibility_flags": ["nodejs_compat"],
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "account_id": "102794b6995d415c78ed2978c4e7b241",
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS"
@@ -13,6 +16,20 @@
   },
   "workers_dev": true,
   "preview_urls": true,
+  "routes": [
+    {
+      "pattern": "rakhuno.com",
+      "custom_domain": true
+    },
+    {
+      "pattern": "www.rakhuno.com",
+      "custom_domain": true
+    },
+    {
+      "pattern": "app.rakhuno.com",
+      "custom_domain": true
+    }
+  ],
   "kv_namespaces": [
     {
       "binding": "LEADS",
