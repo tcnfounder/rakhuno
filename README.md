@@ -20,7 +20,20 @@ npm run dev
 
 ## Deploy
 
-### Cloudflare Workers (current production)
+### GitHub → Cloudflare (recommended)
+
+1. Repo **Settings → Secrets and variables → Actions**
+2. Secrets:
+   - `CLOUDFLARE_API_TOKEN` — Cloudflare token with **Edit Cloudflare Workers**
+   - `CLOUDFLARE_ACCOUNT_ID` — `102794b6995d415c78ed2978c4e7b241`
+3. Optional **Variables** (build-time):
+   - `NEXT_PUBLIC_GA_MEASUREMENT_ID`
+   - `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION`
+4. Push to `main` (or **Actions → Deploy to Cloudflare → Run workflow**)
+
+Workflow: `.github/workflows/deploy.yml`
+
+### Manual (local)
 
 ```bash
 npm run deploy
