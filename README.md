@@ -2,15 +2,17 @@
 
 Простий [рахунок-фактура](https://rakhuno.com/invoice) та email-нагадування про податки для ФОП.
 
-**Production:** [Railway](https://railway.com) ← GitHub `main` auto-deploy  
-**Public URL (Railway):** https://rakhuno-production.up.railway.app  
-**Custom domain goal:** [rakhuno.com](https://rakhuno.com) → point DNS to Railway
+**Live:** [rakhuno.com](https://rakhuno.com)  
+**App host:** [Railway](https://railway.com) ← GitHub `main` auto-deploy  
+**Edge:** Cloudflare Worker `rakhuno-proxy` → `rakhuno-production.up.railway.app`  
+**Direct Railway URL:** https://rakhuno-production.up.railway.app
 
 ## Stack
 
 - Next.js (App Router) + Tailwind
-- **Host:** Railway (`npm run build` / `npm run start`)
-- Brevo for email leads (KV only on optional Cloudflare path)
+- **Compute:** Railway (`npm run build` / `npm run start`)
+- **Domain / CDN:** Cloudflare (Worker proxy `rakhuno-proxy` on `rakhuno.com` + `www`)
+- Brevo for email leads
 - html2canvas / jsPDF for Ukrainian PDF invoices
 
 ## Local
@@ -31,18 +33,18 @@ Repo is linked in Railway. **Push / merge to `main` → Railway builds and deplo
 - `NEXT_PUBLIC_GA_MEASUREMENT_ID` (e.g. `G-XXXXXXXX`) — already live on Railway if set
 - `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` — Search Console meta (optional)
 
-### Point rakhuno.com to Railway
+### Domain architecture (already live)
 
-1. Railway project → **Settings → Networking / Domains** → add `rakhuno.com` and `www.rakhuno.com`
-2. Copy the DNS records Railway shows (usually CNAME → `*.up.railway.app`)
-3. In Cloudflare DNS (domain registrar DNS): set those records for `@` / `www`
-4. Remove **Workers custom domains** for `rakhuno.com` / `www` / `app` if they still steal traffic (Wrangler `routes` / CF dashboard)
-5. Wait for DNS → open `https://rakhuno.com` — should show Railway headers / new SEO + GA4
-6. Search Console → confirm sitemap `https://rakhuno.com/sitemap.xml`
+1. Old OpenNext Worker custom domains on `rakhuno` were removed
+2. Cloudflare Worker **`rakhuno-proxy`** is attached to `rakhuno.com` + `www.rakhuno.com`
+3. Proxy fetches Railway origin `rakhuno-production.up.railway.app` (rewrites redirects)
+4. GA4 / SEO ship from Railway; edge stays on Cloudflare
 
-### Optional: Cloudflare Workers
+Do **not** re-attach custom domains to the legacy `rakhuno` OpenNext Worker or traffic will go stale again.
 
-Legacy OpenNext path remains in repo (`npm run deploy`, optional Actions workflow). Not production while the domain is on Railway.
+### Optional: Cloudflare OpenNext Worker
+
+Legacy path remains in repo (`npm run deploy`, optional Actions workflow) for previews only.
 
 ## Notes
 
