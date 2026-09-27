@@ -89,28 +89,14 @@ export default function HomePage() {
                 className="step-rise flex flex-col"
                 style={{ animationDelay: `${0.1 * i}s` }}
               >
-                <div className="relative aspect-[4/3] overflow-hidden rounded-sm bg-ink-2">
-                  {step.media.type === "video" ? (
-                    <video
-                      className="absolute inset-0 h-full w-full object-cover"
-                      autoPlay
-                      muted
-                      loop
-                      playsInline
-                      poster={step.media.poster}
-                      aria-hidden
-                    >
-                      <source src={step.media.src} type="video/mp4" />
-                    </video>
-                  ) : (
-                    <Image
-                      src={step.media.src}
-                      alt=""
-                      fill
-                      sizes="(max-width: 768px) 100vw, 33vw"
-                      className="img-pan object-cover"
-                    />
-                  )}
+                <div className="relative aspect-square overflow-hidden rounded-2xl bg-ink-2 ring-1 ring-white/5">
+                  <Image
+                    src={step.icon}
+                    alt=""
+                    fill
+                    sizes="(max-width: 768px) 100vw, 280px"
+                    className="object-cover"
+                  />
                 </div>
                 <p className="mt-5 font-display text-sm text-signal">{step.n}</p>
                 <h3 className="mt-2 font-display text-2xl">{step.title}</h3>
