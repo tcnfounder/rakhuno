@@ -248,12 +248,39 @@ export default function HomePage() {
             </li>
             <li className="border-t border-line pt-5">
               <Link
+                href="/guides/rahunok-onlayn"
+                className="font-display text-xl text-paper transition hover:text-signal md:text-2xl"
+              >
+                Рахунок онлайн за 2 хвилини
+              </Link>
+              <p className="mt-2 text-mist">Алгоритм без Word і Checkbox — одразу PDF клієнту.</p>
+            </li>
+            <li className="border-t border-line pt-5">
+              <Link
                 href="/guides/fop-3-grupa"
                 className="font-display text-xl text-paper transition hover:text-signal md:text-2xl"
               >
                 ФОП 3 група — коротко
               </Link>
               <p className="mt-2 text-mist">Кому підходить, рахунки клієнтам, що не забути про податки.</p>
+            </li>
+            <li className="border-t border-line pt-5">
+              <Link
+                href="/guides/yedynyy-podatok"
+                className="font-display text-xl text-paper transition hover:text-signal md:text-2xl"
+              >
+                Єдиний податок: коли платити
+              </Link>
+              <p className="mt-2 text-mist">Типові вікна, календар і email-нагадування — без зайвої теорії.</p>
+            </li>
+            <li className="border-t border-line pt-5">
+              <Link
+                href="/guides/podatky-fop"
+                className="font-display text-xl text-paper transition hover:text-signal md:text-2xl"
+              >
+                Податки ФОП: чекліст
+              </Link>
+              <p className="mt-2 text-mist">Щомісяця й щокварталу: рахунки, строки, архів документів.</p>
             </li>
             <li className="border-t border-line pt-5">
               <Link

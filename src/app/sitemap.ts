@@ -1,23 +1,57 @@
 import type { MetadataRoute } from "next";
 
+type Entry = {
+  path: string;
+  priority: number;
+  changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"];
+  /** Stable content date — update when the page meaningfully changes */
+  lastModified: string;
+};
+
+const entries: Entry[] = [
+  { path: "", priority: 1, changeFrequency: "weekly", lastModified: "2026-09-27" },
+  { path: "/invoice", priority: 0.95, changeFrequency: "weekly", lastModified: "2026-09-27" },
+  { path: "/guides", priority: 0.85, changeFrequency: "weekly", lastModified: "2026-09-27" },
+  {
+    path: "/guides/rahunok-faktura",
+    priority: 0.9,
+    changeFrequency: "monthly",
+    lastModified: "2026-09-27",
+  },
+  {
+    path: "/guides/fop-3-grupa",
+    priority: 0.88,
+    changeFrequency: "monthly",
+    lastModified: "2026-09-27",
+  },
+  {
+    path: "/guides/yedynyy-podatok",
+    priority: 0.88,
+    changeFrequency: "monthly",
+    lastModified: "2026-09-27",
+  },
+  {
+    path: "/guides/podatky-fop",
+    priority: 0.86,
+    changeFrequency: "monthly",
+    lastModified: "2026-09-27",
+  },
+  {
+    path: "/guides/rahunok-onlayn",
+    priority: 0.86,
+    changeFrequency: "monthly",
+    lastModified: "2026-09-27",
+  },
+  { path: "/privacy", priority: 0.3, changeFrequency: "yearly", lastModified: "2026-09-20" },
+  { path: "/terms", priority: 0.3, changeFrequency: "yearly", lastModified: "2026-09-20" },
+];
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = "https://rakhuno.com";
-  const paths = [
-    "",
-    "/invoice",
-    "/guides",
-    "/guides/rahunok-faktura",
-    "/guides/fop-3-grupa",
-    "/guides/yedynyy-podatok",
-    "/guides/podatky-fop",
-    "/guides/rahunok-onlayn",
-    "/privacy",
-    "/terms",
-  ];
-  return paths.map((path, i) => ({
-    url: `${base}${path}`,
-    lastModified: new Date(),
-    changeFrequency: path.startsWith("/guides") ? "weekly" : "weekly",
-    priority: path === "" ? 1 : path === "/invoice" ? 0.9 : 0.7 - i * 0.01,
+  return entries.map((e) => ({
+    url: `${base}${e.path}`,
+    lastModified: new Date(e.lastModified),
+    changeFrequency: e.changeFrequency,
+    priority: e.priority,
   }));
 }

@@ -40,6 +40,11 @@ Set env vars in Railway:
 - `BREVO_API_KEY`
 - `BREVO_LIST_ID` (e.g. `3`)
 
+Optional (build-time / `NEXT_PUBLIC_*` for Cloudflare or Railway):
+
+- `NEXT_PUBLIC_GA_MEASUREMENT_ID` — GA4 (e.g. `G-XXXXXXXX`)
+- `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` — Google Search Console meta content
+
 Leads fall back to log/CSV when Cloudflare KV is unavailable.
 
 ## Notes

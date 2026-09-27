@@ -75,6 +75,7 @@ export default function Page() {
       <ArticleLayout
         title="Рахунок-фактура для ФОП"
         description="Що це за документ, які поля потрібні і як зібрати PDF клієнту за кілька хвилин."
+        path="/guides/rahunok-faktura"
         related={[
           { href: "/guides/rahunok-onlayn", label: "Рахунок онлайн за 2 хвилини" },
           { href: "/guides/fop-3-grupa", label: "ФОП 3 група — коротко" },
