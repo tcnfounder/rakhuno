@@ -104,3 +104,26 @@ body {
     animation: none;
   }
 }
+
+.field-input {
+  color-scheme: dark;
+}
+
+.field-input::-webkit-calendar-picker-indicator {
+  filter: invert(0.85);
+  opacity: 0.8;
+  cursor: pointer;
+}
+
+.field-input option {
+  background: #0c1a15;
+  color: #e7efe9;
+}
+
+.field-input:-webkit-autofill,
+.field-input:-webkit-autofill:hover,
+.field-input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #e7efe9;
+  box-shadow: 0 0 0 1000px #0c1a15 inset;
+  transition: background-color 9999s ease-in-out 0s;
+}

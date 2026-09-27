@@ -1,5 +1,5 @@
 import { jsPDF } from "jspdf";
-import { InvoiceData, calcTotal, formatDateUk, formatUah } from "./invoice";
+import { InvoiceData, calcLine, calcTotal, formatDateUk, formatUah, parseAmount } from "./invoice";
 
 function money(n: number) {
   return formatUah(n).replace(/\u00a0/g, " ");
@@ -107,7 +107,7 @@ export function buildInvoicePdf(data: InvoiceData) {
   doc.setFont("helvetica", "normal");
   doc.setFontSize(10);
 
-  for (const item of rows.length ? rows : [{ description: "—", qty: 0, price: 0 }]) {
+  for (const item of rows.length ? rows : [{ description: "—", qty: "0", price: "0", id: "x" }]) {
     const descWidth = cols.qty - margin - 8;
     const desc = doc.splitTextToSize(item.description || "—", descWidth);
     const rowH = Math.max(desc.length * 4.5, 6);
@@ -116,9 +116,9 @@ export function buildInvoicePdf(data: InvoiceData) {
       y = 18;
     }
     doc.text(desc, cols.desc, y);
-    doc.text(String(item.qty || 0), cols.qty, y, { align: "right" });
-    doc.text(money(item.price || 0), cols.price, y, { align: "right" });
-    doc.text(money((item.qty || 0) * (item.price || 0)), cols.sum, y, { align: "right" });
+    doc.text(String(parseAmount(item.qty)), cols.qty, y, { align: "right" });
+    doc.text(money(parseAmount(item.price)), cols.price, y, { align: "right" });
+    doc.text(money(calcLine(item)), cols.sum, y, { align: "right" });
     y += rowH + 3;
   }
 

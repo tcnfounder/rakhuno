@@ -1,7 +1,8 @@
 export type InvoiceItem = {
+  id: string;
   description: string;
-  qty: number;
-  price: number;
+  qty: string;
+  price: string;
 };
 
 export type FopGroup = "2" | "3" | "";
@@ -30,16 +31,33 @@ export type SellerProfile = Pick<
 export const PROFILE_KEY = "rakhuno.seller.v1";
 export const COUNTER_KEY = "rakhuno.invoiceCounter.v1";
 
+let idSeq = 0;
+export function newId() {
+  idSeq += 1;
+  return `line-${Date.now()}-${idSeq}`;
+}
+
 export function emptyItem(): InvoiceItem {
-  return { description: "", qty: 1, price: 0 };
+  return { id: newId(), description: "", qty: "1", price: "" };
 }
 
 export function todayIso() {
   return new Date().toISOString().slice(0, 10);
 }
 
+export function parseAmount(value: string) {
+  const normalized = value.replace(/\s/g, "").replace(",", ".");
+  if (!normalized) return 0;
+  const n = Number(normalized);
+  return Number.isFinite(n) ? n : 0;
+}
+
+export function calcLine(item: InvoiceItem) {
+  return parseAmount(item.qty) * parseAmount(item.price);
+}
+
 export function calcTotal(items: InvoiceItem[]) {
-  return items.reduce((sum, item) => sum + (Number(item.qty) || 0) * (Number(item.price) || 0), 0);
+  return items.reduce((sum, item) => sum + calcLine(item), 0);
 }
 
 export function formatUah(value: number) {
@@ -59,6 +77,15 @@ export function formatDateUk(iso: string) {
     month: "2-digit",
     year: "numeric",
   }).format(d);
+}
+
+export function formatIban(raw: string) {
+  const clean = raw.replace(/\s+/g, "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 34);
+  return clean.replace(/(.{4})/g, "$1 ").trim();
+}
+
+export function formatTaxId(raw: string) {
+  return raw.replace(/\D/g, "").slice(0, 10);
 }
 
 export function nextInvoiceNumber(): string {
@@ -110,8 +137,11 @@ export function validateInvoice(data: InvoiceData): string | null {
   if (!data.buyerName.trim()) return "Вкажіть замовника.";
   const lines = data.items.filter((i) => i.description.trim());
   if (!lines.length) return "Додайте хоча б одну позицію з описом.";
-  if (lines.some((i) => !(Number(i.qty) > 0) || !(Number(i.price) >= 0))) {
-    return "Перевірте кількість і ціну в позиціях.";
+  for (const line of lines) {
+    if (!(parseAmount(line.qty) > 0)) return "Кількість має бути більше 0.";
+    if (line.price.trim() === "" || parseAmount(line.price) < 0) {
+      return "Вкажіть ціну для кожної позиції.";
+    }
   }
   return null;
 }
