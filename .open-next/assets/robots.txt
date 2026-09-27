@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://rakhuno.com/sitemap.xml

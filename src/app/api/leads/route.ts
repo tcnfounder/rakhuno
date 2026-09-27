@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { appendFile, mkdir } from "fs/promises";
 import path from "path";
 
@@ -7,8 +8,34 @@ type LeadBody = {
   source?: string;
 };
 
+type LeadsKv = {
+  put: (key: string, value: string) => Promise<void>;
+};
+
 function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+async function storeLead(email: string, source: string) {
+  const stamp = new Date().toISOString();
+  const key = `lead:${stamp}:${email}`;
+  const value = JSON.stringify({ email, source, at: stamp });
+
+  try {
+    const { env } = await getCloudflareContext({ async: true });
+    const kv = (env as { LEADS?: LeadsKv }).LEADS;
+    if (kv) {
+      await kv.put(key, value);
+      return "kv";
+    }
+  } catch {
+    // Local `next dev` has no Workers runtime — fall back to CSV.
+  }
+
+  const dir = path.join(process.cwd(), "data");
+  await mkdir(dir, { recursive: true });
+  await appendFile(path.join(dir, "leads.csv"), `${stamp},${email},${source}\n`, "utf8");
+  return "csv";
 }
 
 export async function POST(req: NextRequest) {
@@ -25,10 +52,6 @@ export async function POST(req: NextRequest) {
   }
 
   const source = (body.source || "invoice").slice(0, 64);
-  const row = `${new Date().toISOString()},${email},${source}\n`;
-  const dir = path.join(process.cwd(), "data");
-  await mkdir(dir, { recursive: true });
-  await appendFile(path.join(dir, "leads.csv"), row, "utf8");
-
-  return NextResponse.json({ ok: true });
+  const backend = await storeLead(email, source);
+  return NextResponse.json({ ok: true, backend });
 }
