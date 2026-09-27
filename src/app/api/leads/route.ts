@@ -17,6 +17,8 @@ type WorkerEnv = {
   LEADS?: LeadsKv;
   BREVO_API_KEY?: string;
   BREVO_LIST_ID?: string;
+  /** Transactional template id for immediate welcome (default: 1) */
+  BREVO_WELCOME_TEMPLATE_ID?: string;
 };
 
 function isValidEmail(email: string) {
@@ -31,6 +33,7 @@ async function getEnv(): Promise<WorkerEnv> {
     return {
       BREVO_API_KEY: process.env.BREVO_API_KEY,
       BREVO_LIST_ID: process.env.BREVO_LIST_ID,
+      BREVO_WELCOME_TEMPLATE_ID: process.env.BREVO_WELCOME_TEMPLATE_ID,
     };
   }
 }
@@ -127,6 +130,36 @@ async function pushToBrevo(
   return "brevo_error";
 }
 
+/** Immediate Mail 0 — transactional template (Rakhuno Welcome). */
+async function sendWelcomeEmail(email: string, env: WorkerEnv) {
+  if (!env.BREVO_API_KEY) return "skipped";
+  const templateId = Number(env.BREVO_WELCOME_TEMPLATE_ID || "1");
+  if (!Number.isFinite(templateId) || templateId <= 0) return "bad_template";
+
+  try {
+    const res = await fetch("https://api.brevo.com/v3/smtp/email", {
+      method: "POST",
+      headers: {
+        accept: "application/json",
+        "content-type": "application/json",
+        "api-key": env.BREVO_API_KEY,
+      },
+      body: JSON.stringify({
+        to: [{ email }],
+        templateId,
+        tags: ["rakhuno-welcome"],
+      }),
+    });
+    if (res.ok) return "sent";
+    const text = await res.text();
+    console.error("[brevo-welcome]", res.status, text);
+    return "send_error";
+  } catch (e) {
+    console.error("[brevo-welcome]", e);
+    return "send_error";
+  }
+}
+
 export async function POST(req: NextRequest) {
   let body: LeadBody;
   try {
@@ -146,5 +179,9 @@ export async function POST(req: NextRequest) {
   const env = await getEnv();
   const backend = await storeLead(email, source, env, { fopGroup });
   const brevo = await pushToBrevo(email, source, env, { fopGroup });
-  return NextResponse.json({ ok: true, backend, brevo });
+  const welcome =
+    brevo === "brevo" || brevo === "brevo_exists"
+      ? await sendWelcomeEmail(email, env)
+      : "skipped";
+  return NextResponse.json({ ok: true, backend, brevo, welcome });
 }
