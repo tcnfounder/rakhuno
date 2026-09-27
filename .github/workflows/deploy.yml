@@ -1,12 +1,13 @@
-name: Deploy to Cloudflare
+# Optional Cloudflare Workers deploy — NOT used for rakhuno.com production.
+# Production is Railway (GitHub integration auto-deploys on push to main).
+# Keep this only if you still need a Workers preview; requires CF secrets.
+name: Deploy Cloudflare (optional)
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 concurrency:
-  group: deploy-production
+  group: deploy-cloudflare-optional
   cancel-in-progress: true
 
 jobs:
@@ -33,7 +34,7 @@ jobs:
           NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION: ${{ vars.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION }}
 
       - name: Deploy Worker
-        uses: cloudflare/wrangler-action@v3
+        uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

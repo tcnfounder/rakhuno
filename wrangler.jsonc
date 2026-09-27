@@ -16,20 +16,9 @@
   },
   "workers_dev": true,
   "preview_urls": true,
-  "routes": [
-    {
-      "pattern": "rakhuno.com",
-      "custom_domain": true
-    },
-    {
-      "pattern": "www.rakhuno.com",
-      "custom_domain": true
-    },
-    {
-      "pattern": "app.rakhuno.com",
-      "custom_domain": true
-    }
-  ],
+  // Custom domains removed from Workers — production DNS points to Railway.
+  // Re-add routes here only if you intentionally host on Cloudflare again.
+  "routes": [],
   "kv_namespaces": [
     {
       "binding": "LEADS",
