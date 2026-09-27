@@ -50,5 +50,6 @@ Kaydet → redeploy. Test: invoice’tan mail gönder → API cevabında `"brevo
 ## Test
 
 1. https://rakhuno.com/invoice  
-2. Email’ine fatura oluştur  
-3. Inbox / Spam → **«Ваш рахунок у Rakhuno + що далі»**
+2. Email gir → **Отримати PDF** → tarayıcıda PDF + «PDF готовий» paneli  
+3. Inbox → Welcome (PDF eki yok; bilinçli — PDF indirilir)  
+4. From: `info@rakhuno.com` — `via` uyarısı olmamalı

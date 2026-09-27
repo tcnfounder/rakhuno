@@ -10,6 +10,8 @@ export type FopGroup = "2" | "3" | "";
 export type InvoiceData = {
   number: string;
   date: string;
+  /** Optional FOP logo as data URL (square crop, stored locally). */
+  sellerLogo: string;
   sellerName: string;
   sellerTaxId: string;
   sellerAddress: string;
@@ -25,20 +27,32 @@ export type InvoiceData = {
 
 export type SellerProfile = Pick<
   InvoiceData,
-  "sellerName" | "sellerTaxId" | "sellerAddress" | "sellerIban" | "sellerBank" | "fopGroup"
+  | "sellerLogo"
+  | "sellerName"
+  | "sellerTaxId"
+  | "sellerAddress"
+  | "sellerIban"
+  | "sellerBank"
+  | "fopGroup"
 >;
 
-export const PROFILE_KEY = "rakhuno.seller.v1";
+export const PROFILE_KEY = "rakhuno.seller.v2";
 export const COUNTER_KEY = "rakhuno.invoiceCounter.v1";
 
 let idSeq = 0;
 export function newId() {
   idSeq += 1;
-  return `line-${Date.now()}-${idSeq}`;
+  // Prefer crypto when available (client); avoid Date.now() in first paint
+  // so SSR markup matches hydration.
+  const rand =
+    typeof crypto !== "undefined" && "randomUUID" in crypto
+      ? crypto.randomUUID()
+      : `s${idSeq}`;
+  return `line-${rand}`;
 }
 
-export function emptyItem(): InvoiceItem {
-  return { id: newId(), description: "", qty: "1", price: "" };
+export function emptyItem(stableId?: string): InvoiceItem {
+  return { id: stableId || newId(), description: "", qty: "1", price: "" };
 }
 
 export function todayIso() {
@@ -115,9 +129,20 @@ export function bumpInvoiceCounter(usedNumber: string) {
 export function loadSellerProfile(): Partial<SellerProfile> | null {
   if (typeof window === "undefined") return null;
   try {
-    const raw = window.localStorage.getItem(PROFILE_KEY);
+    const raw =
+      window.localStorage.getItem(PROFILE_KEY) ||
+      window.localStorage.getItem("rakhuno.seller.v1");
     if (!raw) return null;
-    return JSON.parse(raw) as SellerProfile;
+    const parsed = JSON.parse(raw) as Partial<SellerProfile>;
+    return {
+      sellerLogo: typeof parsed.sellerLogo === "string" ? parsed.sellerLogo : "",
+      sellerName: parsed.sellerName || "",
+      sellerTaxId: parsed.sellerTaxId || "",
+      sellerAddress: parsed.sellerAddress || "",
+      sellerIban: parsed.sellerIban || "",
+      sellerBank: parsed.sellerBank || "",
+      fopGroup: parsed.fopGroup || "",
+    };
   } catch {
     return null;
   }
