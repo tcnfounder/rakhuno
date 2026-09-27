@@ -1,7 +1,28 @@
 import Image from "next/image";
 import Link from "next/link";
+import { BrandLockup } from "@/components/BrandLockup";
 import { SiteHeader } from "@/components/SiteHeader";
-import { HowItWorksMotion } from "@/components/HowItWorksMotion";
+
+const steps = [
+  {
+    n: "01",
+    title: "Заповніть рахунок",
+    text: "ПІБ ФОП, IBAN і позиції — прямо в документі на екрані.",
+    media: { type: "video" as const, src: "/brand/invoice.mp4", poster: "/brand/invoice.webp" },
+  },
+  {
+    n: "02",
+    title: "Отримайте PDF",
+    text: "Email — і рахунок одразу завантажується клієнту.",
+    media: { type: "image" as const, src: "/brand/how-2.webp" },
+  },
+  {
+    n: "03",
+    title: "Не пропустіть податки",
+    text: "Нагадування в inbox перед типовим строком сплати.",
+    media: { type: "image" as const, src: "/brand/reminder.webp" },
+  },
+];
 
 export default function HomePage() {
   return (
@@ -25,9 +46,9 @@ export default function HomePage() {
           <SiteHeader />
           <div className="flex flex-1 flex-col justify-end px-5 pb-16 pt-10 md:px-10 md:pb-24">
             <div className="mx-auto w-full max-w-content">
-              <p className="rise font-display text-5xl font-semibold tracking-tight sm:text-7xl md:text-8xl lg:text-9xl">
-                Rakhuno
-              </p>
+              <div className="rise">
+                <BrandLockup size="hero" href="" />
+              </div>
               <h1 className="rise rise-delay-1 mt-6 max-w-3xl font-display text-2xl font-medium leading-tight sm:text-4xl md:text-5xl">
                 Простий рахунок для ФОП
               </h1>
@@ -57,8 +78,45 @@ export default function HomePage() {
       <section id="yak-pratsyuye" className="border-t border-line px-5 py-16 md:px-10 md:py-24">
         <div className="mx-auto max-w-content">
           <p className="font-display text-sm uppercase tracking-[0.18em] text-signal">Як це працює</p>
-          <div className="mt-8">
-            <HowItWorksMotion videoSrc="/brand/how-promo.mp4" />
+          <h2 className="mt-3 max-w-2xl font-display text-3xl font-semibold md:text-5xl">
+            Три кроки до рахунку
+          </h2>
+
+          <div className="mt-12 grid gap-8 md:grid-cols-3 md:gap-6">
+            {steps.map((step, i) => (
+              <article
+                key={step.n}
+                className="step-rise flex flex-col"
+                style={{ animationDelay: `${0.1 * i}s` }}
+              >
+                <div className="relative aspect-[4/3] overflow-hidden rounded-sm bg-ink-2">
+                  {step.media.type === "video" ? (
+                    <video
+                      className="absolute inset-0 h-full w-full object-cover"
+                      autoPlay
+                      muted
+                      loop
+                      playsInline
+                      poster={step.media.poster}
+                      aria-hidden
+                    >
+                      <source src={step.media.src} type="video/mp4" />
+                    </video>
+                  ) : (
+                    <Image
+                      src={step.media.src}
+                      alt=""
+                      fill
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      className="img-pan object-cover"
+                    />
+                  )}
+                </div>
+                <p className="mt-5 font-display text-sm text-signal">{step.n}</p>
+                <h3 className="mt-2 font-display text-2xl">{step.title}</h3>
+                <p className="mt-2 text-mist">{step.text}</p>
+              </article>
+            ))}
           </div>
         </div>
       </section>
@@ -153,10 +211,10 @@ export default function HomePage() {
 
       <footer className="border-t border-line px-5 py-10 text-sm text-muted md:px-10">
         <div className="mx-auto flex max-w-content flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <p className="flex items-center gap-2">
-            <Image src="/brand/mark.webp" alt="" width={22} height={22} className="rounded" />
-            © {new Date().getFullYear()} Rakhuno
-          </p>
+          <div className="flex items-center gap-3">
+            <BrandLockup size="sm" href="/" />
+            <span>© {new Date().getFullYear()}</span>
+          </div>
           <div className="flex flex-wrap gap-4">
             <Link href="/guides" className="hover:text-signal">
               Гіди
