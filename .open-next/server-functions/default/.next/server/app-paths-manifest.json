@@ -3,6 +3,12 @@
   "/_not-found/page": "app/_not-found/page.js",
   "/api/leads/route": "app/api/leads/route.js",
   "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/guides/fop-3-grupa/page": "app/guides/fop-3-grupa/page.js",
+  "/guides/page": "app/guides/page.js",
+  "/guides/podatky-fop/page": "app/guides/podatky-fop/page.js",
+  "/guides/rahunok-faktura/page": "app/guides/rahunok-faktura/page.js",
+  "/guides/rahunok-onlayn/page": "app/guides/rahunok-onlayn/page.js",
+  "/guides/yedynyy-podatok/page": "app/guides/yedynyy-podatok/page.js",
   "/invoice/page": "app/invoice/page.js",
   "/page": "app/page.js",
   "/sitemap.xml/route": "app/sitemap.xml/route.js"

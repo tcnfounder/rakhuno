@@ -7,7 +7,10 @@ export function SiteHeader() {
         Rakhuno
       </Link>
       <nav className="flex items-center gap-3 text-sm md:gap-5">
-        <Link href="/#yak-pratsyuye" className="hidden text-mist transition hover:text-paper sm:inline">
+        <Link href="/guides" className="hidden text-mist transition hover:text-paper sm:inline">
+          Гіди
+        </Link>
+        <Link href="/#yak-pratsyuye" className="hidden text-mist transition hover:text-paper md:inline">
           Як працює
         </Link>
         <Link href="/invoice" className="rounded-full bg-signal px-4 py-2 font-medium text-ink transition hover:bg-white">

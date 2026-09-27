@@ -103,6 +103,14 @@ export default function HomePage() {
       <footer className="border-t border-line px-5 py-10 text-sm text-muted md:px-10">
         <div className="mx-auto flex max-w-content flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} Rakhuno</p>
+          <div className="flex flex-wrap gap-4">
+            <Link href="/guides" className="hover:text-signal">
+              Гіди
+            </Link>
+            <Link href="/invoice" className="hover:text-signal">
+              Рахунок
+            </Link>
+          </div>
           <p className="max-w-lg">
             Не є податковою консультацією. Строки загальні; перевіряйте актуальні вимоги ДПС.
           </p>

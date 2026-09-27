@@ -1,0 +1,65 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { SiteHeader } from "@/components/SiteHeader";
+
+export const metadata: Metadata = {
+  title: "Гіди для ФОП",
+  description: "Рахунок-фактура, ФОП 3 група, єдиний податок — короткі гіди від Rakhuno.",
+};
+
+const guides = [
+  {
+    href: "/guides/rahunok-faktura",
+    title: "Що таке рахунок-фактура для ФОП",
+    blurb: "Навіщо документ, які поля потрібні, як виставити швидко.",
+  },
+  {
+    href: "/guides/fop-3-grupa",
+    title: "ФОП 3 група — коротко",
+    blurb: "Кому підходить, що пам’ятати про податки та рахунки.",
+  },
+  {
+    href: "/guides/yedynyy-podatok",
+    title: "Єдиний податок: коли платити",
+    blurb: "Типові строки й нагадування email — без зайвої теорії.",
+  },
+  {
+    href: "/guides/podatky-fop",
+    title: "Податки ФОП: чекліст",
+    blurb: "Що перевірити щомісяця / щокварталу.",
+  },
+  {
+    href: "/guides/rahunok-onlayn",
+    title: "Рахунок онлайн за 2 хвилини",
+    blurb: "Як зібрати PDF без Checkbox і Медок.",
+  },
+];
+
+export default function GuidesIndexPage() {
+  return (
+    <main className="min-h-screen bg-ink">
+      <div className="grid-atmosphere min-h-screen">
+        <SiteHeader />
+        <section className="mx-auto max-w-content px-5 py-14 md:px-10">
+          <h1 className="font-display text-4xl font-semibold text-paper md:text-5xl">Гіди для ФОП</h1>
+          <p className="mt-4 max-w-2xl text-mist">
+            Короткі сторінки під пошукові запити. Потім — у Rakhuno створити рахунок і підписатися на
+            нагадування.
+          </p>
+          <div className="mt-12 space-y-6">
+            {guides.map((g) => (
+              <Link
+                key={g.href}
+                href={g.href}
+                className="block border-t border-line pt-5 transition hover:border-signal"
+              >
+                <h2 className="font-display text-2xl text-paper">{g.title}</h2>
+                <p className="mt-2 text-mist">{g.blurb}</p>
+              </Link>
+            ))}
+          </div>
+        </section>
+      </div>
+    </main>
+  );
+}

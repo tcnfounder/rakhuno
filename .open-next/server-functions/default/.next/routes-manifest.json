@@ -54,6 +54,42 @@
       "namedRegex": "^/favicon\\.ico(?:/)?$"
     },
     {
+      "page": "/guides",
+      "regex": "^/guides(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/guides(?:/)?$"
+    },
+    {
+      "page": "/guides/fop-3-grupa",
+      "regex": "^/guides/fop\\-3\\-grupa(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/guides/fop\\-3\\-grupa(?:/)?$"
+    },
+    {
+      "page": "/guides/podatky-fop",
+      "regex": "^/guides/podatky\\-fop(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/guides/podatky\\-fop(?:/)?$"
+    },
+    {
+      "page": "/guides/rahunok-faktura",
+      "regex": "^/guides/rahunok\\-faktura(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/guides/rahunok\\-faktura(?:/)?$"
+    },
+    {
+      "page": "/guides/rahunok-onlayn",
+      "regex": "^/guides/rahunok\\-onlayn(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/guides/rahunok\\-onlayn(?:/)?$"
+    },
+    {
+      "page": "/guides/yedynyy-podatok",
+      "regex": "^/guides/yedynyy\\-podatok(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/guides/yedynyy\\-podatok(?:/)?$"
+    },
+    {
       "page": "/invoice",
       "regex": "^/invoice(?:/)?$",
       "routeKeys": {},

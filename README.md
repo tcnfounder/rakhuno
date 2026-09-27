@@ -32,8 +32,18 @@ Open http://localhost:3000
 5. Soft-share in 5 Telegram FOP groups (native edit first)
 6. Skip Instagram
 
-## Payments (when Pro is ready)
-Paddle or Lemon Squeezy checkout on `/pro` — no UA company required if your MoR country is supported.
+# Email drip (Brevo)
+1. Create free account at https://www.brevo.com
+2. Contacts → Lists → create list `Rakhuno`
+3. Settings → SMTP & API → API keys → create key
+4. From project folder:
+   ```bash
+   npx wrangler secret put BREVO_API_KEY
+   npx wrangler secret put BREVO_LIST_ID
+   ```
+   (`BREVO_LIST_ID` is the numeric list id)
+5. Automations → use sequences in `content/drip-emails-uk.md`
+
 
 ## Disclaimer
 Not tax advice. Reminder-only copy in product UI.
