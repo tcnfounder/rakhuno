@@ -13,9 +13,10 @@ export const metadata: Metadata = {
     url: "https://rakhuno.com/invoice",
   },
   twitter: {
+    card: "summary_large_image",
     title: "Рахунок-фактура онлайн · Rakhuno",
-    description:
-      "Створіть рахунок-фактуру для ФОП і завантажте PDF.",
+    description: "Створіть рахунок-фактуру для ФОП і завантажте PDF.",
+    images: ["/brand/og-default.png"],
   },
 };
 
