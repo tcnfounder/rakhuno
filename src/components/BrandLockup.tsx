@@ -13,14 +13,17 @@ const textSize = {
   hero: "text-5xl sm:text-7xl md:text-8xl",
 } as const;
 
+/** Optical match: Unbounded ascender/baseline ink ≈ 0.82em */
+const R_HEIGHT = "0.82em";
+
 /**
  * Geometric R + "akhuno" as one word.
- * R height is always 1em of the wordmark font-size — equal everywhere.
+ * R height matches type ink so top (ascenders) and bottom (baseline) line up.
  */
 export function BrandLockup({ href = "/", size = "md", className = "" }: BrandLockupProps) {
   const inner = (
     <span
-      className={`inline-flex items-end font-display font-semibold leading-none tracking-tight text-paper ${textSize[size]} ${className}`}
+      className={`inline-flex items-center font-display font-semibold leading-none tracking-tight text-paper ${textSize[size]} ${className}`}
     >
       {/* native img: Next/Image ignores em height reliably */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -29,8 +32,8 @@ export function BrandLockup({ href = "/", size = "md", className = "" }: BrandLo
         alt=""
         aria-hidden
         draggable={false}
-        className="block shrink-0 select-none"
-        style={{ height: "1em", width: "auto" }}
+        className="block shrink-0 select-none object-contain"
+        style={{ height: R_HEIGHT, width: "auto" }}
       />
       <span className="leading-none">akhuno</span>
     </span>
@@ -38,7 +41,7 @@ export function BrandLockup({ href = "/", size = "md", className = "" }: BrandLo
 
   if (!href) return inner;
   return (
-    <Link href={href} className="inline-flex leading-none" aria-label="Rakhuno">
+    <Link href={href} className="inline-flex items-center leading-none" aria-label="Rakhuno">
       {inner}
     </Link>
   );
