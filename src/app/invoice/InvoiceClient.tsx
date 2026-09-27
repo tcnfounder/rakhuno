@@ -59,6 +59,7 @@ export default function InvoiceClient() {
   const [copied, setCopied] = useState(false);
   const [lastPdf, setLastPdf] = useState<PdfResult | null>(null);
   const [showDone, setShowDone] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   const [data, setData] = useState<InvoiceData>({
     number: "1",
@@ -72,7 +73,7 @@ export default function InvoiceClient() {
     buyerName: "",
     buyerTaxId: "",
     buyerAddress: "",
-    items: [emptyItem()],
+    items: [emptyItem("line-initial")],
     note: "Оплата протягом 5 банківських днів.",
     fopGroup: "",
   });
@@ -82,11 +83,25 @@ export default function InvoiceClient() {
     setData((prev) => ({
       ...prev,
       number: nextInvoiceNumber(),
+      date: todayIso(),
       ...(profile || {}),
+      sellerLogo: profile?.sellerLogo || prev.sellerLogo || "",
     }));
+    setMounted(true);
   }, []);
 
   const total = useMemo(() => calcTotal(data.items), [data.items]);
+
+  if (!mounted) {
+    return (
+      <main className="min-h-screen bg-ink">
+        <div className="grid-atmosphere min-h-screen">
+          <SiteHeader />
+          <div className="mx-auto max-w-content px-5 py-16 text-mist">Завантаження рахунку…</div>
+        </div>
+      </main>
+    );
+  }
 
   function update<K extends keyof InvoiceData>(key: K, value: InvoiceData[K]) {
     setData((prev) => ({ ...prev, [key]: value }));

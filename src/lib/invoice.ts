@@ -42,11 +42,17 @@ export const COUNTER_KEY = "rakhuno.invoiceCounter.v1";
 let idSeq = 0;
 export function newId() {
   idSeq += 1;
-  return `line-${Date.now()}-${idSeq}`;
+  // Prefer crypto when available (client); avoid Date.now() in first paint
+  // so SSR markup matches hydration.
+  const rand =
+    typeof crypto !== "undefined" && "randomUUID" in crypto
+      ? crypto.randomUUID()
+      : `s${idSeq}`;
+  return `line-${rand}`;
 }
 
-export function emptyItem(): InvoiceItem {
-  return { id: newId(), description: "", qty: "1", price: "" };
+export function emptyItem(stableId?: string): InvoiceItem {
+  return { id: stableId || newId(), description: "", qty: "1", price: "" };
 }
 
 export function todayIso() {
