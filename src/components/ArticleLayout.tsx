@@ -27,7 +27,7 @@ export function ArticleLayout({
           <div className="prose-rakhuno mt-10 space-y-5 text-base leading-relaxed text-paper/90">
             {children}
           </div>
-          <div className="mt-12 rounded-2xl border border-line bg-ink-2/80 p-6">
+          <div className="mt-12 border-t border-line pt-8">
             <p className="font-display text-xl text-paper">Потрібен рахунок зараз?</p>
             <p className="mt-2 text-sm text-mist">
               Створіть рахунок-фактуру в Rakhuno за 2 хвилини. Email — для нагадувань про податки.

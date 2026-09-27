@@ -30,6 +30,11 @@ export const metadata: Metadata = {
     siteName: "Rakhuno",
     locale: "uk_UA",
     type: "website",
+    images: [{ url: "/brand/hero.jpg", width: 1200, height: 800, alt: "Rakhuno" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: ["/brand/hero.jpg"],
   },
   alternates: {
     canonical: "https://rakhuno.com",
