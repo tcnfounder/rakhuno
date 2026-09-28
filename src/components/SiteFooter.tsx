@@ -23,6 +23,9 @@ export function SiteFooter() {
             <Link href="/guides/vystavyty-rakhunok" className="hover:text-signal">
               Виставити рахунок
             </Link>
+            <Link href="/guides/rakhunok-na-oplatu" className="hover:text-signal">
+              На оплату
+            </Link>
             <Link href="/invoice" className="hover:text-signal">
               Рахунок
             </Link>

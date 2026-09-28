@@ -31,6 +31,18 @@ const entries: Entry[] = [
     lastModified: "2026-09-28",
   },
   {
+    path: "/guides/rakhunok-na-oplatu",
+    priority: 0.95,
+    changeFrequency: "weekly",
+    lastModified: "2026-09-28",
+  },
+  {
+    path: "/guides/blank-rakhunku-faktury",
+    priority: 0.93,
+    changeFrequency: "weekly",
+    lastModified: "2026-09-28",
+  },
+  {
     path: "/guides/fop-3-grupa",
     priority: 0.88,
     changeFrequency: "monthly",

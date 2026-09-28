@@ -1,0 +1,20 @@
+# Rakhuno — простий рахунок-фактура для ФОП (Україна)
+# https://rakhuno.com
+
+> Онлайн рахунок на оплату / рахунок-фактура (проформа) у PDF для ФОП. Без Word і Checkbox.
+
+## Product
+- https://rakhuno.com/invoice — виставити рахунок-фактуру онлайн, скачати PDF
+- https://rakhuno.com/ — огляд продукту й нагадування про податки
+
+## Guides (Ukrainian)
+- https://rakhuno.com/guides/rahunok-faktura — що таке рахунок-фактура для ФОП
+- https://rakhuno.com/guides/rakhunok-na-oplatu — рахунок на оплату: зразок і PDF
+- https://rakhuno.com/guides/blank-rakhunku-faktury — бланк рахунку-фактури онлайн
+- https://rakhuno.com/guides/zrazok-rahunku-faktury — зразок рахунку-фактури
+- https://rakhuno.com/guides/vystavyty-rakhunok — як виставити рахунок
+- https://rakhuno.com/guides/rahunok-onlayn — рахунок онлайн за 2 хвилини
+- https://rakhuno.com/guides — усі гіди
+
+## Contact
+- info@rakhuno.com
