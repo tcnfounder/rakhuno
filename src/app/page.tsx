@@ -262,6 +262,24 @@ export default function HomePage() {
             </li>
             <li className="border-t border-line pt-5">
               <Link
+                href="/guides/zrazok-rahunku-faktury"
+                className="font-display text-xl text-paper transition hover:text-signal md:text-2xl"
+              >
+                Зразок рахунку-фактури
+              </Link>
+              <p className="mt-2 text-mist">Приклад полів і готовий PDF — без бланка Word.</p>
+            </li>
+            <li className="border-t border-line pt-5">
+              <Link
+                href="/guides/vystavyty-rakhunok"
+                className="font-display text-xl text-paper transition hover:text-signal md:text-2xl"
+              >
+                Як виставити рахунок на оплату
+              </Link>
+              <p className="mt-2 text-mist">Коли надсилати клієнту, які поля й PDF за 2 хвилини.</p>
+            </li>
+            <li className="border-t border-line pt-5">
+              <Link
                 href="/guides/rahunok-onlayn"
                 className="font-display text-xl text-paper transition hover:text-signal md:text-2xl"
               >

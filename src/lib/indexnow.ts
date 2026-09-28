@@ -7,6 +7,8 @@ const DEFAULT_URLS = [
   "https://rakhuno.com/invoice",
   "https://rakhuno.com/guides",
   "https://rakhuno.com/guides/rahunok-faktura",
+  "https://rakhuno.com/guides/zrazok-rahunku-faktury",
+  "https://rakhuno.com/guides/vystavyty-rakhunok",
   "https://rakhuno.com/guides/rahunok-onlayn",
   "https://rakhuno.com/guides/fop-3-grupa",
   "https://rakhuno.com/guides/yedynyy-podatok",

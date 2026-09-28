@@ -76,9 +76,9 @@ export default function Page() {
         description="Без шаблону Word і без важкої бухгалтерії — тільки зрозумілий PDF клієнту."
         path="/guides/rahunok-onlayn"
         related={[
+          { href: "/guides/vystavyty-rakhunok", label: "Як виставити рахунок" },
           { href: "/guides/rahunok-faktura", label: "Що таке рахунок-фактура" },
-          { href: "/guides/fop-3-grupa", label: "ФОП 3 група — коротко" },
-          { href: "/guides/podatky-fop", label: "Податки ФОП: чекліст" },
+          { href: "/guides/zrazok-rahunku-faktury", label: "Зразок рахунку-фактури" },
         ]}
       >
         <p>

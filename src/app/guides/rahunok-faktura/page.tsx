@@ -110,9 +110,9 @@ export default function Page() {
         description="Зразок полів, обов’язкові реквізити й онлайн PDF клієнту за кілька хвилин — без Word."
         path="/guides/rahunok-faktura"
         related={[
+          { href: "/guides/zrazok-rahunku-faktury", label: "Зразок рахунку-фактури" },
+          { href: "/guides/vystavyty-rakhunok", label: "Як виставити рахунок" },
           { href: "/guides/rahunok-onlayn", label: "Рахунок онлайн за 2 хвилини" },
-          { href: "/guides/fop-3-grupa", label: "ФОП 3 група — коротко" },
-          { href: "/guides/yedynyy-podatok", label: "Єдиний податок: коли платити" },
         ]}
       >
         <p>
