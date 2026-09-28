@@ -655,8 +655,8 @@ export default function InvoiceClient() {
                 <div className="mb-4 rounded-lg border border-signal/40 bg-signal/10 p-4">
                   <p className="font-display text-lg font-semibold text-paper">PDF готовий</p>
                   <p className="mt-1 text-sm text-mist">
-                    Файл має бути в «Завантаженнях». Adblock інколи блокує спливаючі вікна — тому
-                    кнопка тут, у сторінці. У листі PDF немає.
+                    Файл у «Завантаженнях». Надішліть його клієнту (Telegram / email) і за бажанням
+                    додайте реквізити текстом. У листі від Rakhuno PDF немає.
                   </p>
                   <button
                     type="button"
@@ -666,6 +666,26 @@ export default function InvoiceClient() {
                   >
                     {busy ? "…" : "Завантажити PDF"}
                   </button>
+                  {unlocked ? (
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      <a
+                        href={`https://t.me/share/url?url=${encodeURIComponent("https://rakhuno.com/invoice")}&text=${encodeURIComponent(paymentText(data))}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={() => trackEvent("invoice_share_telegram")}
+                        className="rounded-full border border-white/15 px-3 py-1.5 text-sm text-mist hover:border-signal hover:text-signal"
+                      >
+                        Реквізити в Telegram
+                      </a>
+                      <a
+                        href={`mailto:?subject=${encodeURIComponent(`Рахунок № ${data.number}`)}&body=${encodeURIComponent(`${paymentText(data)}\n\nPDF у вкладенні (завантажте з браузера й додайте файл).`)}`}
+                        onClick={() => trackEvent("invoice_share_email")}
+                        className="rounded-full border border-white/15 px-3 py-1.5 text-sm text-mist hover:border-signal hover:text-signal"
+                      >
+                        Реквізити в email
+                      </a>
+                    </div>
+                  ) : null}
                 </div>
               ) : null}
 
@@ -709,6 +729,7 @@ export default function InvoiceClient() {
                       try {
                         await navigator.clipboard.writeText(paymentText(data));
                         setCopied(true);
+                        trackEvent("invoice_copy_payment");
                         window.setTimeout(() => setCopied(false), 2000);
                       } catch {
                         setError("Не вдалося скопіювати.");
