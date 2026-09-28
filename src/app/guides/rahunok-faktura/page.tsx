@@ -58,6 +58,8 @@ const articleLd = {
   "@type": "Article",
   headline: "Рахунок-фактура для ФОП: що це і як створити",
   description: metadata.description,
+  datePublished: "2026-09-27",
+  dateModified: "2026-09-28",
   author: { "@type": "Organization", name: "Rakhuno" },
   publisher: {
     "@type": "Organization",
@@ -68,10 +70,37 @@ const articleLd = {
   inLanguage: "uk",
 };
 
+const howToLd = {
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  name: "Як створити рахунок-фактуру для ФОП онлайн",
+  description:
+    "Заповніть реквізити ФОП і позиції в Rakhuno, залиште email — PDF завантажиться в браузері.",
+  totalTime: "PT2M",
+  step: [
+    {
+      "@type": "HowToStep",
+      name: "Відкрити конструктор",
+      text: "Перейдіть на сторінку рахунку Rakhuno.",
+      url: "https://rakhuno.com/invoice",
+    },
+    {
+      "@type": "HowToStep",
+      name: "Заповнити реквізити",
+      text: "Вкажіть ПІБ ФОП, ІПН, IBAN, покупця та позиції послуг.",
+    },
+    {
+      "@type": "HowToStep",
+      name: "Отримати PDF",
+      text: "Залиште email і натисніть «Отримати PDF» — файл збережеться в завантаженнях браузера.",
+    },
+  ],
+};
+
 export default function Page() {
   return (
     <>
-      <JsonLd data={[articleLd, faqLd]} />
+      <JsonLd data={[articleLd, faqLd, howToLd]} />
       <ArticleLayout
         title="Рахунок-фактура для ФОП"
         description="Що це за документ, які поля потрібні і як зібрати PDF клієнту за кілька хвилин."

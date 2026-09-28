@@ -1,6 +1,7 @@
 "use client";
 
 import { ReactNode, useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { SiteHeader } from "@/components/SiteHeader";
 import {
   InvoiceData,
@@ -745,6 +746,43 @@ export default function InvoiceClient() {
               {okMsg ? <p className="mt-2 text-sm text-signal">{okMsg}</p> : null}
             </div>
           </div>
+
+          <aside className="print:hidden mx-auto mt-14 w-full max-w-[210mm] border-t border-line pt-8">
+            <p className="font-display text-sm uppercase tracking-[0.18em] text-signal">
+              Гіди для ФОП
+            </p>
+            <ul className="mt-4 space-y-3 text-mist">
+              <li>
+                <Link
+                  href="/guides/rahunok-faktura"
+                  className="text-paper transition hover:text-signal"
+                >
+                  → Що таке рахунок-фактура для ФОП
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/guides/rahunok-onlayn"
+                  className="text-paper transition hover:text-signal"
+                >
+                  → Рахунок онлайн за 2 хвилини
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/guides/yedynyy-podatok"
+                  className="text-paper transition hover:text-signal"
+                >
+                  → Єдиний податок: коли платити
+                </Link>
+              </li>
+              <li>
+                <Link href="/guides" className="text-paper transition hover:text-signal">
+                  → Усі гіди
+                </Link>
+              </li>
+            </ul>
+          </aside>
         </div>
       </div>
 
