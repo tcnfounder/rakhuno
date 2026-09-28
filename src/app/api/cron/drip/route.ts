@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getWorkerEnv, processDay7Queue } from "@/lib/brevo-drip";
 
 function authorized(req: NextRequest, secret: string | undefined) {
+  // Optional manual trigger. If CRON_SECRET unset, HTTP endpoint stays closed
+  // (in-process Railway cron does not need this).
   if (!secret) return false;
   const header = req.headers.get("authorization") || "";
   if (header === `Bearer ${secret}`) return true;
@@ -9,7 +11,7 @@ function authorized(req: NextRequest, secret: string | undefined) {
   return urlSecret === secret;
 }
 
-/** Hourly: schedule Day 7 once within Brevo's 3-day transactional window. */
+/** Optional manual trigger. Day 7 normally runs in-process on Railway. */
 async function handle(req: NextRequest) {
   const env = await getWorkerEnv();
   if (!authorized(req, env.CRON_SECRET)) {

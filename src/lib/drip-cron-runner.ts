@@ -6,11 +6,11 @@ let started = false;
 
 /**
  * In-process Day 7 drip ticker for Railway (`npm run start`).
- * Enabled when CRON_SECRET is set — no GitHub Actions / extra service.
+ * No extra env: runs in production whenever BREVO_API_KEY is present.
  */
 export function startDripCron() {
   if (started) return;
-  if (!process.env.CRON_SECRET) return;
+  if (!process.env.BREVO_API_KEY) return;
   // Skip local `next dev` unless explicitly forced.
   if (process.env.NODE_ENV !== "production" && process.env.DRIP_CRON_INLINE !== "1") {
     return;
