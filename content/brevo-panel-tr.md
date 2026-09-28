@@ -1,48 +1,22 @@
 # Brevo — Rakhuno drip (otomatik)
 
-> **Panelde Automation kurmana gerek yok.**  
-> Invoice’tan lead gelince site kendisi:
+> **Panelde Automation kurmana gerek yok. Ekstra env de yok.**  
+> Invoice’tan **yeni** lead gelince site:
 > 1. Welcome’ı **hemen** gönderir (template id **1**)
-> 2. Day 3’ü **+3 gün** zamanlar (template id **3**)
-> 3. Day 7’yi **+7 gün** zamanlar (template id **2**)
+> 2. Day 3’ü **+3 gün** Brevo `scheduledAt` ile zamanlar (template id **3**)
+> 3. Day 7’yi kuyruğa alır — Railway production’da saatlik in-process cron, Brevo free limit (+3g pencere) içinde gönderir (template id **2**)
 
-Brevo → Automations’ta yarım kalan “Rakhuno Leads Onboarding” varsa **Activate etme** — Inactive bırak veya sil. Çift mail olmasın.
-
----
-
-## Şablonlar (Active olmalı)
-
-- **id 1** — Rakhuno Welcome  
-- **id 3** — Day 3 tips  
-- **id 2** — Day 7 vergi  
-
-Liste: **Rakhuno Leads** (id **3**) — site contact’ı buraya ekler.
+Yarım kalan Brevo Automation varsa **Activate etme** — sil / Inactive.
 
 ---
 
-## Railway env
+## Railway env (zaten olanlar)
 
-Railway → Rakhuno service → **Variables**:
-
-- `BREVO_API_KEY` = Brevo API key  
+- `BREVO_API_KEY` ← bu varsa Day 7 cron da açılır  
 - `BREVO_LIST_ID` = `3`  
-- `BREVO_WELCOME_TEMPLATE_ID` = `1` (opsiyonel)  
-- `BREVO_DAY3_TEMPLATE_ID` = `3` (opsiyonel)  
-- `BREVO_DAY7_TEMPLATE_ID` = `2` (opsiyonel)
+- Template id’ler opsiyonel (default 1 / 3 / 2)
 
-Kaydet → redeploy. Test: invoice’tan mail gönder → API cevabında  
-`"welcome":"sent"` ve `"drip":{"day3":"scheduled","day7":"scheduled"}`  
-(mevcut contact ise drip `skipped` — Welcome yine gider).
+`CRON_SECRET` **gerekmez** (sadece elle `/api/cron/drip` tetiklemek istersen).
 
----
-
-## Test
-
-1. https://rakhuno.com/invoice  
-2. **Yeni** bir email gir → PDF al  
-3. Inbox → Welcome (birkaç dk)  
-4. Brevo → **Transactional** → Scheduled / logs → Day 3 (+3g) ve Day 7 (+7g) görünmeli  
-5. From: `info@rakhuno.com`
-
-> Click-tracking `rakhuno.com/<uuid>` üretirse middleware `/invoice`’a yönlendirir.  
-> Kalıcı: `lb.rakhuno.com` → Brevo CNAME (link branding).
+Test: invoice → yeni mail →  
+`"welcome":"sent"`, `"drip":{"day3":"scheduled","day7":"queued"}`

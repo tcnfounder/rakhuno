@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { appendFile, mkdir } from "fs/promises";
 import path from "path";
+import {
+  getWorkerEnv,
+  scheduleDripEmails,
+  sendTransactionalTemplate,
+  type WorkerEnv,
+} from "@/lib/brevo-drip";
 
 type LeadBody = {
   email?: string;
@@ -9,60 +14,8 @@ type LeadBody = {
   fopGroup?: string;
 };
 
-type LeadsKv = {
-  put: (key: string, value: string) => Promise<void>;
-};
-
-type WorkerEnv = {
-  LEADS?: LeadsKv;
-  BREVO_API_KEY?: string;
-  BREVO_LIST_ID?: string;
-  /** Transactional template id for immediate welcome (default: 1) */
-  BREVO_WELCOME_TEMPLATE_ID?: string;
-  /** Day 3 drip template (default: 3) */
-  BREVO_DAY3_TEMPLATE_ID?: string;
-  /** Day 7 drip template (default: 2) */
-  BREVO_DAY7_TEMPLATE_ID?: string;
-};
-
 function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
-
-/** ISO timestamp `days` from now (UTC). Brevo may deliver up to ~5 min late. */
-function scheduledAtDaysFromNow(days: number) {
-  return new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString();
-}
-
-async function getEnv(): Promise<WorkerEnv> {
-  // Railway (and other Node hosts) set secrets on process.env. Cloudflare
-  // Workers may expose the same names via getCloudflareContext. Prefer
-  // bindings when present, but always fall back to process.env so a
-  // successful CF context without Brevo secrets does not skip mailing.
-  const fromProcess: WorkerEnv = {
-    BREVO_API_KEY: process.env.BREVO_API_KEY,
-    BREVO_LIST_ID: process.env.BREVO_LIST_ID,
-    BREVO_WELCOME_TEMPLATE_ID: process.env.BREVO_WELCOME_TEMPLATE_ID,
-    BREVO_DAY3_TEMPLATE_ID: process.env.BREVO_DAY3_TEMPLATE_ID,
-    BREVO_DAY7_TEMPLATE_ID: process.env.BREVO_DAY7_TEMPLATE_ID,
-  };
-  try {
-    const { env } = await getCloudflareContext({ async: true });
-    const cf = env as WorkerEnv;
-    return {
-      LEADS: cf.LEADS,
-      BREVO_API_KEY: cf.BREVO_API_KEY || fromProcess.BREVO_API_KEY,
-      BREVO_LIST_ID: cf.BREVO_LIST_ID || fromProcess.BREVO_LIST_ID,
-      BREVO_WELCOME_TEMPLATE_ID:
-        cf.BREVO_WELCOME_TEMPLATE_ID || fromProcess.BREVO_WELCOME_TEMPLATE_ID,
-      BREVO_DAY3_TEMPLATE_ID:
-        cf.BREVO_DAY3_TEMPLATE_ID || fromProcess.BREVO_DAY3_TEMPLATE_ID,
-      BREVO_DAY7_TEMPLATE_ID:
-        cf.BREVO_DAY7_TEMPLATE_ID || fromProcess.BREVO_DAY7_TEMPLATE_ID,
-    };
-  } catch {
-    return fromProcess;
-  }
 }
 
 async function storeLead(
@@ -143,7 +96,6 @@ async function pushToBrevo(
       return "brevo_exists";
     }
 
-    // Authorized-IP flaps / transient errors — retry
     const retryable =
       res.status === 401 ||
       res.status === 429 ||
@@ -157,49 +109,6 @@ async function pushToBrevo(
   return "brevo_error";
 }
 
-async function sendTransactionalTemplate(
-  email: string,
-  env: WorkerEnv,
-  opts: {
-    templateId: number;
-    tags: string[];
-    scheduledAt?: string;
-    logLabel: string;
-  },
-) {
-  if (!env.BREVO_API_KEY) return "skipped";
-  if (!Number.isFinite(opts.templateId) || opts.templateId <= 0) {
-    return "bad_template";
-  }
-
-  try {
-    const body: Record<string, unknown> = {
-      to: [{ email }],
-      templateId: opts.templateId,
-      tags: opts.tags,
-    };
-    if (opts.scheduledAt) body.scheduledAt = opts.scheduledAt;
-
-    const res = await fetch("https://api.brevo.com/v3/smtp/email", {
-      method: "POST",
-      headers: {
-        accept: "application/json",
-        "content-type": "application/json",
-        "api-key": env.BREVO_API_KEY,
-      },
-      body: JSON.stringify(body),
-    });
-    if (res.ok) return opts.scheduledAt ? "scheduled" : "sent";
-    const text = await res.text();
-    console.error(`[${opts.logLabel}]`, res.status, text);
-    return "send_error";
-  } catch (e) {
-    console.error(`[${opts.logLabel}]`, e);
-    return "send_error";
-  }
-}
-
-/** Immediate Mail 0 — transactional template (Rakhuno Welcome). */
 async function sendWelcomeEmail(email: string, env: WorkerEnv) {
   const templateId = Number(env.BREVO_WELCOME_TEMPLATE_ID || "1");
   return sendTransactionalTemplate(email, env, {
@@ -207,30 +116,6 @@ async function sendWelcomeEmail(email: string, env: WorkerEnv) {
     tags: ["rakhuno-welcome"],
     logLabel: "brevo-welcome",
   });
-}
-
-/**
- * Day 3 + Day 7 drip via Brevo transactional scheduledAt.
- * No Marketing Automations panel required.
- */
-async function scheduleDripEmails(email: string, env: WorkerEnv) {
-  const day3Id = Number(env.BREVO_DAY3_TEMPLATE_ID || "3");
-  const day7Id = Number(env.BREVO_DAY7_TEMPLATE_ID || "2");
-
-  const day3 = await sendTransactionalTemplate(email, env, {
-    templateId: day3Id,
-    tags: ["rakhuno-drip-day3"],
-    scheduledAt: scheduledAtDaysFromNow(3),
-    logLabel: "brevo-drip-day3",
-  });
-  const day7 = await sendTransactionalTemplate(email, env, {
-    templateId: day7Id,
-    tags: ["rakhuno-drip-day7"],
-    scheduledAt: scheduledAtDaysFromNow(7),
-    logLabel: "brevo-drip-day7",
-  });
-
-  return { day3, day7 };
 }
 
 export async function POST(req: NextRequest) {
@@ -249,17 +134,17 @@ export async function POST(req: NextRequest) {
   const source = (body.source || "invoice").slice(0, 64);
   const fopGroupRaw = (body.fopGroup || "").trim();
   const fopGroup = fopGroupRaw === "2" || fopGroupRaw === "3" ? fopGroupRaw : undefined;
-  const env = await getEnv();
+  const env = await getWorkerEnv();
   const backend = await storeLead(email, source, env, { fopGroup });
   const brevo = await pushToBrevo(email, source, env, { fopGroup });
 
-  // New list members get Welcome + scheduled Day 3 / Day 7.
-  // Existing contacts still get Welcome (reminder) but not a fresh drip
-  // schedule — avoids stacking 3/7-day emails on every PDF export.
+  // New list members get Welcome + Day 3 schedule + Day 7 queue.
+  // Existing contacts still get Welcome; drip not re-stacked.
   const enrolled = brevo === "brevo";
-  const welcome = enrolled || brevo === "brevo_exists"
-    ? await sendWelcomeEmail(email, env)
-    : "skipped";
+  const welcome =
+    enrolled || brevo === "brevo_exists"
+      ? await sendWelcomeEmail(email, env)
+      : "skipped";
   const drip = enrolled
     ? await scheduleDripEmails(email, env)
     : { day3: "skipped", day7: "skipped" };
