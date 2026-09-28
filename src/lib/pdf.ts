@@ -18,25 +18,27 @@ function flattenFormControls(root: HTMLElement) {
     }
 
     replacement.textContent = text || "—";
+    const isCell = control.hasAttribute("data-pdf-cell");
     replacement.setAttribute(
       "style",
       [
         "display:block",
         "width:100%",
         "margin:0",
-        "padding:6px 0 4px",
+        isCell ? "padding:4px 6px" : "padding:4px 0",
         "border:0",
-        "border-bottom:1px solid #e5e5e5",
+        isCell ? "border-bottom:0" : "border-bottom:1px solid #d4d4d4",
         "background:transparent",
         "color:#171717",
         "font:inherit",
         "font-size:inherit",
         "font-weight:inherit",
-        "line-height:1.45",
+        "line-height:1.35",
         "letter-spacing:inherit",
         "white-space:pre-wrap",
         "word-break:break-word",
-        "min-height:1.45em",
+        "min-height:1.25em",
+        "box-sizing:border-box",
       ].join(";"),
     );
 
@@ -125,12 +127,13 @@ export async function buildInvoicePdf(data: InvoiceData, node: HTMLElement): Pro
     if (imgH <= usableH) {
       pdf.addImage(imgData, "JPEG", margin, margin, imgW, imgH);
     } else {
-      // Slice tall canvas across A4 pages
+      // Many line items → slice tall canvas across A4 pages + page index
       const pageCanvas = document.createElement("canvas");
       const pageCtx = pageCanvas.getContext("2d");
       if (!pageCtx) throw new Error("no_canvas");
 
       const slicePx = Math.floor((usableH / imgH) * canvas.height);
+      const totalPages = Math.max(1, Math.ceil(canvas.height / slicePx));
       pageCanvas.width = canvas.width;
       let y = 0;
       let page = 0;
@@ -144,6 +147,12 @@ export async function buildInvoicePdf(data: InvoiceData, node: HTMLElement): Pro
         const sliceHmm = (h * imgW) / canvas.width;
         if (page > 0) pdf.addPage();
         pdf.addImage(sliceData, "JPEG", margin, margin, imgW, sliceHmm);
+        pdf.setFont("helvetica", "normal");
+        pdf.setFontSize(8);
+        pdf.setTextColor(120);
+        pdf.text(`Аркуш ${page + 1} з ${totalPages}`, pageW / 2, pageH - 6, {
+          align: "center",
+        });
         y += h;
         page += 1;
       }
