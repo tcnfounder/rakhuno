@@ -10,7 +10,6 @@ import {
   calcLine,
   calcTotal,
   emptyItem,
-  formatDateUk,
   formatIban,
   formatTaxId,
   formatUah,
@@ -263,8 +262,8 @@ export default function InvoiceClient() {
                 Рахунок-проформа
               </h1>
               <p className="mt-2 max-w-xl text-mist">
-                Український формат для ФОП: реквізити, таблиця позицій, сума прописом. Логотип —
-                опційно.
+                Як у типовому рахунку на оплату для ФОП: сторони, таблиця, сума прописом. Багато
+                рядків — PDF на кілька аркушів. Логотип опційно.
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -338,41 +337,44 @@ export default function InvoiceClient() {
                 boxSizing: "border-box",
               }}
             >
-              {/* Title row */}
-              <div className="flex items-start justify-between gap-4 border-b-2 border-neutral-900 pb-3">
-                <div className="min-w-0 flex-1">
-                  {hasLogo ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={data.sellerLogo}
-                      alt=""
-                      className="mb-2 max-h-12 w-auto max-w-[150px] object-contain object-left"
-                    />
-                  ) : null}
-                  <p className="text-[18px] font-bold uppercase tracking-[0.04em]">
-                    Рахунок-проформа
-                  </p>
-                  <p className="mt-1 text-[11px] text-neutral-500">
-                    Не є податковою накладною. Для оплати послуг / товарів.
+              {/* Title — classic UA: № + one date only (PDF flattens date → dd.mm.yyyy) */}
+              <div className="border-b-2 border-neutral-900 pb-3">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="min-w-0 flex-1">
+                    {hasLogo ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={data.sellerLogo}
+                        alt=""
+                        className="mb-2 max-h-11 w-auto max-w-[140px] object-contain object-left"
+                      />
+                    ) : null}
+                    <p className="text-[17px] font-bold uppercase tracking-[0.03em]">
+                      Рахунок-проформа
+                    </p>
+                  </div>
+                  <p className="shrink-0 pt-0.5 text-right text-[11px] leading-snug text-neutral-500">
+                    Не є податковою
+                    <br />
+                    накладною
                   </p>
                 </div>
-                <div className="w-[148px] shrink-0 space-y-1 text-right">
-                  <SoftField label="№">
-                    <input
-                      className={`${lineInput} text-right font-semibold`}
-                      value={data.number}
-                      onChange={(e) => update("number", e.target.value.slice(0, 20))}
-                    />
-                  </SoftField>
-                  <SoftField label="від">
-                    <input
-                      className={`${lineInput} text-right`}
-                      type="date"
-                      value={data.date}
-                      onChange={(e) => update("date", e.target.value)}
-                    />
-                  </SoftField>
-                  <p className="text-[11px] text-neutral-600">{formatDateUk(data.date)}</p>
+                <div className="mt-2 flex flex-wrap items-end gap-x-3 gap-y-1 text-[14px]">
+                  <span className="font-semibold text-neutral-800">№</span>
+                  <input
+                    className={`${lineInput} w-20 font-semibold`}
+                    value={data.number}
+                    onChange={(e) => update("number", e.target.value.slice(0, 20))}
+                    aria-label="Номер рахунку"
+                  />
+                  <span className="font-semibold text-neutral-800">від</span>
+                  <input
+                    className={`${lineInput} w-[9.5rem]`}
+                    type="date"
+                    value={data.date}
+                    onChange={(e) => update("date", e.target.value)}
+                    aria-label="Дата рахунку"
+                  />
                 </div>
               </div>
 
@@ -461,11 +463,20 @@ export default function InvoiceClient() {
                 </div>
               </div>
 
-              {/* Lines table */}
+              {/* Lines table — grows freely; PDF slices across A4 pages */}
               <div className="mt-5">
-                <div className="mb-1 flex items-center justify-between">
+                <div className="mb-1 flex items-center justify-between gap-2">
                   <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-neutral-600">
                     Перелік товарів / послуг
+                    <span className="ml-2 font-normal normal-case tracking-normal text-neutral-400">
+                      ({data.items.length}{" "}
+                      {data.items.length === 1
+                        ? "позиція"
+                        : data.items.length < 5
+                          ? "позиції"
+                          : "позицій"}
+                      )
+                    </span>
                   </p>
                   <button
                     type="button"
