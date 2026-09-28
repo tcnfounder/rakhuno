@@ -41,6 +41,10 @@ const faqs = [
     q: "Що писати в призначенні платежу?",
     a: "Коротко: «Оплата за рахунком №… від …» плюс суть послуги. Так клієнту й банку простіше звірити платіж з документом.",
   },
+  {
+    q: "Де взяти зразок рахунку-фактури для ФОП?",
+    a: "Достатньо структури: номер/дата, постачальник, покупець, позиції, сума, примітка. У Rakhuno ці поля вже в онлайн-формі — заповнюєте й одразу отримуєте PDF, без окремого Word-шаблону.",
+  },
 ];
 
 const faqLd = {
@@ -59,7 +63,7 @@ const articleLd = {
   headline: "Рахунок-фактура для ФОП: що це і як створити",
   description: metadata.description,
   datePublished: "2026-09-27",
-  dateModified: "2026-09-28",
+  dateModified: "2026-09-28T03:00:00+00:00",
   author: { "@type": "Organization", name: "Rakhuno" },
   publisher: {
     "@type": "Organization",
@@ -293,6 +297,43 @@ export default function Page() {
           Не підходить як єдиний інструмент: складний склад, ПРРО/касова дисципліна в ритейлі,
           повний ЕДО з десятками контрагентів, автоматична подача декларацій. Тоді — бухгалтерський
           софт + фахівець; Rakhuno можна лишити лише для швидких рахунків «набік».
+        </p>
+
+        <h2 className="!mt-10 font-display text-2xl text-paper">Зразок рахунку-фактури (поля)</h2>
+        <p>
+          Шукаєте «зразок рахунку» у Word — часто достатньо структури нижче. У Rakhuno ці блоки вже
+          зібрані в{" "}
+          <Link href="/invoice" className="text-signal underline-offset-2 hover:underline">
+            живому документі
+          </Link>
+          ; PDF виглядає як проформа на оплату.
+        </p>
+        <div className="not-prose rounded-xl border border-line bg-ink-2/40 p-5 text-sm leading-relaxed text-mist">
+          <p className="font-display text-base text-paper">Рахунок-фактура (проформа) № 12 від 28.09.2026</p>
+          <p className="mt-4">
+            <strong className="text-paper/90">Постачальник:</strong> ФОП Іваненко І. І., ІПН …, IBAN
+            UA…, банк …
+          </p>
+          <p className="mt-2">
+            <strong className="text-paper/90">Покупець:</strong> ТОВ «…» / ФОП …, ЄДРПОУ / ІПН …,
+            адреса …
+          </p>
+          <p className="mt-4">
+            <strong className="text-paper/90">Позиції:</strong> «Дизайн лендінгу» — 1 шт. — 8 000,00
+            грн
+          </p>
+          <p className="mt-2">
+            <strong className="text-paper/90">Разом:</strong> 8 000,00 грн (вісім тисяч грн 00 коп.),
+            без ПДВ
+          </p>
+          <p className="mt-2">
+            <strong className="text-paper/90">Примітка:</strong> оплата протягом 5 банківських днів;
+            призначення: «Оплата за рахунком № 12 від 28.09.2026»
+          </p>
+        </div>
+        <p className="mt-4">
+          Це не бланк з гербом і не заміна акту. Це робочий зразок полів, щоб клієнт і банк зрозуміли
+          платіж з першого разу.
         </p>
 
         <h2 className="!mt-10 font-display text-2xl text-paper">Часті питання</h2>
