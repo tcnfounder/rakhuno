@@ -1,59 +1,48 @@
-# Brevo panel — sadece Day 3 + Day 7 (Türkçe, tıkla-tıkla)
+# Brevo — Rakhuno drip (otomatik)
 
-> **Mail 0 (hoş geldin)** artık siteden otomatik gidiyor. Panele dokunmana gerek yok.  
-> Aşağıdakiler sadece **3. gün** ve **7. gün** mailleri için.
+> **Panelde Automation kurmana gerek yok.**  
+> Invoice’tan lead gelince site kendisi:
+> 1. Welcome’ı **hemen** gönderir (template id **1**)
+> 2. Day 3’ü **+3 gün** zamanlar (template id **3**)
+> 3. Day 7’yi **+7 gün** zamanlar (template id **2**)
 
-Şablonlar hesabında hazır:
-- **id 1** — Rakhuno Welcome (otomatik)
-- **id 3** — Day 3 tips
-- **id 2** — Day 7 vergi
-
-Liste: **Rakhuno Leads** (id **3**) — 16 kişi var.
+Brevo → Automations’ta yarım kalan “Rakhuno Leads Onboarding” varsa **Activate etme** — Inactive bırak veya sil. Çift mail olmasın.
 
 ---
 
-## Adım adım (Automation)
+## Şablonlar (Active olmalı)
 
-1. [app.brevo.com](https://app.brevo.com) aç → sol menü **Automations**
-2. **Create an automation** (veya Create workflow)
-3. Mümkünse hazır şablon: **“Welcome / Contact added to a list”**  
-   Yoksa: **Custom automation** → boş akış
-4. **Trigger (tetikleyici):**
-   - Tip: **A contact is added to a list**
-   - List: **Rakhuno Leads**
-5. İlk adım: **Wait** → **3 days**
-6. Sonraki: **Send an email**
-   - Template: **Rakhuno Day 3 — рахунок tips**
-7. Sonra yine **Wait** → **4 days**
-8. Sonra **Send an email**
-   - Template: **Rakhuno Day 7 — єдиний податок**
-9. Sağ üstten **Active / Activate**
+- **id 1** — Rakhuno Welcome  
+- **id 3** — Day 3 tips  
+- **id 2** — Day 7 vergi  
 
-Bitince: invoice sayfasından kendi mailinle fatura çıkar →  
-- birkaç dakika içinde Welcome gelmeli  
-- 3 gün sonra Day 3 (automation)
+Liste: **Rakhuno Leads** (id **3**) — site contact’ı buraya ekler.
 
 ---
 
-## Railway env (zorunlu — yoksa invoice Brevo’ya gitmez)
+## Railway env
 
 Railway → Rakhuno service → **Variables**:
 
 - `BREVO_API_KEY` = Brevo API key  
 - `BREVO_LIST_ID` = `3`  
-- `BREVO_WELCOME_TEMPLATE_ID` = `1` (opsiyonel; default 1)
+- `BREVO_WELCOME_TEMPLATE_ID` = `1` (opsiyonel)  
+- `BREVO_DAY3_TEMPLATE_ID` = `3` (opsiyonel)  
+- `BREVO_DAY7_TEMPLATE_ID` = `2` (opsiyonel)
 
-Kaydet → redeploy. Test: invoice’tan mail gönder → API cevabında `"brevo":"brevo"` / `"welcome":"sent"` olmalı (`"skipped"` değil).
+Kaydet → redeploy. Test: invoice’tan mail gönder → API cevabında  
+`"welcome":"sent"` ve `"drip":{"day3":"scheduled","day7":"scheduled"}`  
+(mevcut contact ise drip `skipped` — Welcome yine gider).
 
 ---
 
 ## Test
 
 1. https://rakhuno.com/invoice  
-2. Email gir → **Отримати PDF** → tarayıcıda PDF + «PDF готовий» paneli  
-3. Inbox → Welcome (PDF eki yok; bilinçli — PDF tarayıcıda iner; maildeki buton siteyi açar)  
-4. From: `info@rakhuno.com` — `via` uyarısı olmamalı  
+2. **Yeni** bir email gir → PDF al  
+3. Inbox → Welcome (birkaç dk)  
+4. Brevo → **Transactional** → Scheduled / logs → Day 3 (+3g) ve Day 7 (+7g) görünmeli  
+5. From: `info@rakhuno.com`
 
-> Brevo click-tracking bazen `rakhuno.com/<uuid>` üretir. Apex’te bu path’ler 404 olurdu;  
-> artık middleware `/invoice`’a yönlendiriyor. Kalıcı çözüm: Brevo’da link branding için  
-> ayrı subdomain (`lb.rakhuno.com` → Brevo CNAME), apex değil.
+> Click-tracking `rakhuno.com/<uuid>` üretirse middleware `/invoice`’a yönlendirir.  
+> Kalıcı: `lb.rakhuno.com` → Brevo CNAME (link branding).
