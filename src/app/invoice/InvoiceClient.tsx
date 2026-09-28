@@ -21,6 +21,7 @@ import {
   todayIso,
   validateInvoice,
 } from "@/lib/invoice";
+import { trackEvent } from "@/lib/analytics";
 import { prepareLogo } from "@/lib/logo";
 import { downloadInvoicePdf, downloadPdfBlob, type PdfResult } from "@/lib/pdf";
 
@@ -216,10 +217,16 @@ export default function InvoiceClient() {
       setUnlocked(true);
       setPdfReady(true);
       setOkMsg("PDF сформовано. Якщо файл не зʼявився — кнопка нижче.");
+      trackEvent("invoice_pdf_unlock", {
+        fop_group: data.fopGroup || "none",
+        item_count: data.items.length,
+      });
+      trackEvent("generate_lead", { method: "invoice_pdf" });
     } catch {
       setError("Не вдалося створити PDF. Спробуйте ще раз кнопкою нижче.");
       setUnlocked(true);
       setPdfReady(true);
+      trackEvent("invoice_pdf_error", { stage: "unlock" });
     } finally {
       setBusy(false);
     }
@@ -241,9 +248,13 @@ export default function InvoiceClient() {
       }
       setPdfReady(true);
       setOkMsg("PDF завантажено.");
+      trackEvent("invoice_pdf_redownload", {
+        from_cache: Boolean(lastPdf),
+      });
     } catch {
       setError("Не вдалося створити PDF.");
       setPdfReady(true);
+      trackEvent("invoice_pdf_error", { stage: "redownload" });
     } finally {
       setBusy(false);
     }
