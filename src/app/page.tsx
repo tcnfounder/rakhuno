@@ -26,7 +26,7 @@ const steps = [
   {
     n: "02",
     title: "Отримайте PDF",
-    text: "Email — і рахунок одразу завантажується клієнту.",
+    text: "PDF одразу в браузері. Email — welcome і податкові нагадування.",
     icon: "/brand/step-2.webp",
     alt: "Іконка: завантаження PDF рахунку",
   },
@@ -43,18 +43,32 @@ const faqs = [
   {
     q: "Як створити рахунок-фактуру онлайн?",
     a: "Відкрийте Rakhuno → Рахунок, вкажіть дані ФОП та позиції, залиште email — PDF завантажиться одразу.",
+    href: "/invoice",
+    linkLabel: "Відкрити рахунок",
+  },
+  {
+    q: "Що таке рахунок-фактура для ФОП?",
+    a: "Документ на оплату з реквізитами, позиціями й сумою. Короткий розбір — у гіді, далі одразу PDF у Rakhuno.",
+    href: "/guides/rahunok-faktura",
+    linkLabel: "Читати гід",
   },
   {
     q: "Чи потрібен Checkbox або Медок?",
     a: "Ні. Rakhuno — легкий онлайн-рахунок для ФОП без важкої бухгалтерії.",
+    href: "/guides/rahunok-onlayn",
+    linkLabel: "Рахунок онлайн за 2 хвилини",
   },
   {
     q: "Що з податками?",
     a: "Ми лише нагадуємо типові строки (єдиний податок, ЄСВ). Це не податкова консультація.",
+    href: "/guides/yedynyy-podatok",
+    linkLabel: "Коли платити єдиний податок",
   },
   {
     q: "Чи безкоштовно?",
     a: "Так. Створення рахунку-фактури та PDF зараз безкоштовні.",
+    href: "/invoice",
+    linkLabel: "Створити безкоштовно",
   },
 ];
 
@@ -303,6 +317,12 @@ export default function HomePage() {
               <div key={f.q} className="py-6">
                 <h3 className="font-display text-xl text-paper">{f.q}</h3>
                 <p className="mt-2 text-mist">{f.a}</p>
+                <Link
+                  href={f.href}
+                  className="mt-3 inline-block text-sm text-signal underline-offset-2 hover:underline"
+                >
+                  {f.linkLabel} →
+                </Link>
               </div>
             ))}
           </div>
