@@ -4,14 +4,14 @@ import { ArticleLayout } from "@/components/ArticleLayout";
 import { JsonLd } from "@/components/JsonLd";
 
 export const metadata: Metadata = {
-  title: "Рахунок-фактура для ФОП: що це, реквізити, як створити онлайн",
+  title: "Рахунок-фактура для ФОП: зразок, реквізити, PDF онлайн",
   description:
-    "Що таке рахунок-фактура для ФОП, які реквізити потрібні, чим відрізняється від акту, зразок полів і як швидко зібрати PDF онлайн у Rakhuno.",
+    "Зразок рахунку-фактури для ФОП: які поля потрібні, чим відрізняється від акту, як заповнити й одразу скачати PDF онлайн у Rakhuno — без Word і Checkbox.",
   alternates: { canonical: "https://rakhuno.com/guides/rahunok-faktura" },
   openGraph: {
-    title: "Рахунок-фактура для ФОП · Rakhuno",
+    title: "Рахунок-фактура для ФОП: зразок і PDF · Rakhuno",
     description:
-      "Реквізити, зразок полів і онлайн PDF за 2 хвилини — без Checkbox і Медок.",
+      "Зразок полів, реквізити й онлайн PDF за 2 хвилини — без Checkbox і Медок.",
     url: "https://rakhuno.com/guides/rahunok-faktura",
   },
 };
@@ -60,7 +60,7 @@ const faqLd = {
 const articleLd = {
   "@context": "https://schema.org",
   "@type": "Article",
-  headline: "Рахунок-фактура для ФОП: що це і як створити",
+  headline: "Рахунок-фактура для ФОП: зразок, реквізити, PDF онлайн",
   description: metadata.description,
   datePublished: "2026-09-27",
   dateModified: "2026-09-28T03:00:00+00:00",
@@ -106,8 +106,8 @@ export default function Page() {
     <>
       <JsonLd data={[articleLd, faqLd, howToLd]} />
       <ArticleLayout
-        title="Рахунок-фактура для ФОП"
-        description="Що це за документ, які поля потрібні і як зібрати PDF клієнту за кілька хвилин."
+        title="Рахунок-фактура для ФОП: зразок і PDF"
+        description="Зразок полів, обов’язкові реквізити й онлайн PDF клієнту за кілька хвилин — без Word."
         path="/guides/rahunok-faktura"
         related={[
           { href: "/guides/rahunok-onlayn", label: "Рахунок онлайн за 2 хвилини" },
