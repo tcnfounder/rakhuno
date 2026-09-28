@@ -100,7 +100,7 @@ export default function Page() {
         path="/guides/zrazok-rahunku-faktury"
         related={[
           { href: "/guides/rahunok-faktura", label: "Рахунок-фактура: що це" },
-          { href: "/guides/rahunok-onlayn", label: "Рахунок онлайн за 2 хвилини" },
+          { href: "/guides/vystavyty-rakhunok", label: "Як виставити рахунок" },
           { href: "/invoice", label: "Створити PDF зараз" },
         ]}
       >

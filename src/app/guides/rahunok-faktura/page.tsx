@@ -111,8 +111,8 @@ export default function Page() {
         path="/guides/rahunok-faktura"
         related={[
           { href: "/guides/zrazok-rahunku-faktury", label: "Зразок рахунку-фактури" },
+          { href: "/guides/vystavyty-rakhunok", label: "Як виставити рахунок" },
           { href: "/guides/rahunok-onlayn", label: "Рахунок онлайн за 2 хвилини" },
-          { href: "/guides/yedynyy-podatok", label: "Єдиний податок: коли платити" },
         ]}
       >
         <p>

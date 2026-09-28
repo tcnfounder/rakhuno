@@ -786,6 +786,14 @@ export default function InvoiceClient() {
             <ul className="mt-4 space-y-3 text-mist">
               <li>
                 <Link
+                  href="/guides/vystavyty-rakhunok"
+                  className="text-paper transition hover:text-signal"
+                >
+                  → Як виставити рахунок на оплату
+                </Link>
+              </li>
+              <li>
+                <Link
                   href="/guides/rahunok-faktura"
                   className="text-paper transition hover:text-signal"
                 >
@@ -794,18 +802,10 @@ export default function InvoiceClient() {
               </li>
               <li>
                 <Link
-                  href="/guides/rahunok-onlayn"
+                  href="/guides/zrazok-rahunku-faktury"
                   className="text-paper transition hover:text-signal"
                 >
-                  → Рахунок онлайн за 2 хвилини
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/guides/yedynyy-podatok"
-                  className="text-paper transition hover:text-signal"
-                >
-                  → Єдиний податок: коли платити
+                  → Зразок рахунку-фактури
                 </Link>
               </li>
               <li>
