@@ -18,25 +18,27 @@ function flattenFormControls(root: HTMLElement) {
     }
 
     replacement.textContent = text || "—";
+    const isCell = control.hasAttribute("data-pdf-cell");
     replacement.setAttribute(
       "style",
       [
         "display:block",
         "width:100%",
         "margin:0",
-        "padding:6px 0 4px",
+        isCell ? "padding:4px 6px" : "padding:4px 0",
         "border:0",
-        "border-bottom:1px solid #e5e5e5",
+        isCell ? "border-bottom:0" : "border-bottom:1px solid #d4d4d4",
         "background:transparent",
         "color:#171717",
         "font:inherit",
         "font-size:inherit",
         "font-weight:inherit",
-        "line-height:1.45",
+        "line-height:1.35",
         "letter-spacing:inherit",
         "white-space:pre-wrap",
         "word-break:break-word",
-        "min-height:1.45em",
+        "min-height:1.25em",
+        "box-sizing:border-box",
       ].join(";"),
     );
 

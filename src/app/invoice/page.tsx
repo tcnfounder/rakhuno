@@ -2,20 +2,20 @@ import type { Metadata } from "next";
 import InvoiceClient from "./InvoiceClient";
 
 export const metadata: Metadata = {
-  title: "Рахунок-фактура онлайн",
+  title: "Рахунок-проформа онлайн",
   description:
-    "Створіть рахунок-фактуру для ФОП і завантажте PDF. Email-нагадування про податки від Rakhuno.",
+    "Створіть рахунок-проформу для ФОП у українському форматі і завантажте PDF. Email-нагадування про податки від Rakhuno.",
   alternates: { canonical: "https://rakhuno.com/invoice" },
   openGraph: {
-    title: "Рахунок-фактура онлайн · Rakhuno",
+    title: "Рахунок-проформа онлайн · Rakhuno",
     description:
-      "Створіть рахунок-фактуру для ФОП і завантажте PDF. Email-нагадування про податки.",
+      "Створіть рахунок-проформу для ФОП і завантажте PDF. Email-нагадування про податки.",
     url: "https://rakhuno.com/invoice",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Рахунок-фактура онлайн · Rakhuno",
-    description: "Створіть рахунок-фактуру для ФОП і завантажте PDF.",
+    title: "Рахунок-проформа онлайн · Rakhuno",
+    description: "Створіть рахунок-проформу для ФОП і завантажте PDF.",
     images: ["/brand/og-default.png"],
   },
 };

@@ -1,6 +1,8 @@
 export type InvoiceItem = {
   id: string;
   description: string;
+  /** Unit label, e.g. шт., послуга, год. */
+  unit: string;
   qty: string;
   price: string;
 };
@@ -52,7 +54,13 @@ export function newId() {
 }
 
 export function emptyItem(stableId?: string): InvoiceItem {
-  return { id: stableId || newId(), description: "", qty: "1", price: "" };
+  return {
+    id: stableId || newId(),
+    description: "",
+    unit: "послуга",
+    qty: "1",
+    price: "",
+  };
 }
 
 export function todayIso() {
@@ -177,14 +185,135 @@ export function validateInvoice(data: InvoiceData): string | null {
 export function paymentText(data: InvoiceData) {
   const total = formatUah(calcTotal(data.items));
   return [
-    `Рахунок №${data.number || "—"} від ${formatDateUk(data.date)}`,
+    `Рахунок-проформа №${data.number || "—"} від ${formatDateUk(data.date)}`,
     `Отримувач: ${data.sellerName || "—"}`,
     data.sellerTaxId ? `ІПН/ЄДРПОУ: ${data.sellerTaxId}` : null,
     data.sellerIban ? `IBAN: ${data.sellerIban}` : null,
     data.sellerBank ? `Банк: ${data.sellerBank}` : null,
     `Сума: ${total}`,
-    data.note ? `Примітка: ${data.note}` : null,
+    data.note ? `Призначення / умови: ${data.note}` : null,
   ]
     .filter(Boolean)
     .join("\n");
+}
+
+/** Amount in Ukrainian words for proforma footer (грн + коп.). */
+export function amountInWordsUk(value: number): string {
+  const safe = Math.max(0, Math.round(value * 100) / 100);
+  const hryvni = Math.floor(safe);
+  const kopiyky = Math.round((safe - hryvni) * 100);
+
+  const ones = [
+    "",
+    "одна",
+    "дві",
+    "три",
+    "чотири",
+    "пʼять",
+    "шість",
+    "сім",
+    "вісім",
+    "девʼять",
+  ];
+  const onesM = [
+    "",
+    "один",
+    "два",
+    "три",
+    "чотири",
+    "пʼять",
+    "шість",
+    "сім",
+    "вісім",
+    "девʼять",
+  ];
+  const teens = [
+    "десять",
+    "одинадцять",
+    "дванадцять",
+    "тринадцять",
+    "чотирнадцять",
+    "пʼятнадцять",
+    "шістнадцять",
+    "сімнадцять",
+    "вісімнадцять",
+    "девʼятнадцять",
+  ];
+  const tens = [
+    "",
+    "",
+    "двадцять",
+    "тридцять",
+    "сорок",
+    "пʼятдесят",
+    "шістдесят",
+    "сімдесят",
+    "вісімдесят",
+    "девʼяносто",
+  ];
+  const hundreds = [
+    "",
+    "сто",
+    "двісті",
+    "триста",
+    "чотириста",
+    "пʼятсот",
+    "шістсот",
+    "сімсот",
+    "вісімсот",
+    "девʼятсот",
+  ];
+
+  function triad(n: number, feminine: boolean): string {
+    const h = Math.floor(n / 100);
+    const t = Math.floor((n % 100) / 10);
+    const o = n % 10;
+    const parts: string[] = [];
+    if (h) parts.push(hundreds[h]);
+    if (t === 1) {
+      parts.push(teens[o]);
+    } else {
+      if (t) parts.push(tens[t]);
+      if (o) parts.push((feminine ? ones : onesM)[o]);
+    }
+    return parts.join(" ");
+  }
+
+  function plural(n: number, one: string, few: string, many: string) {
+    const mod10 = n % 10;
+    const mod100 = n % 100;
+    if (mod10 === 1 && mod100 !== 11) return one;
+    if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return few;
+    return many;
+  }
+
+  if (hryvni === 0) {
+    const kopWord = plural(kopiyky, "копійка", "копійки", "копійок");
+    return `нуль гривень ${String(kopiyky).padStart(2, "0")} ${kopWord}`;
+  }
+
+  const millions = Math.floor(hryvni / 1_000_000);
+  const thousands = Math.floor((hryvni % 1_000_000) / 1000);
+  const rest = hryvni % 1000;
+  const chunks: string[] = [];
+
+  if (millions) {
+    chunks.push(
+      `${triad(millions, false)} ${plural(millions, "мільйон", "мільйони", "мільйонів")}`,
+    );
+  }
+  if (thousands) {
+    chunks.push(
+      `${triad(thousands, true)} ${plural(thousands, "тисяча", "тисячі", "тисяч")}`,
+    );
+  }
+  if (rest || (!millions && !thousands)) {
+    chunks.push(triad(rest, false) || "нуль");
+  }
+
+  const hrWord = plural(hryvni, "гривня", "гривні", "гривень");
+  const kopWord = plural(kopiyky, "копійка", "копійки", "копійок");
+  const body = chunks.join(" ").replace(/\s+/g, " ").trim();
+  const capitalized = body.charAt(0).toUpperCase() + body.slice(1);
+  return `${capitalized} ${hrWord} ${String(kopiyky).padStart(2, "0")} ${kopWord}`;
 }

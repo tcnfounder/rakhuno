@@ -5,6 +5,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import {
   InvoiceData,
   InvoiceItem,
+  amountInWordsUk,
   bumpInvoiceCounter,
   calcLine,
   calcTotal,
@@ -38,7 +39,7 @@ function SoftField({
 }) {
   return (
     <label className={`block ${className}`}>
-      <span className="mb-1 flex items-baseline justify-between gap-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-neutral-500">
+      <span className="mb-0.5 flex items-baseline justify-between gap-2 text-[10px] font-semibold uppercase tracking-[0.06em] text-neutral-500">
         <span>{label}</span>
         {hint ? <span className="normal-case tracking-normal text-neutral-400">{hint}</span> : null}
       </span>
@@ -47,12 +48,16 @@ function SoftField({
   );
 }
 
-const paperInput =
-  "w-full appearance-none border-0 border-b border-neutral-200 bg-transparent px-0 py-2 text-[14px] leading-[1.45] text-neutral-900 outline-none transition placeholder:text-neutral-400 focus:border-neutral-900 min-h-[2.25rem] overflow-visible";
+const lineInput =
+  "w-full appearance-none border-0 border-b border-neutral-300 bg-transparent px-0 py-1 text-[13px] leading-[1.35] text-neutral-900 outline-none placeholder:text-neutral-400 focus:border-neutral-900 min-h-[1.75rem]";
+
+const cellInput =
+  "w-full appearance-none border-0 bg-transparent px-1.5 py-1.5 text-[12px] leading-[1.3] text-neutral-900 outline-none placeholder:text-neutral-400 focus:bg-neutral-50 min-h-[2rem]";
 
 export default function InvoiceClient() {
   const previewRef = useRef<HTMLDivElement>(null);
   const logoInputRef = useRef<HTMLInputElement>(null);
+  const readyRef = useRef<HTMLDivElement>(null);
   const [email, setEmail] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -60,7 +65,7 @@ export default function InvoiceClient() {
   const [unlocked, setUnlocked] = useState(false);
   const [copied, setCopied] = useState(false);
   const [lastPdf, setLastPdf] = useState<PdfResult | null>(null);
-  const [showDone, setShowDone] = useState(false);
+  const [pdfReady, setPdfReady] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   const [data, setData] = useState<InvoiceData>({
@@ -76,7 +81,7 @@ export default function InvoiceClient() {
     buyerTaxId: "",
     buyerAddress: "",
     items: [emptyItem("line-initial")],
-    note: "Оплата протягом 5 банківських днів.",
+    note: "Оплата протягом 5 банківських днів на зазначений IBAN. Без ПДВ.",
     fopGroup: "",
   });
 
@@ -93,7 +98,7 @@ export default function InvoiceClient() {
       const meta = window.sessionStorage.getItem(LAST_PDF_META_KEY);
       if (meta) {
         setUnlocked(true);
-        setOkMsg("PDF уже створювався в цій сесії — натисніть «Завантажити знову».");
+        setOkMsg("PDF уже створювався в цій сесії — натисніть «Завантажити PDF» нижче.");
       }
     } catch {
       /* ignore */
@@ -101,15 +106,21 @@ export default function InvoiceClient() {
     setMounted(true);
   }, []);
 
+  useEffect(() => {
+    if (!pdfReady) return;
+    readyRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, [pdfReady]);
+
   const total = useMemo(() => calcTotal(data.items), [data.items]);
   const hasLogo = Boolean(data.sellerLogo);
+  const words = useMemo(() => amountInWordsUk(total), [total]);
 
   if (!mounted) {
     return (
       <main className="min-h-screen bg-ink">
         <div className="grid-atmosphere min-h-screen">
           <SiteHeader />
-          <div className="mx-auto max-w-content px-5 py-16 text-mist">Завантаження рахунку…</div>
+          <div className="mx-auto max-w-content px-5 py-16 text-mist">Завантаження…</div>
         </div>
       </main>
     );
@@ -122,7 +133,9 @@ export default function InvoiceClient() {
   function updateItem(id: string, patch: Partial<InvoiceItem>) {
     setData((prev) => ({
       ...prev,
-      items: prev.items.map((item) => (item.id === id ? { ...item, ...patch } : item)),
+      items: prev.items.map((item) =>
+        item.id === id ? { ...item, unit: item.unit || "послуга", ...patch } : item,
+      ),
     }));
   }
 
@@ -151,9 +164,9 @@ export default function InvoiceClient() {
     try {
       const dataUrl = await prepareLogo(file);
       update("sellerLogo", dataUrl);
-      setOkMsg("Логотип додано. У PDF зберігається пропорція.");
+      setOkMsg("Логотип додано.");
     } catch {
-      setError("Не вдалося обробити зображення. Спробуйте JPG/PNG до 8 МБ.");
+      setError("Не вдалося обробити зображення. JPG/PNG до 8 МБ.");
     }
   }
 
@@ -182,12 +195,11 @@ export default function InvoiceClient() {
       return;
     }
     if (!email.trim()) {
-      setError("Вкажіть email для PDF і нагадувань.");
+      setError("Вкажіть email — для податкових нагадувань.");
       return;
     }
     setBusy(true);
     try {
-      // Lead in background — never block / navigate away for mailing.
       void fetch("/api/leads", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -202,12 +214,12 @@ export default function InvoiceClient() {
       await makePdf();
       bumpInvoiceCounter(data.number);
       setUnlocked(true);
-      setShowDone(true);
-      setOkMsg("PDF готовий — перевірте завантаження або кнопку в вікні.");
+      setPdfReady(true);
+      setOkMsg("PDF сформовано. Якщо файл не зʼявився — кнопка нижче.");
     } catch {
-      setError("Не вдалося створити PDF. Спробуйте ще раз.");
+      setError("Не вдалося створити PDF. Спробуйте ще раз кнопкою нижче.");
       setUnlocked(true);
-      setShowDone(true);
+      setPdfReady(true);
     } finally {
       setBusy(false);
     }
@@ -227,11 +239,11 @@ export default function InvoiceClient() {
       } else {
         await makePdf();
       }
+      setPdfReady(true);
       setOkMsg("PDF завантажено.");
-      setShowDone(true);
     } catch {
       setError("Не вдалося створити PDF.");
-      setShowDone(true);
+      setPdfReady(true);
     } finally {
       setBusy(false);
     }
@@ -245,12 +257,14 @@ export default function InvoiceClient() {
         </div>
 
         <div className="mx-auto w-full max-w-content px-5 py-8 md:px-10 md:py-10">
-          <div className="print:hidden mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div className="print:hidden mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <h1 className="font-display text-3xl font-semibold text-paper md:text-4xl">Рахунок</h1>
+              <h1 className="font-display text-3xl font-semibold text-paper md:text-4xl">
+                Рахунок-проформа
+              </h1>
               <p className="mt-2 max-w-xl text-mist">
-                A4 без зсувів. Логотип ФОП — опційно: якщо додасте, шапка підлаштується; без
-                лого — чистий рахунок.
+                Український формат для ФОП: реквізити, таблиця позицій, сума прописом. Логотип —
+                опційно.
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -274,8 +288,7 @@ export default function InvoiceClient() {
             </div>
           </div>
 
-          {/* Logo controls live outside the A4 sheet so empty state never holes the document */}
-          <div className="print:hidden mx-auto mb-4 flex w-full max-w-[210mm] flex-wrap items-center gap-3">
+          <div className="print:hidden mx-auto mb-3 flex w-full max-w-[210mm] flex-wrap items-center gap-3">
             <input
               ref={logoInputRef}
               type="file"
@@ -297,147 +310,150 @@ export default function InvoiceClient() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => {
-                    update("sellerLogo", "");
-                    setOkMsg("Логотип прибрано — макет знову без нього.");
-                  }}
+                  onClick={() => update("sellerLogo", "")}
                   className="rounded-full border border-white/15 px-3 py-1.5 text-sm text-mist hover:border-signal hover:text-signal"
                 >
                   Прибрати логотип
                 </button>
-                <span className="text-xs text-muted">Горизонтальний або квадрат — як є, без crop.</span>
               </>
             ) : (
-              <>
-                <button
-                  type="button"
-                  onClick={() => logoInputRef.current?.click()}
-                  className="rounded-full border border-dashed border-white/25 px-3 py-1.5 text-sm text-mist hover:border-signal hover:text-signal"
-                >
-                  + Додати логотип (опційно)
-                </button>
-                <span className="text-xs text-muted">Без лого рахунок виглядає так само чисто.</span>
-              </>
+              <button
+                type="button"
+                onClick={() => logoInputRef.current?.click()}
+                className="rounded-full border border-dashed border-white/25 px-3 py-1.5 text-sm text-mist hover:border-signal hover:text-signal"
+              >
+                + Логотип (опційно)
+              </button>
             )}
           </div>
 
+          {/* —— A4 проформа —— */}
           <div className="mx-auto w-full max-w-[210mm] overflow-x-auto">
             <div
               ref={previewRef}
-              className="mx-auto w-[210mm] min-h-[297mm] bg-white text-[#171717] shadow-[0_24px_80px_rgba(0,0,0,0.45)] print:shadow-none"
+              className="mx-auto w-[210mm] min-h-[297mm] bg-white text-[#111] shadow-[0_24px_80px_rgba(0,0,0,0.45)] print:shadow-none"
               style={{
                 fontFamily: "Arial, Helvetica, sans-serif",
-                padding: "16mm 16mm 14mm",
+                padding: "14mm 14mm 12mm",
                 boxSizing: "border-box",
               }}
             >
-              {/* Header: logo only when present — layout reflows, never leaves a hole */}
-              <div className="flex items-start justify-between gap-6 border-b border-neutral-900 pb-5">
-                <div className="flex min-w-0 flex-1 items-start gap-4">
+              {/* Title row */}
+              <div className="flex items-start justify-between gap-4 border-b-2 border-neutral-900 pb-3">
+                <div className="min-w-0 flex-1">
                   {hasLogo ? (
-                    <div className="shrink-0">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={data.sellerLogo}
-                        alt=""
-                        className="max-h-14 w-auto max-w-[160px] object-contain object-left"
-                      />
-                    </div>
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={data.sellerLogo}
+                      alt=""
+                      className="mb-2 max-h-12 w-auto max-w-[150px] object-contain object-left"
+                    />
                   ) : null}
-                  <div className="min-w-0 flex-1">
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-neutral-500">
-                      Рахунок-фактура
-                    </p>
-                    <SoftField label="Постачальник (ФОП)" className="mt-2">
-                      <input
-                        className={`${paperInput} text-xl font-bold`}
-                        placeholder="ПІБ ФОП"
-                        value={data.sellerName}
-                        onChange={(e) => update("sellerName", e.target.value)}
-                      />
-                    </SoftField>
-                  </div>
+                  <p className="text-[18px] font-bold uppercase tracking-[0.04em]">
+                    Рахунок-проформа
+                  </p>
+                  <p className="mt-1 text-[11px] text-neutral-500">
+                    Не є податковою накладною. Для оплати послуг / товарів.
+                  </p>
                 </div>
-                <div className="w-[120px] shrink-0 text-right">
-                  <SoftField label="Номер">
+                <div className="w-[148px] shrink-0 space-y-1 text-right">
+                  <SoftField label="№">
                     <input
-                      className={`${paperInput} text-right`}
+                      className={`${lineInput} text-right font-semibold`}
                       value={data.number}
                       onChange={(e) => update("number", e.target.value.slice(0, 20))}
                     />
                   </SoftField>
-                  <SoftField label="Дата" className="mt-2">
+                  <SoftField label="від">
                     <input
-                      className={`${paperInput} text-right`}
+                      className={`${lineInput} text-right`}
                       type="date"
                       value={data.date}
                       onChange={(e) => update("date", e.target.value)}
                     />
                   </SoftField>
-                  <p className="mt-2 text-xs text-neutral-500">від {formatDateUk(data.date)}</p>
+                  <p className="text-[11px] text-neutral-600">{formatDateUk(data.date)}</p>
                 </div>
               </div>
 
-              <div className="mt-5 grid gap-x-8 gap-y-2 sm:grid-cols-2">
-                <SoftField label="ІПН / ЄДРПОУ">
-                  <input
-                    className={paperInput}
-                    inputMode="numeric"
-                    placeholder="1234567890"
-                    value={data.sellerTaxId}
-                    onChange={(e) => update("sellerTaxId", formatTaxId(e.target.value))}
-                  />
-                </SoftField>
-                <SoftField label="Банк">
-                  <input
-                    className={paperInput}
-                    placeholder="ПриватБанк"
-                    value={data.sellerBank}
-                    onChange={(e) => update("sellerBank", e.target.value)}
-                  />
-                </SoftField>
-                <SoftField label="IBAN" hint="обовʼязково" className="sm:col-span-2">
-                  <input
-                    className={`${paperInput} font-mono tracking-wide`}
-                    placeholder="UA00 0000 …"
-                    value={data.sellerIban}
-                    onChange={(e) => update("sellerIban", formatIban(e.target.value))}
-                  />
-                </SoftField>
-                <SoftField label="Адреса" className="sm:col-span-2">
-                  <input
-                    className={paperInput}
-                    placeholder="м. Київ…"
-                    value={data.sellerAddress}
-                    onChange={(e) => update("sellerAddress", e.target.value)}
-                  />
-                </SoftField>
-              </div>
-
-              <div className="mt-8 rounded-sm bg-neutral-50 px-4 py-3">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-neutral-500">
-                  Платник / замовник
-                </p>
-                <SoftField label="Назва / ПІБ" className="mt-2">
-                  <input
-                    className={`${paperInput} text-lg font-semibold`}
-                    placeholder="ТОВ «Клієнт»"
-                    value={data.buyerName}
-                    onChange={(e) => update("buyerName", e.target.value)}
-                  />
-                </SoftField>
-                <div className="mt-2 grid gap-3 sm:grid-cols-2">
-                  <SoftField label="ІПН / ЄДРПОУ" hint="опційно">
+              {/* Parties */}
+              <div className="mt-4 grid grid-cols-2 gap-0 border border-neutral-800">
+                <div className="border-r border-neutral-800 p-3">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-neutral-600">
+                    Виконавець (постачальник)
+                  </p>
+                  <SoftField label="ФОП / назва" className="mt-2">
                     <input
-                      className={paperInput}
+                      className={`${lineInput} text-[15px] font-bold`}
+                      placeholder="ПІБ ФОП"
+                      value={data.sellerName}
+                      onChange={(e) => update("sellerName", e.target.value)}
+                    />
+                  </SoftField>
+                  <SoftField label="ІПН / ЄДРПОУ" className="mt-2">
+                    <input
+                      className={lineInput}
+                      inputMode="numeric"
+                      placeholder="1234567890"
+                      value={data.sellerTaxId}
+                      onChange={(e) => update("sellerTaxId", formatTaxId(e.target.value))}
+                    />
+                  </SoftField>
+                  <SoftField label="Адреса" className="mt-2">
+                    <input
+                      className={lineInput}
+                      placeholder="м. Київ…"
+                      value={data.sellerAddress}
+                      onChange={(e) => update("sellerAddress", e.target.value)}
+                    />
+                  </SoftField>
+                  <SoftField label="Банк" className="mt-2">
+                    <input
+                      className={lineInput}
+                      placeholder="ПриватБанк"
+                      value={data.sellerBank}
+                      onChange={(e) => update("sellerBank", e.target.value)}
+                    />
+                  </SoftField>
+                  <SoftField label="IBAN" hint="обовʼязково" className="mt-2">
+                    <input
+                      className={`${lineInput} font-mono text-[12px] tracking-wide`}
+                      placeholder="UA00 0000 …"
+                      value={data.sellerIban}
+                      onChange={(e) => update("sellerIban", formatIban(e.target.value))}
+                    />
+                  </SoftField>
+                  {data.fopGroup ? (
+                    <p className="mt-2 text-[11px] text-neutral-600">
+                      Платник єдиного податку, {data.fopGroup} група. Без ПДВ.
+                    </p>
+                  ) : (
+                    <p className="mt-2 text-[11px] text-neutral-500">Без ПДВ (за замовчуванням).</p>
+                  )}
+                </div>
+                <div className="p-3">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-neutral-600">
+                    Замовник (платник)
+                  </p>
+                  <SoftField label="Назва / ПІБ" className="mt-2">
+                    <input
+                      className={`${lineInput} text-[15px] font-bold`}
+                      placeholder="ТОВ «Клієнт»"
+                      value={data.buyerName}
+                      onChange={(e) => update("buyerName", e.target.value)}
+                    />
+                  </SoftField>
+                  <SoftField label="ІПН / ЄДРПОУ" hint="опційно" className="mt-2">
+                    <input
+                      className={lineInput}
                       inputMode="numeric"
                       value={data.buyerTaxId}
                       onChange={(e) => update("buyerTaxId", formatTaxId(e.target.value))}
                     />
                   </SoftField>
-                  <SoftField label="Адреса" hint="опційно">
+                  <SoftField label="Адреса" hint="опційно" className="mt-2">
                     <input
-                      className={paperInput}
+                      className={lineInput}
                       value={data.buyerAddress}
                       onChange={(e) => update("buyerAddress", e.target.value)}
                     />
@@ -445,112 +461,193 @@ export default function InvoiceClient() {
                 </div>
               </div>
 
-              <div className="mt-8">
-                <div className="mb-2 flex items-center justify-between">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-neutral-500">
-                    Позиції
+              {/* Lines table */}
+              <div className="mt-5">
+                <div className="mb-1 flex items-center justify-between">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-neutral-600">
+                    Перелік товарів / послуг
                   </p>
                   <button
                     type="button"
                     data-pdf-hide
                     onClick={() => update("items", [...data.items, emptyItem()])}
-                    className="text-sm text-neutral-600 underline-offset-2 hover:text-neutral-900 hover:underline"
+                    className="text-[12px] text-neutral-600 underline-offset-2 hover:text-neutral-900 hover:underline"
                   >
                     + рядок
                   </button>
                 </div>
 
-                <div className="overflow-hidden rounded-sm border border-neutral-200">
-                  <div className="grid grid-cols-[36px_1fr_64px_88px_96px_28px] gap-2 border-b border-neutral-200 bg-neutral-50 px-2 py-2 text-[10px] uppercase tracking-wide text-neutral-500">
-                    <span>№</span>
-                    <span>Опис</span>
-                    <span>К-сть</span>
-                    <span>Ціна</span>
-                    <span className="text-right">Сума</span>
-                    <span />
-                  </div>
-
-                  <div className="divide-y divide-neutral-100">
+                <table className="w-full border-collapse border border-neutral-800 text-[12px]">
+                  <thead>
+                    <tr className="bg-neutral-100">
+                      <th className="w-8 border border-neutral-800 px-1 py-1.5 text-center font-semibold">
+                        №
+                      </th>
+                      <th className="border border-neutral-800 px-1.5 py-1.5 text-left font-semibold">
+                        Найменування
+                      </th>
+                      <th className="w-16 border border-neutral-800 px-1 py-1.5 text-center font-semibold">
+                        Од.
+                      </th>
+                      <th className="w-14 border border-neutral-800 px-1 py-1.5 text-center font-semibold">
+                        К-сть
+                      </th>
+                      <th className="w-[72px] border border-neutral-800 px-1 py-1.5 text-right font-semibold">
+                        Ціна
+                      </th>
+                      <th className="w-[84px] border border-neutral-800 px-1 py-1.5 text-right font-semibold">
+                        Сума
+                      </th>
+                      <th
+                        data-pdf-hide
+                        className="w-7 border border-neutral-800 px-0 py-1.5 font-semibold"
+                      />
+                    </tr>
+                  </thead>
+                  <tbody>
                     {data.items.map((item, index) => (
-                      <div
-                        key={item.id}
-                        className="grid grid-cols-[36px_1fr_64px_88px_96px_28px] items-center gap-2 px-2 py-2"
-                      >
-                        <span className="text-sm text-neutral-400">{index + 1}</span>
-                        <input
-                          className={paperInput}
-                          placeholder="Опис послуги"
-                          value={item.description}
-                          onChange={(e) => updateItem(item.id, { description: e.target.value })}
-                        />
-                        <input
-                          className={paperInput}
-                          inputMode="decimal"
-                          placeholder="1"
-                          aria-label="Кількість"
-                          value={item.qty}
-                          onChange={(e) =>
-                            updateItem(item.id, {
-                              qty: e.target.value.replace(/[^\d.,]/g, "").slice(0, 12),
-                            })
-                          }
-                        />
-                        <input
-                          className={paperInput}
-                          inputMode="decimal"
-                          placeholder="0"
-                          aria-label="Ціна"
-                          value={item.price}
-                          onChange={(e) =>
-                            updateItem(item.id, {
-                              price: e.target.value.replace(/[^\d.,]/g, "").slice(0, 14),
-                            })
-                          }
-                        />
-                        <p className="text-right text-sm font-medium tabular-nums">
+                      <tr key={item.id}>
+                        <td className="border border-neutral-800 px-1 py-1 text-center text-neutral-500">
+                          {index + 1}
+                        </td>
+                        <td className="border border-neutral-800 p-0">
+                          <input
+                            data-pdf-cell
+                            className={cellInput}
+                            placeholder="Опис послуги / товару"
+                            value={item.description}
+                            onChange={(e) => updateItem(item.id, { description: e.target.value })}
+                          />
+                        </td>
+                        <td className="border border-neutral-800 p-0">
+                          <input
+                            data-pdf-cell
+                            className={`${cellInput} text-center`}
+                            placeholder="шт."
+                            aria-label="Одиниця"
+                            value={item.unit || "послуга"}
+                            onChange={(e) =>
+                              updateItem(item.id, { unit: e.target.value.slice(0, 16) })
+                            }
+                          />
+                        </td>
+                        <td className="border border-neutral-800 p-0">
+                          <input
+                            data-pdf-cell
+                            className={`${cellInput} text-center`}
+                            inputMode="decimal"
+                            placeholder="1"
+                            aria-label="Кількість"
+                            value={item.qty}
+                            onChange={(e) =>
+                              updateItem(item.id, {
+                                qty: e.target.value.replace(/[^\d.,]/g, "").slice(0, 12),
+                              })
+                            }
+                          />
+                        </td>
+                        <td className="border border-neutral-800 p-0">
+                          <input
+                            data-pdf-cell
+                            className={`${cellInput} text-right`}
+                            inputMode="decimal"
+                            placeholder="0"
+                            aria-label="Ціна"
+                            value={item.price}
+                            onChange={(e) =>
+                              updateItem(item.id, {
+                                price: e.target.value.replace(/[^\d.,]/g, "").slice(0, 14),
+                              })
+                            }
+                          />
+                        </td>
+                        <td className="border border-neutral-800 px-1.5 py-1.5 text-right tabular-nums font-medium">
                           {formatUah(calcLine(item))}
-                        </p>
-                        <button
-                          type="button"
-                          data-pdf-hide
-                          aria-label="Видалити"
-                          onClick={() => removeItem(item.id)}
-                          className="justify-self-end text-neutral-400 hover:text-neutral-900"
-                        >
-                          ×
-                        </button>
-                      </div>
+                        </td>
+                        <td data-pdf-hide className="border border-neutral-800 p-0 text-center">
+                          <button
+                            type="button"
+                            aria-label="Видалити"
+                            onClick={() => removeItem(item.id)}
+                            className="px-1 text-neutral-400 hover:text-neutral-900"
+                          >
+                            ×
+                          </button>
+                        </td>
+                      </tr>
                     ))}
-                  </div>
-                </div>
+                  </tbody>
+                </table>
 
-                <div className="mt-5 flex items-baseline justify-between border-t-2 border-neutral-900 pt-3">
-                  <span className="text-sm font-medium uppercase tracking-wide text-neutral-500">
-                    До сплати
-                  </span>
-                  <span className="text-2xl font-bold tabular-nums">{formatUah(total)}</span>
+                <div className="mt-0 border border-t-0 border-neutral-800">
+                  <div className="flex items-baseline justify-between gap-4 px-3 py-2">
+                    <span className="text-[12px] font-semibold uppercase tracking-wide">
+                      Всього до сплати
+                    </span>
+                    <span className="text-[20px] font-bold tabular-nums">{formatUah(total)}</span>
+                  </div>
+                  <div className="border-t border-neutral-300 px-3 py-2 text-[12px] leading-snug text-neutral-800">
+                    <span className="font-semibold">Сума прописом: </span>
+                    {words}
+                  </div>
                 </div>
               </div>
 
-              <SoftField label="Примітка" className="mt-6">
+              <SoftField label="Призначення платежу / умови оплати" className="mt-4">
                 <textarea
-                  className={`${paperInput} min-h-[3.5rem] resize-y`}
+                  className={`${lineInput} min-h-[3rem] resize-y`}
                   value={data.note}
                   onChange={(e) => update("note", e.target.value)}
                 />
               </SoftField>
 
-              <p className="mt-8 text-[9px] text-neutral-400">
-                Документ сформовано через rakhuno.com. Не є податковою консультацією.
+              <div className="mt-8 grid grid-cols-2 gap-8 text-[12px]">
+                <div>
+                  <p className="font-semibold">Виконавець</p>
+                  <p className="mt-6 border-b border-neutral-400 pb-1 text-neutral-500">
+                    підпис / ПІБ
+                  </p>
+                </div>
+                <div>
+                  <p className="font-semibold">Замовник</p>
+                  <p className="mt-6 border-b border-neutral-400 pb-1 text-neutral-500">
+                    підпис / ПІБ
+                  </p>
+                </div>
+              </div>
+
+              <p className="mt-6 text-[9px] text-neutral-400">
+                Сформовано через rakhuno.com. Не є податковою консультацією.
               </p>
             </div>
           </div>
 
+          {/* Download / email — inline success, no overlay (adblock-safe) */}
           <div className="mx-auto mt-8 max-w-[210mm] print:hidden">
-            <div className="rounded-xl border border-white/10 bg-ink-2/80 p-4 sm:p-5">
+            <div
+              ref={readyRef}
+              className="rounded-xl border border-white/10 bg-ink-2/80 p-4 sm:p-5"
+            >
+              {pdfReady ? (
+                <div className="mb-4 rounded-lg border border-signal/40 bg-signal/10 p-4">
+                  <p className="font-display text-lg font-semibold text-paper">PDF готовий</p>
+                  <p className="mt-1 text-sm text-mist">
+                    Файл має бути в «Завантаженнях». Adblock інколи блокує спливаючі вікна — тому
+                    кнопка тут, у сторінці. У листі PDF немає.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => void downloadAgain()}
+                    disabled={busy}
+                    className="mt-3 w-full rounded-lg bg-signal px-4 py-3 font-semibold text-ink hover:bg-white disabled:opacity-60 sm:w-auto"
+                  >
+                    {busy ? "…" : "Завантажити PDF"}
+                  </button>
+                </div>
+              ) : null}
+
               <p className="text-sm text-mist">
-                Email — для податкових нагадувань. PDF завжди завантажується в браузері; ми не
-                надсилаємо рахунок вашому клієнту і не кладемо PDF у лист.
+                Email — для податкових нагадувань. PDF завжди в браузері.
               </p>
               <div className="mt-3 flex flex-col gap-3 sm:flex-row">
                 <input
@@ -568,26 +665,19 @@ export default function InvoiceClient() {
                   }}
                   className="w-full rounded-lg border border-white/15 bg-ink px-3.5 py-3 text-paper outline-none placeholder:text-muted focus:border-signal"
                 />
-                {unlocked ? (
-                  <button
-                    type="button"
-                    onClick={() => void downloadAgain()}
-                    disabled={busy}
-                    className="rounded-lg bg-signal px-5 py-3 font-semibold text-ink transition hover:bg-white disabled:opacity-60"
-                  >
-                    {busy ? "…" : "Завантажити знову"}
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => void unlockAndDownload()}
-                    disabled={busy}
-                    className="rounded-lg bg-signal px-5 py-3 font-semibold text-ink transition hover:bg-white disabled:opacity-60"
-                  >
-                    {busy ? "…" : "Отримати PDF"}
-                  </button>
-                )}
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (unlocked) void downloadAgain();
+                    else void unlockAndDownload();
+                  }}
+                  disabled={busy}
+                  className="rounded-lg bg-signal px-5 py-3 font-semibold text-ink transition hover:bg-white disabled:opacity-60"
+                >
+                  {busy ? "…" : unlocked ? "Завантажити знову" : "Отримати PDF"}
+                </button>
               </div>
+
               {unlocked ? (
                 <div className="mt-3 flex flex-wrap gap-2">
                   <button
@@ -626,8 +716,8 @@ export default function InvoiceClient() {
                       }));
                       setUnlocked(false);
                       setLastPdf(null);
-                      setShowDone(false);
-                      setOkMsg("Новий рахунок.");
+                      setPdfReady(false);
+                      setOkMsg("Новий рахунок-проформа.");
                       try {
                         window.sessionStorage.removeItem(LAST_PDF_META_KEY);
                       } catch {
@@ -660,46 +750,10 @@ export default function InvoiceClient() {
           {busy
             ? "…"
             : unlocked
-              ? `Завантажити знову · ${formatUah(total)}`
+              ? `Завантажити PDF · ${formatUah(total)}`
               : `Отримати PDF · ${formatUah(total)}`}
         </button>
       </div>
-
-      {showDone ? (
-        <div
-          className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 p-4 sm:items-center print:hidden"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="pdf-done-title"
-        >
-          <div className="w-full max-w-md rounded-2xl border border-white/10 bg-ink-2 p-5 shadow-2xl">
-            <h2 id="pdf-done-title" className="font-display text-xl font-semibold text-paper">
-              PDF готовий
-            </h2>
-            <p className="mt-2 text-sm text-mist">
-              Файл має зʼявитися в завантаженнях браузера. Лист на email — лише нагадування; PDF у
-              ньому немає. Якщо файл не зʼявився — натисніть кнопку нижче.
-            </p>
-            <div className="mt-5 flex flex-col gap-2 sm:flex-row">
-              <button
-                type="button"
-                onClick={() => void downloadAgain()}
-                disabled={busy}
-                className="flex-1 rounded-lg bg-signal px-4 py-3 font-semibold text-ink hover:bg-white disabled:opacity-60"
-              >
-                Завантажити PDF
-              </button>
-              <button
-                type="button"
-                onClick={() => setShowDone(false)}
-                className="rounded-lg border border-white/15 px-4 py-3 text-mist hover:border-signal hover:text-signal"
-              >
-                Закрити
-              </button>
-            </div>
-          </div>
-        </div>
-      ) : null}
     </main>
   );
 }
