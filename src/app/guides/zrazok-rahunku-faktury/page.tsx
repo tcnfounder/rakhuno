@@ -1,15 +1,16 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { ArticleLayout } from "@/components/ArticleLayout";
 import { JsonLd } from "@/components/JsonLd";
 
 export const metadata: Metadata = {
-  title: "Зразок рахунку-фактури для ФОП: поля, приклад, PDF онлайн",
+  title: "Рахунок-фактура зразок для ФОП: поля, приклад, PDF онлайн",
   description:
-    "Зразок рахунку-фактури для ФОП: які поля заповнити, приклад структури без Word і як одразу скачати PDF онлайн у Rakhuno.",
+    "Рахунок-фактура зразок для ФОП: які поля заповнити, приклад структури без Word і як одразу скачати PDF онлайн у Rakhuno.",
   alternates: { canonical: "https://rakhuno.com/guides/zrazok-rahunku-faktury" },
   openGraph: {
-    title: "Зразок рахунку-фактури для ФОП · Rakhuno",
+    title: "Рахунок-фактура зразок для ФОП · Rakhuno",
     description: "Приклад полів + онлайн PDF за 2 хвилини — без бланка Word.",
     url: "https://rakhuno.com/guides/zrazok-rahunku-faktury",
   },
@@ -99,8 +100,8 @@ export default function Page() {
         description="Які поля потрібні, приклад структури й як одразу зібрати PDF онлайн — без Word."
         path="/guides/zrazok-rahunku-faktury"
         related={[
-          { href: "/guides/rahunok-faktura", label: "Рахунок-фактура: що це" },
-          { href: "/guides/vystavyty-rakhunok", label: "Як виставити рахунок" },
+          { href: "/guides/rakhunok-na-oplatu", label: "Рахунок на оплату" },
+          { href: "/guides/blank-rakhunku-faktury", label: "Бланк рахунку-фактури" },
           { href: "/invoice", label: "Створити PDF зараз" },
         ]}
       >
@@ -113,6 +114,20 @@ export default function Page() {
           </Link>
           .
         </p>
+
+        <figure className="not-prose my-8">
+          <Image
+            src="/brand/invoice.webp"
+            alt="Зразок рахунку-фактури для ФОП: приклад PDF з реквізитами та позиціями"
+            width={1200}
+            height={630}
+            className="w-full rounded-xl border border-line"
+            priority
+          />
+          <figcaption className="mt-2 text-sm text-muted">
+            Візуальний зразок рахунку-фактури — те, що клієнт бачить у PDF.
+          </figcaption>
+        </figure>
 
         <h2 className="!mt-10 font-display text-2xl text-paper">Зразок полів (приклад)</h2>
         <div className="not-prose rounded-xl border border-line bg-ink-2/40 p-5 text-sm leading-relaxed text-mist">

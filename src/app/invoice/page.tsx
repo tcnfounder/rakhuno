@@ -1,22 +1,23 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { JsonLd } from "@/components/JsonLd";
 import InvoiceClient from "./InvoiceClient";
 
 export const metadata: Metadata = {
-  title: "Рахунок-проформа онлайн",
+  title: "Рахунок-фактура онлайн для ФОП: виставити PDF за 2 хвилини",
   description:
-    "Створіть рахунок-проформу для ФОП у українському форматі і завантажте PDF. Email-нагадування про податки від Rakhuno.",
+    "Виставити рахунок на оплату / рахунок-фактуру для ФОП онлайн: заповніть реквізити, скачайте PDF. Проформа-інвойс без Word і Checkbox — безкоштовно.",
   alternates: { canonical: "https://rakhuno.com/invoice" },
   openGraph: {
-    title: "Рахунок-проформа онлайн · Rakhuno",
+    title: "Рахунок-фактура онлайн для ФОП · Rakhuno",
     description:
-      "Створіть рахунок-проформу для ФОП і завантажте PDF. Email-нагадування про податки.",
+      "Виставити рахунок на оплату за 2 хвилини: PDF у браузері, email-нагадування про податки.",
     url: "https://rakhuno.com/invoice",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Рахунок-проформа онлайн · Rakhuno",
-    description: "Створіть рахунок-проформу для ФОП і завантажте PDF.",
+    title: "Рахунок-фактура онлайн для ФОП · Rakhuno",
+    description: "Виставити рахунок на оплату й скачати PDF за 2 хвилини.",
     images: ["/brand/og-default.png"],
   },
 };
@@ -27,10 +28,18 @@ const faqLd = {
   mainEntity: [
     {
       "@type": "Question",
-      name: "Як створити рахунок-проформу для ФОП?",
+      name: "Як виставити рахунок-фактуру онлайн для ФОП?",
       acceptedAnswer: {
         "@type": "Answer",
         text: "Заповніть реквізити ФОП, покупця та позиції, вкажіть email і натисніть «Отримати PDF». Файл завантажиться у браузері.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "Це рахунок на оплату чи проформа-інвойс?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Так. У документі — рахунок-проформа (рахунок на оплату) з реквізитами, позиціями й сумою для переказу на IBAN. Не є податковою накладною.",
       },
     },
     {
@@ -46,7 +55,7 @@ const faqLd = {
       name: "Чи безкоштовно?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Так. Створення рахунку-проформи та PDF зараз безкоштовні.",
+        text: "Так. Створення рахунку-фактури та PDF зараз безкоштовні.",
       },
     },
   ],
@@ -55,7 +64,7 @@ const faqLd = {
 const howToLd = {
   "@context": "https://schema.org",
   "@type": "HowTo",
-  name: "Створити рахунок-проформу онлайн у Rakhuno",
+  name: "Виставити рахунок-фактуру онлайн у Rakhuno",
   totalTime: "PT2M",
   step: [
     {
@@ -71,7 +80,7 @@ const howToLd = {
     {
       "@type": "HowToStep",
       name: "PDF",
-      text: "Залиште email і завантажте PDF у браузері.",
+      text: "Залиште email і завантажте рахунок на оплату в браузері.",
     },
   ],
 };
@@ -81,6 +90,44 @@ export default function InvoicePage() {
     <>
       <JsonLd data={[faqLd, howToLd]} />
       <InvoiceClient />
+      <section className="print:hidden border-t border-line bg-ink px-5 py-12 md:px-10">
+        <div className="mx-auto w-full max-w-content">
+          <h2 className="font-display text-2xl text-paper">Рахунок-фактура онлайн за 2 хвилини</h2>
+          <p className="mt-3 text-mist">
+            Rakhuno збирає <strong className="text-paper/90">рахунок на оплату</strong> (проформа /
+            рахунок-фактура в побутовій мові) у PDF: реквізити ФОП, покупець, позиції, сума прописом.
+            Без Word-бланка й без Checkbox.
+          </p>
+          <ul className="mt-5 list-disc space-y-2 pl-5 text-mist">
+            <li>IBAN і профіль ФОП можна зберегти в браузері.</li>
+            <li>PDF качається локально — зручно надіслати в Telegram чи email.</li>
+            <li>
+              Гіди:{" "}
+              <Link
+                href="/guides/rakhunok-na-oplatu"
+                className="text-signal underline-offset-2 hover:underline"
+              >
+                рахунок на оплату
+              </Link>
+              ,{" "}
+              <Link
+                href="/guides/blank-rakhunku-faktury"
+                className="text-signal underline-offset-2 hover:underline"
+              >
+                бланк
+              </Link>
+              ,{" "}
+              <Link
+                href="/guides/vystavyty-rakhunok"
+                className="text-signal underline-offset-2 hover:underline"
+              >
+                як виставити рахунок
+              </Link>
+              .
+            </li>
+          </ul>
+        </div>
+      </section>
     </>
   );
 }
