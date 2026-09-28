@@ -15,7 +15,7 @@ const entries: Entry[] = [
   {
     path: "/guides/rahunok-faktura",
     priority: 0.95,
-    changeFrequency: "weekly",
+    changeFrequency: "daily",
     lastModified: "2026-09-28",
   },
   {
