@@ -10,11 +10,11 @@ Accent: `#c6f26d` on `#07110e`
 Şablonlar Active olsun (id 1 / 3 / 2). Site `/api/leads` üzerinden:
 
 1. Mail 0 — **hemen** (`templateId` 1)
-2. Mail 1 — **+3 gün** `scheduledAt` (`templateId` 3)
-3. Mail 2 — **+7 gün** `scheduledAt` (`templateId` 2)
+2. Mail 1 — **+3 gün** `scheduledAt` (`templateId` 3) — free plan max
+3. Mail 2 — contact’ta `DRIP_DAY7=pending` + due; `/api/cron/drip` (GitHub Actions saatlik) Brevo 3-gün penceresinde schedule/send eder (`templateId` 2)
 
-Brevo Marketing Automations kullanma (çift gönderim riski).  
-Test: `rakhuno.com/invoice` → yeni email → Welcome + scheduled drip.
+Brevo Marketing Automations kullanma.  
+Env: `CRON_SECRET` (Railway + GitHub secret aynı).
 
 Aylık + vergi penceresi mailleri (Mail 3–4) sonra eklenir; önce 0–1–2 yeter.
 

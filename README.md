@@ -32,7 +32,8 @@ Repo is linked in Railway. **Push / merge to `main` → Railway builds and deplo
 - `BREVO_LIST_ID` (e.g. `3`)
 - `BREVO_WELCOME_TEMPLATE_ID` (default `1`) — immediate welcome
 - `BREVO_DAY3_TEMPLATE_ID` (default `3`) — scheduled +3 days
-- `BREVO_DAY7_TEMPLATE_ID` (default `2`) — scheduled +7 days
+- `BREVO_DAY7_TEMPLATE_ID` (default `2`) — queued; cron schedules within Brevo’s 3-day limit
+- `CRON_SECRET` — protects `/api/cron/drip` (same value in GitHub Actions secret)
 - `NEXT_PUBLIC_GA_MEASUREMENT_ID` (e.g. `G-XXXXXXXX`) — already live on Railway if set
 - `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` — Search Console meta (optional)
 
