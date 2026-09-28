@@ -6,7 +6,7 @@ import { SiteShell } from "@/components/SiteShell";
 export const metadata: Metadata = {
   title: "Гіди для ФОП: рахунок, податки, 3 група",
   description:
-    "Практичні гіди Rakhuno: рахунок-фактура, рахунок онлайн, ФОП 3 група, єдиний податок і чекліст податків.",
+    "Практичні гіди Rakhuno: рахунок-фактура, зразок рахунку, рахунок онлайн, ФОП 3 група, єдиний податок.",
   alternates: { canonical: "https://rakhuno.com/guides" },
   openGraph: {
     title: "Гіди для ФОП · Rakhuno",
@@ -20,6 +20,11 @@ const guides = [
     href: "/guides/rahunok-faktura",
     title: "Що таке рахунок-фактура для ФОП",
     blurb: "Навіщо документ, які поля потрібні, як виставити швидко.",
+  },
+  {
+    href: "/guides/zrazok-rahunku-faktury",
+    title: "Зразок рахунку-фактури для ФОП",
+    blurb: "Приклад полів і шлях до PDF онлайн — без Word-бланка.",
   },
   {
     href: "/guides/fop-3-grupa",

@@ -17,6 +17,9 @@ export function SiteFooter() {
             <Link href="/guides/rahunok-faktura" className="hover:text-signal">
               Рахунок-фактура
             </Link>
+            <Link href="/guides/zrazok-rahunku-faktury" className="hover:text-signal">
+              Зразок
+            </Link>
             <Link href="/invoice" className="hover:text-signal">
               Рахунок
             </Link>

@@ -19,6 +19,12 @@ const entries: Entry[] = [
     lastModified: "2026-09-28",
   },
   {
+    path: "/guides/zrazok-rahunku-faktury",
+    priority: 0.94,
+    changeFrequency: "weekly",
+    lastModified: "2026-09-28",
+  },
+  {
     path: "/guides/fop-3-grupa",
     priority: 0.88,
     changeFrequency: "monthly",
