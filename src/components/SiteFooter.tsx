@@ -43,6 +43,23 @@ export function SiteFooter() {
         <p className="max-w-2xl text-xs leading-relaxed">
           Не є податковою консультацією. Строки загальні; перевіряйте актуальні вимоги ДПС.
         </p>
+        <p className="text-xs">
+          <a
+            href="https://www.jettfy.com/uk"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 text-muted transition-colors hover:text-paper"
+          >
+            <span>Розробка:</span>
+            <img
+              src="/brand/jettfy-logo.svg"
+              alt="Jettfy"
+              width={75}
+              height={30}
+              className="h-[1.05rem] w-auto opacity-90"
+            />
+          </a>
+        </p>
       </div>
     </footer>
   );
