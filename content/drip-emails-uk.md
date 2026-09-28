@@ -11,10 +11,10 @@ Accent: `#c6f26d` on `#07110e`
 
 1. Mail 0 — **hemen** (`templateId` 1)
 2. Mail 1 — **+3 gün** `scheduledAt` (`templateId` 3) — free plan max
-3. Mail 2 — contact’ta `DRIP_DAY7=pending` + due; `/api/cron/drip` (GitHub Actions saatlik) Brevo 3-gün penceresinde schedule/send eder (`templateId` 2)
+3. Mail 2 — contact’ta `DRIP_DAY7=pending` + due; Railway app (`CRON_SECRET` set) saatlik in-process cron ile Brevo 3-gün penceresinde schedule/send eder (`templateId` 2)
 
 Brevo Marketing Automations kullanma.  
-Env: `CRON_SECRET` (Railway + GitHub secret aynı).
+Env: Railway’de `CRON_SECRET` yeterli (GitHub Actions yok).
 
 Aylık + vergi penceresi mailleri (Mail 3–4) sonra eklenir; önce 0–1–2 yeter.
 
