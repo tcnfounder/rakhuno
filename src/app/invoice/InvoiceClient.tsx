@@ -271,11 +271,11 @@ export default function InvoiceClient() {
           <div className="print:hidden mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <h1 className="font-display text-3xl font-semibold text-paper md:text-4xl">
-                Рахунок-проформа
+                Рахунок-фактура онлайн
               </h1>
               <p className="mt-2 max-w-xl text-mist">
-                Як у типовому рахунку на оплату для ФОП: сторони, таблиця, сума прописом. Багато
-                рядків — PDF на кілька аркушів. Логотип опційно.
+                Виставити рахунок на оплату для ФОП: сторони, таблиця, сума прописом, PDF у браузері.
+                Багато рядків — кілька аркушів. Логотип опційно.
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -357,7 +357,7 @@ export default function InvoiceClient() {
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
                         src={data.sellerLogo}
-                        alt=""
+                        alt="Логотип ФОП на рахунку-фактурі"
                         className="mb-2 max-h-11 w-auto max-w-[140px] object-contain object-left"
                       />
                     ) : null}

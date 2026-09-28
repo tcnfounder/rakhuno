@@ -105,8 +105,8 @@ export default function Page() {
         description="Коли надсилати, які поля потрібні й як одразу зібрати PDF онлайн — без Word."
         path="/guides/vystavyty-rakhunok"
         related={[
-          { href: "/guides/rahunok-faktura", label: "Рахунок-фактура: що це" },
-          { href: "/guides/zrazok-rahunku-faktury", label: "Зразок рахунку-фактури" },
+          { href: "/guides/rakhunok-na-oplatu", label: "Рахунок на оплату" },
+          { href: "/guides/blank-rakhunku-faktury", label: "Бланк рахунку-фактури" },
           { href: "/invoice", label: "Виставити рахунок зараз" },
         ]}
       >
