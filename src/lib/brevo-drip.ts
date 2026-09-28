@@ -71,6 +71,13 @@ export async function sendTransactionalTemplate(
       to: [{ email }],
       templateId: opts.templateId,
       tags: opts.tags,
+      // Best-effort: keep CTAs as real rakhuno.com URLs when Brevo honors these.
+      // (Not all plans respect them; middleware still catches apex /uuid.)
+      headers: {
+        "X-Mailin-Track": "false",
+        "X-Mailin-Track-Clicks": "false",
+        "X-Mailin-Track-Opens": "false",
+      },
     };
     if (opts.scheduledAt) body.scheduledAt = opts.scheduledAt;
 

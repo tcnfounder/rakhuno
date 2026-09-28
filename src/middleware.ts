@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 
-/** Brevo click-tracking can rewrite CTAs to `https://rakhuno.com/<uuid>` when
- *  link branding points at the site apex. Those paths 404 here — send users
- *  to the invoice tool (where their form state lives in localStorage). */
+/**
+ * Brevo click-tracking sometimes lands on `https://rakhuno.com/<uuid>`
+ * (apex used as branded host, or Mail Privacy Protection prefetch).
+ * Absolute 302 → /invoice so Safari doesn't stick on a dead UUID path.
+ */
 export function middleware(req: NextRequest) {
-  const url = req.nextUrl.clone();
-  url.pathname = "/invoice";
-  url.search = "";
-  return NextResponse.redirect(url, 302);
+  return NextResponse.redirect(new URL("/invoice", req.url), 302);
 }
 
 export const config = {
