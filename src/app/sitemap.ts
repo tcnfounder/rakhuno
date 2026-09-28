@@ -9,14 +9,14 @@ type Entry = {
 };
 
 const entries: Entry[] = [
-  { path: "", priority: 1, changeFrequency: "weekly", lastModified: "2026-09-27" },
-  { path: "/invoice", priority: 0.95, changeFrequency: "weekly", lastModified: "2026-09-27" },
-  { path: "/guides", priority: 0.85, changeFrequency: "weekly", lastModified: "2026-09-27" },
+  { path: "", priority: 1, changeFrequency: "weekly", lastModified: "2026-09-28" },
+  { path: "/invoice", priority: 0.95, changeFrequency: "weekly", lastModified: "2026-09-28" },
+  { path: "/guides", priority: 0.9, changeFrequency: "weekly", lastModified: "2026-09-28" },
   {
     path: "/guides/rahunok-faktura",
-    priority: 0.9,
-    changeFrequency: "monthly",
-    lastModified: "2026-09-27",
+    priority: 0.95,
+    changeFrequency: "weekly",
+    lastModified: "2026-09-28",
   },
   {
     path: "/guides/fop-3-grupa",
@@ -38,9 +38,9 @@ const entries: Entry[] = [
   },
   {
     path: "/guides/rahunok-onlayn",
-    priority: 0.86,
-    changeFrequency: "monthly",
-    lastModified: "2026-09-27",
+    priority: 0.9,
+    changeFrequency: "weekly",
+    lastModified: "2026-09-28",
   },
   { path: "/privacy", priority: 0.3, changeFrequency: "yearly", lastModified: "2026-09-20" },
   { path: "/terms", priority: 0.3, changeFrequency: "yearly", lastModified: "2026-09-20" },

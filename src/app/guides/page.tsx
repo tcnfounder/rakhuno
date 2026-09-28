@@ -49,8 +49,15 @@ export default function GuidesIndexPage() {
       <SiteShell>
         <h1 className="font-display text-4xl font-semibold text-paper md:text-5xl">Гіди для ФОП</h1>
         <p className="mt-4 max-w-2xl text-mist">
-          Короткі сторінки під пошукові запити. Потім — у Rakhuno створити рахунок і підписатися на
-          нагадування.
+          Короткі сторінки під пошукові запити. Почніть з{" "}
+          <Link href="/guides/rahunok-faktura" className="text-signal underline-offset-2 hover:underline">
+            рахунку-фактури
+          </Link>
+          , потім{" "}
+          <Link href="/invoice" className="text-signal underline-offset-2 hover:underline">
+            створіть PDF у Rakhuno
+          </Link>{" "}
+          і підпишіться на нагадування про податки.
         </p>
         <div className="mt-12 max-w-3xl space-y-6">
           {guides.map((g) => (
