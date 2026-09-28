@@ -5,18 +5,16 @@ List: **Rakhuno Leads** (id `3`)
 Logo: `https://rakhuno.com/brand/mark.webp`  
 Accent: `#c6f26d` on `#07110e`
 
-## Brevo’da 10 dakikalık kurulum
+## Kurulum (otomatik — panel Automation yok)
 
-1. **Campaigns → Templates** — aşağıdan 3 şablon oluştur (Mail 0 / 1 / 2).
-2. **Automations → Create automation**
-   - Trigger: **Contact added to list** → `Rakhuno Leads` (id 3)
-   - Step A: **Send email** → Template Mail 0 (hemen)
-   - Step B: **Wait** → 3 days
-   - Step C: **Send email** → Template Mail 1
-   - Step D: **Wait** → 4 days (toplam ~7. gün)
-   - Step E: **Send email** → Template Mail 2
-3. Automation’ı **Active** yap.
-4. Test: `rakhuno.com/invoice` → kendi mailinle fatura çıkar → 2 dk içinde Mail 0 gelmeli.
+Şablonlar Active olsun (id 1 / 3 / 2). Site `/api/leads` üzerinden:
+
+1. Mail 0 — **hemen** (`templateId` 1)
+2. Mail 1 — **+3 gün** `scheduledAt` (`templateId` 3)
+3. Mail 2 — **+7 gün** `scheduledAt` (`templateId` 2)
+
+Brevo Marketing Automations kullanma (çift gönderim riski).  
+Test: `rakhuno.com/invoice` → yeni email → Welcome + scheduled drip.
 
 Aylık + vergi penceresi mailleri (Mail 3–4) sonra eklenir; önce 0–1–2 yeter.
 
