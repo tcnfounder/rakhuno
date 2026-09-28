@@ -93,6 +93,29 @@ export async function sendTransactionalTemplate(
   }
 }
 
+/** Create text attributes if missing (400 = already exists). */
+async function ensureDripAttributes(env: WorkerEnv) {
+  if (!env.BREVO_API_KEY) return;
+  for (const name of ["DRIP_DAY7", "DRIP_DAY7_DUE"] as const) {
+    try {
+      const res = await fetch("https://api.brevo.com/v3/contacts/attributes", {
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          "content-type": "application/json",
+          "api-key": env.BREVO_API_KEY,
+        },
+        body: JSON.stringify({ name, type: "text" }),
+      });
+      if (!res.ok && res.status !== 400) {
+        console.error("[brevo-attr-create]", name, res.status, await res.text());
+      }
+    } catch (e) {
+      console.error("[brevo-attr-create]", name, e);
+    }
+  }
+}
+
 async function patchContactAttributes(
   email: string,
   env: WorkerEnv,
@@ -136,6 +159,7 @@ export async function scheduleDripEmails(email: string, env: WorkerEnv) {
     logLabel: "brevo-drip-day3",
   });
 
+  await ensureDripAttributes(env);
   const queued = await patchContactAttributes(email, env, {
     DRIP_DAY7: "pending",
     DRIP_DAY7_DUE: day7Due,
