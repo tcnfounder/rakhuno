@@ -20,3 +20,18 @@ Yarım kalan Brevo Automation varsa **Activate etme** — sil / Inactive.
 
 Test: invoice → yeni mail →  
 `"welcome":"sent"`, `"drip":{"day3":"scheduled","day7":"queued"}`
+
+---
+
+## Safari / `rakhuno.com/<uuid>` linki
+
+Bu site bug’ı değil — **Brevo click-tracking**. Mail Privacy Protection / tıklanınca bazen  
+`https://rakhuno.com/e4006d87-…` açılır; middleware bunu **`/invoice`**’a 302 eder.
+
+Kalıcı (Brevo panel, 2 dk):
+
+1. Brevo → **Senders / Domains** → `rakhuno.com`  
+2. Link branding host: **`mail.rakhuno.com`** (apex `rakhuno.com` değil)  
+3. DNS’te CNAME zaten var; `mail.rakhuno.com` şu an Brevo tarafında timeout — Domain’i **Authenticate / Refresh** et, SSL yeşile dönene kadar bekle  
+
+Doğru olunca maillerdeki track link `mail.rakhuno.com/…` olur; Safari apex UUID açmaz.
