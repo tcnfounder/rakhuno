@@ -15,6 +15,7 @@ export const metadata: Metadata = {
   },
 };
 
+/** Money-intent guides first — stronger internal PageRank for SEO cluster. */
 const guides = [
   {
     href: "/guides/rahunok-faktura",
@@ -22,9 +23,9 @@ const guides = [
     blurb: "Навіщо документ, які поля потрібні, як виставити швидко.",
   },
   {
-    href: "/guides/zrazok-rahunku-faktury",
-    title: "Зразок рахунку-фактури для ФОП",
-    blurb: "Приклад полів і шлях до PDF онлайн — без Word-бланка.",
+    href: "/guides/rakhunok-na-oplatu",
+    title: "Рахунок на оплату для ФОП",
+    blurb: "Зразок полів, реквізити й онлайн PDF — без Excel.",
   },
   {
     href: "/guides/vystavyty-rakhunok",
@@ -32,9 +33,14 @@ const guides = [
     blurb: "Коли надсилати клієнту, які поля й PDF за 2 хвилини.",
   },
   {
-    href: "/guides/rakhunok-na-oplatu",
-    title: "Рахунок на оплату для ФОП",
-    blurb: "Зразок полів, реквізити й онлайн PDF — без Excel.",
+    href: "/guides/zrazok-rahunku-faktury",
+    title: "Зразок рахунку-фактури для ФОП",
+    blurb: "Приклад полів і шлях до PDF онлайн — без Word-бланка.",
+  },
+  {
+    href: "/guides/rahunok-onlayn",
+    title: "Рахунок онлайн за 2 хвилини",
+    blurb: "Як зібрати PDF без Checkbox і Медок.",
   },
   {
     href: "/guides/blank-rakhunku-faktury",
@@ -55,11 +61,6 @@ const guides = [
     href: "/guides/podatky-fop",
     title: "Податки ФОП: чекліст",
     blurb: "Що перевірити щомісяця / щокварталу.",
-  },
-  {
-    href: "/guides/rahunok-onlayn",
-    title: "Рахунок онлайн за 2 хвилини",
-    blurb: "Як зібрати PDF без Checkbox і Медок.",
   },
 ];
 

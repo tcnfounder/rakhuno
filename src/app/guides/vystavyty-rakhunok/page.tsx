@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArticleLayout } from "@/components/ArticleLayout";
 import { JsonLd } from "@/components/JsonLd";
+import { MidInvoiceCta } from "@/components/SiteShell";
 
 export const metadata: Metadata = {
   title: "Як виставити рахунок на оплату ФОП онлайн: крок за кроком",
@@ -58,7 +59,7 @@ const articleLd = {
   headline: "Як виставити рахунок на оплату ФОП онлайн",
   description: metadata.description,
   datePublished: "2026-09-28",
-  dateModified: "2026-09-28",
+  dateModified: "2026-09-29",
   author: { "@type": "Organization", name: "Rakhuno" },
   publisher: {
     "@type": "Organization",
@@ -137,6 +138,11 @@ export default function Page() {
           </Link>
           .
         </p>
+
+        <MidInvoiceCta
+          title="Виставити рахунок зараз"
+          text="Кроки нижче — у конструкторі Rakhuno: реквізити → позиції → PDF клієнту."
+        />
 
         <h2 className="!mt-10 font-display text-2xl text-paper">Коли виставляти рахунок</h2>
         <ul className="list-disc space-y-2 pl-5 text-mist">

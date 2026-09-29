@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArticleLayout } from "@/components/ArticleLayout";
 import { JsonLd } from "@/components/JsonLd";
+import { MidInvoiceCta } from "@/components/SiteShell";
 
 export const metadata: Metadata = {
   title: "Рахунок-фактура зразок для ФОП: поля, приклад, PDF онлайн",
@@ -55,7 +56,7 @@ const articleLd = {
   headline: "Зразок рахунку-фактури для ФОП",
   description: metadata.description,
   datePublished: "2026-09-28",
-  dateModified: "2026-09-28",
+  dateModified: "2026-09-29",
   author: { "@type": "Organization", name: "Rakhuno" },
   publisher: {
     "@type": "Organization",
@@ -128,6 +129,11 @@ export default function Page() {
             Візуальний зразок рахунку-фактури — те, що клієнт бачить у PDF.
           </figcaption>
         </figure>
+
+        <MidInvoiceCta
+          title="Заповнити зразок онлайн"
+          text="Не копіюйте Word — відкрийте конструктор і отримайте свій PDF з ІПН та IBAN."
+        />
 
         <h2 className="!mt-10 font-display text-2xl text-paper">Зразок полів (приклад)</h2>
         <div className="not-prose rounded-xl border border-line bg-ink-2/40 p-5 text-sm leading-relaxed text-mist">

@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArticleLayout } from "@/components/ArticleLayout";
 import { JsonLd } from "@/components/JsonLd";
+import { MidInvoiceCta } from "@/components/SiteShell";
 
 export const metadata: Metadata = {
   title: "Рахунок на оплату для ФОП: зразок, реквізити, PDF онлайн",
@@ -55,7 +56,7 @@ const articleLd = {
   headline: "Рахунок на оплату для ФОП: зразок, реквізити, PDF онлайн",
   description: metadata.description,
   datePublished: "2026-09-28",
-  dateModified: "2026-09-28",
+  dateModified: "2026-09-29",
   author: { "@type": "Organization", name: "Rakhuno" },
   publisher: {
     "@type": "Organization",
@@ -137,6 +138,11 @@ export default function Page() {
             Приклад вигляду рахунку на оплату: сторони, таблиця, сума.
           </figcaption>
         </figure>
+
+        <MidInvoiceCta
+          title="Зробити рахунок на оплату онлайн"
+          text="Ті самі поля, що в зразку нижче — у живому документі. PDF клієнту за ~2 хвилини."
+        />
 
         <h2 className="!mt-10 font-display text-2xl text-paper">Зразок полів рахунку на оплату</h2>
         <div className="not-prose rounded-xl border border-line bg-ink-2/40 p-5 text-sm leading-relaxed text-mist">

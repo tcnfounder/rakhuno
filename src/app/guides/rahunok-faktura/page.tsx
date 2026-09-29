@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArticleLayout } from "@/components/ArticleLayout";
 import { JsonLd } from "@/components/JsonLd";
+import { MidInvoiceCta } from "@/components/SiteShell";
 
 export const metadata: Metadata = {
   title: "Рахунок-фактура для ФОП: зразок, реквізити, PDF онлайн",
@@ -63,7 +64,7 @@ const articleLd = {
   headline: "Рахунок-фактура для ФОП: зразок, реквізити, PDF онлайн",
   description: metadata.description,
   datePublished: "2026-09-27",
-  dateModified: "2026-09-28T03:00:00+00:00",
+  dateModified: "2026-09-29T03:00:00+00:00",
   author: { "@type": "Organization", name: "Rakhuno" },
   publisher: {
     "@type": "Organization",
@@ -175,6 +176,11 @@ export default function Page() {
           Помилка в IBAN або коді платника — найчастіша причина «завислих» платежів. Тому краще
           зберігати профіль ФОП один раз і не передруковувати з месенджера.
         </p>
+
+        <MidInvoiceCta
+          title="Потрібен готовий PDF, а не теорія?"
+          text="Відкрийте конструктор — поля рахунку-фактури вже зібрані. Заповніть ФОП і позиції, скачайте PDF."
+        />
 
         <h2 className="!mt-10 font-display text-2xl text-paper">Зразок логіки полів (без шаблону Word)</h2>
         <p>

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Onest, Unbounded } from "next/font/google";
 import { Analytics } from "@/components/Analytics";
-import { JsonLd, organizationLd, softwareLd } from "@/components/JsonLd";
+import { JsonLd, organizationLd, softwareLd, websiteLd } from "@/components/JsonLd";
 import "./globals.css";
 
 const googleVerification = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION?.trim();
@@ -72,7 +72,7 @@ export default function RootLayout({
   return (
     <html lang="uk">
       <body className={`${display.variable} ${body.variable} antialiased`}>
-        <JsonLd data={[organizationLd, softwareLd]} />
+        <JsonLd data={[organizationLd, softwareLd, websiteLd]} />
         <Analytics />
         {children}
       </body>
