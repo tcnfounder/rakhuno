@@ -29,19 +29,20 @@ export function BrandLockup({ href = "/", size = "md", className = "" }: BrandLo
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src="/brand/r-letter.webp"
-        alt=""
-        aria-hidden
+        alt="Rakhuno"
         draggable={false}
         className="block shrink-0 select-none object-contain"
         style={{ height: R_HEIGHT, width: "auto" }}
       />
-      <span className="leading-none">akhuno</span>
+      <span className="leading-none" aria-hidden>
+        akhuno
+      </span>
     </span>
   );
 
   if (!href) return inner;
   return (
-    <Link href={href} className="inline-flex items-center leading-none" aria-label="Rakhuno">
+    <Link href={href} className="inline-flex items-center leading-none">
       {inner}
     </Link>
   );

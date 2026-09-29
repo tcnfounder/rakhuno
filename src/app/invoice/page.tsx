@@ -91,41 +91,65 @@ export default function InvoicePage() {
       <JsonLd data={[faqLd, howToLd]} />
       <InvoiceClient />
       <section className="print:hidden border-t border-line bg-ink px-5 py-12 md:px-10">
-        <div className="mx-auto w-full max-w-content">
-          <h2 className="font-display text-2xl text-paper">Рахунок-фактура онлайн за 2 хвилини</h2>
+        <div className="mx-auto w-full max-w-3xl">
+          <h2 className="font-display text-2xl text-paper md:text-3xl">
+            Рахунок-фактура онлайн за 2 хвилини
+          </h2>
           <p className="mt-3 text-mist">
             Rakhuno збирає <strong className="text-paper/90">рахунок на оплату</strong> (проформа /
             рахунок-фактура в побутовій мові) у PDF: реквізити ФОП, покупець, позиції, сума прописом.
             Без Word-бланка й без Checkbox.
           </p>
-          <ul className="mt-5 list-disc space-y-2 pl-5 text-mist">
-            <li>IBAN і профіль ФОП можна зберегти в браузері.</li>
-            <li>PDF качається локально — зручно надіслати в Telegram чи email.</li>
-            <li>
-              Гіди:{" "}
-              <Link
-                href="/guides/rakhunok-na-oplatu"
-                className="text-signal underline-offset-2 hover:underline"
-              >
-                рахунок на оплату
-              </Link>
-              ,{" "}
-              <Link
-                href="/guides/blank-rakhunku-faktury"
-                className="text-signal underline-offset-2 hover:underline"
-              >
-                бланк
-              </Link>
-              ,{" "}
-              <Link
-                href="/guides/vystavyty-rakhunok"
-                className="text-signal underline-offset-2 hover:underline"
-              >
-                як виставити рахунок
-              </Link>
-              .
-            </li>
+          <h3 className="mt-8 font-display text-xl text-paper">Що заповнити перед PDF</h3>
+          <ul className="mt-3 list-disc space-y-2 pl-5 text-mist">
+            <li>ПІБ ФОП, ІПН (РНОКПП), IBAN — профіль можна зберегти в браузері.</li>
+            <li>Дані покупця: назва / ПІБ, ЄДРПОУ або ІПН, адреса за потреби.</li>
+            <li>Позиції з конкретною назвою послуги (не голе «роботи»), кількість і ціна.</li>
+            <li>Примітка: строк оплати, «без ПДВ» / ставка, призначення платежу.</li>
           </ul>
+          <h3 className="mt-8 font-display text-xl text-paper">Коли цього достатньо</h3>
+          <p className="mt-3 text-mist">
+            ФОП і фрілансери з кількома рахунками на місяць, клієнти-юрособи, яким потрібен PDF на
+            оплату, а не повний електронний документообіг. Якщо замовник вимагає саме Медок / Вчасно
+            / Checkbox як канал — робіть за їхнім регламентом. Якщо треба лише зрозумілий рахунок на
+            IBAN — цієї форми достатньо.
+          </p>
+          <p className="mt-4 text-mist">
+            PDF зберігається локально в завантаженнях — зручно надіслати в Telegram, email чи Drive.
+            Лист від Rakhuno — welcome і нагадування про типові податкові строки, не копія PDF у
+            вкладенні.
+          </p>
+          <p className="mt-4 text-mist">
+            Гіди:{" "}
+            <Link
+              href="/guides/rahunok-faktura"
+              className="text-signal underline-offset-2 hover:underline"
+            >
+              рахунок-фактура для ФОП
+            </Link>
+            ,{" "}
+            <Link
+              href="/guides/rakhunok-na-oplatu"
+              className="text-signal underline-offset-2 hover:underline"
+            >
+              рахунок на оплату
+            </Link>
+            ,{" "}
+            <Link
+              href="/guides/blank-rakhunku-faktury"
+              className="text-signal underline-offset-2 hover:underline"
+            >
+              бланк
+            </Link>
+            ,{" "}
+            <Link
+              href="/guides/vystavyty-rakhunok"
+              className="text-signal underline-offset-2 hover:underline"
+            >
+              як виставити рахунок
+            </Link>
+            .
+          </p>
         </div>
       </section>
     </>

@@ -241,6 +241,50 @@ export default function HomePage() {
         </div>
       </section>
 
+      <section id="dlya-kogo" className="border-t border-line px-5 py-16 md:px-10 md:py-24">
+        <div className="mx-auto w-full max-w-3xl">
+          <p className="font-display text-sm uppercase tracking-[0.18em] text-signal">Для кого</p>
+          <h2 className="mt-3 font-display text-3xl font-semibold md:text-5xl">
+            Рахунок-фактура онлайн без важкої бухгалтерії
+          </h2>
+          <div className="mt-6 space-y-4 text-mist">
+            <p>
+              Rakhuno допомагає ФОП і фрілансерам{" "}
+              <strong className="text-paper/90">виставити рахунок на оплату</strong> і скачати PDF за
+              кілька хвилин: ПІБ, ІПН, IBAN, позиції, сума. Без Word-шаблону, без Checkbox і без Медок
+              — якщо вам потрібен саме зрозумілий документ клієнту, а не повний ЕДО.
+            </p>
+            <p>
+              Типовий сценарій: 5–30 рахунків на місяць, клієнти просять PDF на email або в Telegram,
+              бухгалтерія замовника не приймає «скрін картки». Ви заповнюєте живий A4 на екрані —
+              PDF виглядає так само, з вашим ПІБ ФОП, не з логотипом сервісу як заголовком.
+            </p>
+            <p>
+              Після першого рахунку профіль продавця можна зберегти в браузері: наступні PDF — ближче
+              до двох хвилин. Окремо підписуєтесь на email-нагадування про типові строки єдиного
+              податку й ЄСВ (це нагадування, не податкова консультація). Детальніше — у гідах{" "}
+              <a href="/guides/rahunok-faktura" className="text-signal underline-offset-2 hover:underline">
+                рахунок-фактура для ФОП
+              </a>{" "}
+              і{" "}
+              <a href="/guides/rahunok-onlayn" className="text-signal underline-offset-2 hover:underline">
+                рахунок онлайн
+              </a>
+              .
+            </p>
+            <p>
+              Якщо потрібні акти, податкові накладні, складський облік або інтеграція з банком —
+              оберіть бухгалтерський контур. Якщо задача «швидко PDF клієнту + не забути податки» —
+              почніть із{" "}
+              <a href="/invoice" className="text-signal underline-offset-2 hover:underline">
+                безкоштовного рахунку
+              </a>
+              .
+            </p>
+          </div>
+        </div>
+      </section>
+
       <section id="gidy" className="border-t border-line px-5 py-16 md:px-10 md:py-24">
         <div className="mx-auto max-w-content">
           <p className="font-display text-sm uppercase tracking-[0.18em] text-signal">Гіди</p>
