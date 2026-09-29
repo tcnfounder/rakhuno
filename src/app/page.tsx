@@ -7,9 +7,9 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 
 export const metadata: Metadata = {
-  alternates: { canonical: "https://rakhuno.com" },
+  alternates: { canonical: "https://rakhuno.com/" },
   openGraph: {
-    url: "https://rakhuno.com",
+    url: "https://rakhuno.com/",
     title: "Rakhuno — простий рахунок для ФОП",
     description: "Створіть рахунок-фактуру за 2 хвилини. Email-нагадування про податки.",
   },
