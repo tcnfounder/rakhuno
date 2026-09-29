@@ -13,7 +13,15 @@ export function Analytics() {
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
-          gtag('config', '${gaId}', { anonymize_ip: true });
+          // Skip API / asset noise (IndexNow pings, cron) so GSC/SEO reads stay clean.
+          var path = (location && location.pathname) || '';
+          if (path.indexOf('/api/') === 0) { /* no page_view */ }
+          else {
+            gtag('config', '${gaId}', {
+              anonymize_ip: true,
+              send_page_view: true
+            });
+          }
         `}
       </Script>
     </>
