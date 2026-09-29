@@ -25,7 +25,7 @@ const guides = [
   {
     href: "/guides/rakhunok-na-oplatu",
     title: "Рахунок на оплату для ФОП",
-    blurb: "Зразок полів, реквізити й онлайn PDF — без Excel.",
+    blurb: "Зразок полів, реквізити й онлайн PDF — без Excel.",
   },
   {
     href: "/guides/vystavyty-rakhunok",
