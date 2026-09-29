@@ -43,3 +43,25 @@ export function InvoiceCta() {
     </div>
   );
 }
+
+/** Compact mid-article CTA — keeps guide → product path short for SEO + conversion. */
+export function MidInvoiceCta({
+  title = "Створити рахунок-фактуру зараз",
+  text = "Заповніть реквізити ФОП і позиції — PDF завантажиться в браузері за ~2 хвилини.",
+}: {
+  title?: string;
+  text?: string;
+}) {
+  return (
+    <aside className="not-prose my-8 rounded-2xl border border-signal/40 bg-signal/5 px-5 py-5">
+      <p className="font-display text-lg text-paper">{title}</p>
+      <p className="mt-1 text-sm text-mist">{text}</p>
+      <Link
+        href="/invoice"
+        className="mt-4 inline-flex rounded-full bg-signal px-4 py-2 text-sm font-semibold text-ink transition hover:bg-white"
+      >
+        Відкрити рахунок →
+      </Link>
+    </aside>
+  );
+}
