@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArticleLayout } from "@/components/ArticleLayout";
 import { JsonLd } from "@/components/JsonLd";
+import { MidInvoiceCta } from "@/components/SiteShell";
 
 export const metadata: Metadata = {
   title: "Рахунок онлайн для ФОП за 2 хвилини: PDF без Word і Checkbox",
@@ -57,6 +58,8 @@ const articleLd = {
   "@type": "Article",
   headline: "Рахунок онлайн для ФОП за 2 хвилини",
   description: metadata.description,
+  datePublished: "2026-09-28",
+  dateModified: "2026-09-29",
   author: { "@type": "Organization", name: "Rakhuno" },
   publisher: {
     "@type": "Organization",
@@ -67,10 +70,37 @@ const articleLd = {
   inLanguage: "uk",
 };
 
+const howToLd = {
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  name: "Як виставити рахунок онлайн для ФОП за 2 хвилини",
+  description:
+    "Відкрийте Rakhuno, заповніть реквізити ФОП і позиції, залиште email — PDF завантажиться в браузері.",
+  totalTime: "PT2M",
+  step: [
+    {
+      "@type": "HowToStep",
+      name: "Відкрити рахунок онлайн",
+      text: "Перейдіть на сторінку конструктора Rakhuno.",
+      url: "https://rakhuno.com/invoice",
+    },
+    {
+      "@type": "HowToStep",
+      name: "Заповнити ФОП і клієнта",
+      text: "Вкажіть ПІБ, ІПН, IBAN, дані покупця та рядки послуг.",
+    },
+    {
+      "@type": "HowToStep",
+      name: "Завантажити PDF",
+      text: "Залиште email і натисніть «Отримати PDF» — надішліть файл клієнту.",
+    },
+  ],
+};
+
 export default function Page() {
   return (
     <>
-      <JsonLd data={[articleLd, faqLd]} />
+      <JsonLd data={[articleLd, faqLd, howToLd]} />
       <ArticleLayout
         title="Рахунок онлайн за 2 хвилини"
         description="Без шаблону Word і без важкої бухгалтерії — тільки зрозумілий PDF клієнту."
@@ -95,6 +125,11 @@ export default function Page() {
           </Link>
           .
         </p>
+
+        <MidInvoiceCta
+          title="Почати рахунок онлайн"
+          text="Алгоритм нижче — уже в конструкторі. Перший PDF сьогодні, наступні швидші зі збереженим профілем ФОП."
+        />
 
         <h2 className="!mt-10 font-display text-2xl text-paper">Алгоритм у Rakhuno</h2>
         <ol className="list-decimal space-y-3 pl-5 text-mist">
