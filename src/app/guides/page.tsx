@@ -38,6 +38,11 @@ const guides = [
     blurb: "Приклад полів і шлях до PDF онлайн — без Word-бланка.",
   },
   {
+    href: "/guides/rakhunok-u-word",
+    title: "Рахунок у Word vs онлайн PDF",
+    blurb: "Коли лишити шаблон Word, а коли швидше конструктор.",
+  },
+  {
     href: "/guides/rahunok-onlayn",
     title: "Рахунок онлайн за 2 хвилини",
     blurb: "Як зібрати PDF без Checkbox і Медок.",

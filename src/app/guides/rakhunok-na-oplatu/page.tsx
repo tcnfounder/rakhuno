@@ -127,11 +127,11 @@ export default function Page() {
 
         <figure className="not-prose my-8">
           <Image
-            src="/brand/invoice.webp"
-            alt="Зразок рахунку на оплату для ФОП у форматі PDF — приклад полів Rakhuno"
+            src="/brand/sample-rakhunok-na-oplatu.webp"
+            alt="Зразок рахунку на оплату для ФОП: PDF з IBAN, позиціями та сумою до сплати"
             width={1200}
-            height={630}
-            className="w-full rounded-xl border border-line"
+            height={1600}
+            className="w-full max-w-xl rounded-xl border border-line bg-paper"
             priority
           />
           <figcaption className="mt-2 text-sm text-muted">

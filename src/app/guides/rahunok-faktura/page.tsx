@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { ArticleLayout } from "@/components/ArticleLayout";
 import { JsonLd } from "@/components/JsonLd";
@@ -14,6 +15,7 @@ export const metadata: Metadata = {
     description:
       "Зразок полів, реквізити й онлайн PDF за 2 хвилини — без Checkbox і Медок.",
     url: "https://rakhuno.com/guides/rahunok-faktura",
+    images: ["/brand/sample-rakhunok-faktury-card.webp"],
   },
 };
 
@@ -46,6 +48,14 @@ const faqs = [
     q: "Де взяти зразок рахунку-фактури для ФОП?",
     a: "Достатньо структури: номер/дата, постачальник, покупець, позиції, сума, примітка. У Rakhuno ці поля вже в онлайн-формі — заповнюєте й одразу отримуєте PDF, без окремого Word-шаблону.",
   },
+  {
+    q: "Чим рахунок-фактура ФОП відрізняється від податкової накладної?",
+    a: "Рахунок (проформа) просить оплатити на IBAN. Податкова накладна — окремий документ для ПДВ-обліку. Більшість ФОП на спрощеній системі без ПДВ клієнту надсилають саме рахунок на оплату, не ПН.",
+  },
+  {
+    q: "Скільки зберігати PDF рахунку?",
+    a: "Практично — весь час, поки можете сперечатися про оплату чи обсяг робіт (часто 1–3 роки зручно тримати в хмарі). Юридичні строки залежать від вашого режиму — уточнюйте у бухгалтера.",
+  },
 ];
 
 const faqLd = {
@@ -64,13 +74,17 @@ const articleLd = {
   headline: "Рахунок-фактура для ФОП: зразок, реквізити, PDF онлайн",
   description: metadata.description,
   datePublished: "2026-09-27",
-  dateModified: "2026-09-29T06:30:00+00:00",
+  dateModified: "2026-09-30T02:50:00+00:00",
   author: { "@type": "Organization", name: "Rakhuno" },
   publisher: {
     "@type": "Organization",
     name: "Rakhuno",
     logo: { "@type": "ImageObject", url: "https://rakhuno.com/brand/icon-512.png" },
   },
+  image: [
+    "https://rakhuno.com/brand/sample-rakhunok-faktury.webp",
+    "https://rakhuno.com/brand/sample-rakhunok-faktury-card.webp",
+  ],
   mainEntityOfPage: "https://rakhuno.com/guides/rahunok-faktura",
   inLanguage: "uk",
 };
@@ -112,6 +126,7 @@ export default function Page() {
         path="/guides/rahunok-faktura"
         related={[
           { href: "/guides/zrazok-rahunku-faktury", label: "Зразок рахунку-фактури" },
+          { href: "/guides/rakhunok-u-word", label: "Рахунок у Word vs онлайн" },
           { href: "/guides/vystavyty-rakhunok", label: "Як виставити рахунок" },
           { href: "/guides/rahunok-onlayn", label: "Рахунок онлайн за 2 хвилини" },
         ]}
@@ -129,6 +144,24 @@ export default function Page() {
           </Link>{" "}
           у Rakhuno.
         </p>
+
+        <figure className="not-prose my-8">
+          <Image
+            src="/brand/sample-rakhunok-faktury.webp"
+            alt="Зразок рахунку-фактури для ФОП: проформа з реквізитами, позиціями та сумою на оплату"
+            width={1200}
+            height={1600}
+            className="w-full max-w-xl rounded-xl border border-line bg-paper"
+            priority
+          />
+          <figcaption className="mt-2 text-sm text-muted">
+            Візуальний зразок рахунку-фактури (проформи) — те, що клієнт бачить у PDF.{" "}
+            <Link href="/invoice" className="text-signal underline-offset-2 hover:underline">
+              Заповнити свій
+            </Link>
+            .
+          </figcaption>
+        </figure>
 
         <h2 className="!mt-10 font-display text-2xl text-paper">Що таке рахунок-фактура простими словами</h2>
         <p>
@@ -265,6 +298,31 @@ export default function Page() {
           ), фрілансери, агенції з кількома рахунками на місяць, ті хто втомився копипастити
           реквізити з Excel. Якщо у вас сотні документів і складний облік — потрібен бухгалтерський
           контур. Якщо 5–30 рахунків на місяць і головний біль «швидко PDF клієнту» — Rakhuno.
+        </p>
+
+        <h2 className="!mt-10 font-display text-2xl text-paper">Чекліст перед відправкою клієнту</h2>
+        <p>
+          Перед тим як натиснути «надіслати» в Telegram чи email, пройдіться за 30 секунд. Це знімає
+          80% «уточніть, будь ласка» від бухгалтерії замовника.
+        </p>
+        <ul className="list-disc space-y-2 pl-5 text-mist">
+          <li>IBAN скопійовано з виписки банку (не з чату рік тому).</li>
+          <li>ІПН / ЄДРПОУ покупця збігається з договором або попередніми актами.</li>
+          <li>Назва позиції конкретна — клієнт впізнає проєкт без дзвінка.</li>
+          <li>Сума в рядках = підсумок = те, що піде в платіжці.</li>
+          <li>У примітці є номер рахунку для призначення платежу.</li>
+          <li>Статус ПДВ («без ПДВ» / ставка) не суперечить вашій групі.</li>
+          <li>PDF відкривається на телефоні — багато клієнтів дивляться саме там.</li>
+        </ul>
+        <p>
+          Якщо досі збираєте рахунок у Word і щоразу правите шрифти — порівняйте підходи в гідові{" "}
+          <Link
+            href="/guides/rakhunok-u-word"
+            className="text-signal underline-offset-2 hover:underline"
+          >
+            рахунок у Word vs онлайн PDF
+          </Link>
+          .
         </p>
 
         <h2 className="!mt-10 font-display text-2xl text-paper">Типові помилки</h2>

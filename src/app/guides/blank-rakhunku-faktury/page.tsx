@@ -116,10 +116,10 @@ export default function Page() {
 
         <figure className="not-prose my-8">
           <Image
-            src="/brand/invoice.webp"
+            src="/brand/sample-rakhunok-faktury-card.webp"
             alt="Бланк рахунку-фактури для ФОП: приклад заповненого PDF онлайн"
             width={1200}
-            height={630}
+            height={900}
             className="w-full rounded-xl border border-line"
             priority
           />

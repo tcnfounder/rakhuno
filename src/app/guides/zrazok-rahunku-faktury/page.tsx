@@ -14,6 +14,7 @@ export const metadata: Metadata = {
     title: "Рахунок-фактура зразок для ФОП · Rakhuno",
     description: "Приклад полів + онлайн PDF за 2 хвилини — без бланка Word.",
     url: "https://rakhuno.com/guides/zrazok-rahunku-faktury",
+    images: ["/brand/sample-rakhunok-faktury-card.webp"],
   },
 };
 
@@ -56,13 +57,17 @@ const articleLd = {
   headline: "Зразок рахунку-фактури для ФОП",
   description: metadata.description,
   datePublished: "2026-09-28",
-  dateModified: "2026-09-29",
+  dateModified: "2026-09-30",
   author: { "@type": "Organization", name: "Rakhuno" },
   publisher: {
     "@type": "Organization",
     name: "Rakhuno",
     logo: { "@type": "ImageObject", url: "https://rakhuno.com/brand/icon-512.png" },
   },
+  image: [
+    "https://rakhuno.com/brand/sample-rakhunok-faktury.webp",
+    "https://rakhuno.com/brand/sample-rakhunok-faktury-card.webp",
+  ],
   mainEntityOfPage: "https://rakhuno.com/guides/zrazok-rahunku-faktury",
   inLanguage: "uk",
 };
@@ -118,15 +123,27 @@ export default function Page() {
 
         <figure className="not-prose my-8">
           <Image
-            src="/brand/invoice.webp"
-            alt="Зразок рахунку-фактури для ФОП: приклад PDF з реквізитами та позиціями"
+            src="/brand/sample-rakhunok-faktury.webp"
+            alt="Зразок рахунку-фактури для ФОП українською: номер, реквізити, позиції, сума без ПДВ"
             width={1200}
-            height={630}
-            className="w-full rounded-xl border border-line"
+            height={1600}
+            className="w-full max-w-xl rounded-xl border border-line bg-paper"
             priority
           />
           <figcaption className="mt-2 text-sm text-muted">
-            Візуальний зразок рахунку-фактури — те, що клієнт бачить у PDF.
+            Зразок рахунку-фактури (проформи) для ФОП — поля, які клієнт очікує в PDF.
+          </figcaption>
+        </figure>
+        <figure className="not-prose my-8">
+          <Image
+            src="/brand/sample-rakhunok-na-oplatu-card.webp"
+            alt="Зразок рахунку на оплату ФОП: приклад заповненого документа для переказу на IBAN"
+            width={1200}
+            height={900}
+            className="w-full rounded-xl border border-line"
+          />
+          <figcaption className="mt-2 text-sm text-muted">
+            Другий приклад — рахунок на оплату з конкретною послугою погодинно.
           </figcaption>
         </figure>
 

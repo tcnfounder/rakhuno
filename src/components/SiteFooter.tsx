@@ -20,6 +20,9 @@ export function SiteFooter() {
             <Link href="/guides/zrazok-rahunku-faktury" className="hover:text-signal">
               Зразок
             </Link>
+            <Link href="/guides/rakhunok-u-word" className="hover:text-signal">
+              Word vs онлайн
+            </Link>
             <Link href="/guides/vystavyty-rakhunok" className="hover:text-signal">
               Виставити рахунок
             </Link>
