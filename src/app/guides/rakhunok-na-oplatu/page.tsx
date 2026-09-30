@@ -56,7 +56,7 @@ const articleLd = {
   headline: "Рахунок на оплату для ФОП: зразок, реквізити, PDF онлайн",
   description: metadata.description,
   datePublished: "2026-09-28",
-  dateModified: "2026-09-29",
+  dateModified: "2026-09-30",
   author: { "@type": "Organization", name: "Rakhuno" },
   publisher: {
     "@type": "Organization",
@@ -107,20 +107,30 @@ export default function Page() {
         ]}
       >
         <p>
-          <strong>Рахунок на оплату</strong> — документ, з яким клієнт бачить: куди платити, за що й
-          скільки. Для ФОП це найчастіший спосіб отримати гроші на IBAN без важкої бухгалтерії.
+          <strong>Рахунок на оплату</strong> у пошуку й переписці часто = той самий PDF, що
+          «рахунок-фактура»: прохання переказати гроші на IBAN за товари чи послуги. Різниця
+          здебільшого в словах клієнта («надішліть рахунок на оплату»), а не в юридичній формі
+          бланка.
         </p>
         <p>
-          Нижче — зразок логіки полів і шлях до PDF у{" "}
+          Ця сторінка заточена під формулювання «рахунок на оплату»: які поля чекає бухгалтерія
+          замовника й як зібрати PDF у{" "}
           <Link href="/invoice" className="text-signal underline-offset-2 hover:underline">
             Rakhuno
           </Link>
-          . Теорія «рахунку-фактури» — у{" "}
+          . Глибше про термін «рахунок-фактура» — у{" "}
           <Link
             href="/guides/rahunok-faktura"
             className="text-signal underline-offset-2 hover:underline"
           >
-            окремому гіді
+            опорному гіді
+          </Link>
+          ; покроковий процес — у{" "}
+          <Link
+            href="/guides/vystavyty-rakhunok"
+            className="text-signal underline-offset-2 hover:underline"
+          >
+            як виставити рахунок
           </Link>
           .
         </p>
@@ -209,6 +219,11 @@ export default function Page() {
             </div>
           ))}
         </div>
+
+        <MidInvoiceCta
+          title="Створити рахунок на оплату онлайн"
+          text="IBAN, позиції й сума — у живому документі. PDF клієнту без Excel і Checkbox."
+        />
 
         <p className="!mt-8 text-sm text-muted">
           Матеріал інформаційний і не є податковою чи бухгалтерською консультацією.
