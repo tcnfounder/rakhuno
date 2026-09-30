@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
 
   const allowed = secret
     ? auth === `Bearer ${secret}`
-    : fallback === "cdbb17d3ba4605c01feb2fb2643330ac";
+    : fallback === "3b8c52078c06493597e733bef4820a74";
 
   if (!allowed) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401, headers: NOINDEX });

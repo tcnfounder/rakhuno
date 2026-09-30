@@ -1,4 +1,4 @@
-const INDEXNOW_KEY = "cdbb17d3ba4605c01feb2fb2643330ac";
+const INDEXNOW_KEY = "3b8c52078c06493597e733bef4820a74";
 const HOST = "rakhuno.com";
 const KEY_LOCATION = `https://${HOST}/${INDEXNOW_KEY}.txt`;
 
@@ -8,6 +8,7 @@ const DEFAULT_URLS = [
   "https://rakhuno.com/guides",
   "https://rakhuno.com/guides/rahunok-faktura",
   "https://rakhuno.com/guides/zrazok-rahunku-faktury",
+  "https://rakhuno.com/guides/rakhunok-u-word",
   "https://rakhuno.com/guides/vystavyty-rakhunok",
   "https://rakhuno.com/guides/rakhunok-na-oplatu",
   "https://rakhuno.com/guides/blank-rakhunku-faktury",
