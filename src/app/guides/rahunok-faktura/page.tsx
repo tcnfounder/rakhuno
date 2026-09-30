@@ -8,7 +8,7 @@ import { MidInvoiceCta } from "@/components/SiteShell";
 export const metadata: Metadata = {
   title: "Рахунок-фактура для ФОП: зразок, реквізити, PDF онлайн",
   description:
-    "Зразок рахунку-фактури для ФОП: які поля потрібні, чим відрізняється від акту, як заповнити й одразу скачати PDF онлайн у Rakhuno — без Word і Checkbox.",
+    "Рахунок-фактура для ФОП: що це, які реквізити потрібні, чим відрізняється від акту й податкової накладної, як зібрати PDF онлайн у Rakhuno — без Word і Checkbox.",
   alternates: { canonical: "https://rakhuno.com/guides/rahunok-faktura" },
   openGraph: {
     title: "Рахунок-фактура для ФОП: зразок і PDF · Rakhuno",
@@ -74,7 +74,7 @@ const articleLd = {
   headline: "Рахунок-фактура для ФОП: зразок, реквізити, PDF онлайн",
   description: metadata.description,
   datePublished: "2026-09-27",
-  dateModified: "2026-09-30T02:50:00+00:00",
+  dateModified: "2026-09-30T22:36:47+00:00",
   author: { "@type": "Organization", name: "Rakhuno" },
   publisher: {
     "@type": "Organization",
@@ -132,17 +132,30 @@ export default function Page() {
         ]}
       >
         <p>
-          <strong>Рахунок-фактура</strong> — документ, яким ФОП (або компанія) повідомляє замовнику:
-          за що платити, скільки й на які реквізити. Для більшості фрілансерів і сервісних ФОП це
-          перший крок до оплати: без рахунку бухгалтерія клієнта часто просто не проведе платіж.
+          У Google під запитом <strong>«рахунок-фактура»</strong> змішані Word-бланки, податкові
+          накладні й інвойси. Для ФОП на спрощеній системі без ПДВ потрібне інше: короткий документ
+          на оплату — куди платити (IBAN), за що й скільки — щоб бухгалтерія клієнта провела платіж
+          без тижня уточнень.
         </p>
         <p>
-          Нижче — практичний розбір без зайвої теорії: що писати в документі, чим він відрізняється
-          від акту, типові помилки й як{" "}
+          Цей гід — опорна сторінка кластера: що таке рахунок-фактура (проформа) для ФОП, які поля
+          обов’язкові, чим вона відрізняється від акту й податкової накладної, типові помилки й як{" "}
           <Link href="/invoice" className="text-signal underline-offset-2 hover:underline">
-            створити рахунок-фактуру онлайн
-          </Link>{" "}
-          у Rakhuno.
+            зібрати PDF онлайн у Rakhuno
+          </Link>
+          . Окремі запити — у{" "}
+          <Link href="/guides/zrazok-rahunku-faktury" className="text-signal underline-offset-2 hover:underline">
+            зразку полів
+          </Link>
+          ,{" "}
+          <Link href="/guides/vystavyty-rakhunok" className="text-signal underline-offset-2 hover:underline">
+            як виставити
+          </Link>
+          {" "}і{" "}
+          <Link href="/guides/rakhunok-na-oplatu" className="text-signal underline-offset-2 hover:underline">
+            рахунку на оплату
+          </Link>
+          .
         </p>
 
         <figure className="not-prose my-8">
@@ -377,42 +390,24 @@ export default function Page() {
           софт + фахівець; Rakhuno можна лишити лише для швидких рахунків «набік».
         </p>
 
-        <h2 className="!mt-10 font-display text-2xl text-paper">Зразок рахунку-фактури (поля)</h2>
+        <h2 className="!mt-10 font-display text-2xl text-paper">Зразок полів — коротко</h2>
         <p>
-          Шукаєте «зразок рахунку» у Word — часто достатньо структури нижче. У Rakhuno ці блоки вже
-          зібрані в{" "}
-          <Link href="/invoice" className="text-signal underline-offset-2 hover:underline">
-            живому документі
+          Якщо потрібен саме візуальний приклад рядків і шапки — відкрийте{" "}
+          <Link
+            href="/guides/zrazok-rahunku-faktury"
+            className="text-signal underline-offset-2 hover:underline"
+          >
+            зразок рахунку-фактури
           </Link>
-          ; PDF виглядає як проформа на оплату.
+          {" "}(там окремий приклад і зображення). Тут головне інше: рахунок-фактура для ФОП — це не
+          «бланк з гербом», а проформа на оплату з IBAN, позиціями й сумою, яку клієнт може провести
+          з першого разу.
         </p>
-        <div className="not-prose rounded-xl border border-line bg-ink-2/40 p-5 text-sm leading-relaxed text-mist">
-          <p className="font-display text-base text-paper">Рахунок-фактура (проформа) № 12 від 28.09.2026</p>
-          <p className="mt-4">
-            <strong className="text-paper/90">Постачальник:</strong> ФОП Іваненко І. І., ІПН …, IBAN
-            UA…, банк …
-          </p>
-          <p className="mt-2">
-            <strong className="text-paper/90">Покупець:</strong> ТОВ «…» / ФОП …, ЄДРПОУ / ІПН …,
-            адреса …
-          </p>
-          <p className="mt-4">
-            <strong className="text-paper/90">Позиції:</strong> «Дизайн лендінгу» — 1 шт. — 8 000,00
-            грн
-          </p>
-          <p className="mt-2">
-            <strong className="text-paper/90">Разом:</strong> 8 000,00 грн (вісім тисяч грн 00 коп.),
-            без ПДВ
-          </p>
-          <p className="mt-2">
-            <strong className="text-paper/90">Примітка:</strong> оплата протягом 5 банківських днів;
-            призначення: «Оплата за рахунком № 12 від 28.09.2026»
-          </p>
-        </div>
-        <p className="mt-4">
-          Це не бланк з гербом і не заміна акту. Це робочий зразок полів, щоб клієнт і банк зрозуміли
-          платіж з першого разу.
-        </p>
+
+        <MidInvoiceCta
+          title="Готовий рахунок-фактура PDF за 2 хвилини"
+          text="Реквізити ФОП + позиції → PDF у браузері. Без Word, Checkbox і Медок — саме під оплату на IBAN."
+        />
 
         <h2 className="!mt-10 font-display text-2xl text-paper">Часті питання</h2>
         <div className="divide-y divide-line">

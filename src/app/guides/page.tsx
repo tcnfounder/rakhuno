@@ -20,7 +20,7 @@ const guides = [
   {
     href: "/guides/rahunok-faktura",
     title: "Що таке рахунок-фактура для ФОП",
-    blurb: "Навіщо документ, які поля потрібні, як виставити швидко.",
+    blurb: "Опорний гід: що це для ФОП, реквізити, акт vs ПН, PDF онлайн.",
   },
   {
     href: "/guides/rakhunok-na-oplatu",
