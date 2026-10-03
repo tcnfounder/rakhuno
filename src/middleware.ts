@@ -52,7 +52,8 @@ function withAgentHeaders(response: NextResponse, origin: string) {
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const origin = request.nextUrl.origin;
+  // Prefer canonical site URL — request.nextUrl.origin is localhost behind Railway.
+  const origin = getSiteUrl();
 
   // Serve robots from middleware so CDN/static caches cannot hide Content-Signal.
   if (pathname === "/robots.txt") {
