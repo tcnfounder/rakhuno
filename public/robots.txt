@@ -1,7 +1,0 @@
-# Served via src/app/robots.ts (Next MetadataRoute). This file is a fallback for
-# static hosts that skip the dynamic route.
-User-agent: *
-Allow: /
-Disallow: /api/
-Sitemap: https://rakhuno.com/sitemap.xml
-Host: https://rakhuno.com
