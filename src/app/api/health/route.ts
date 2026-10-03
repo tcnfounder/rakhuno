@@ -1,18 +1,5 @@
-import { NextResponse } from "next/server";
-
-/** Public liveness probe for API catalog / agents. */
+import { NextResponse } from 'next/server';
+export const dynamic = 'force-dynamic';
 export async function GET() {
-  return NextResponse.json(
-    {
-      ok: true,
-      service: "rakhuno",
-      time: new Date().toISOString(),
-    },
-    {
-      headers: {
-        "Cache-Control": "no-store",
-        "Access-Control-Allow-Origin": "*",
-      },
-    },
-  );
+  return NextResponse.json({ ok: true, service: 'rakhuno' });
 }
