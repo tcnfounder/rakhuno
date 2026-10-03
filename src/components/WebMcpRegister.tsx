@@ -19,7 +19,7 @@ function getModelContext(): ModelContext | null {
     if (docCtx?.registerTool) return docCtx;
   }
   if (typeof navigator !== "undefined") {
-    const navkCtx = (navigator as Navigator & { modelContext?: ModelContext }).modelContext;
+    const navCtx = (navigator as Navigator & { modelContext?: ModelContext }).modelContext;
     if (navCtx?.registerTool) return navCtx;
   }
   return null;
@@ -37,7 +37,7 @@ export default function WebMcpRegister() {
     const register = async () => {
       if (registered || controller.signal.aborted) return;
       const ctx = getModelContext();
-     if (!ctx?.registerTool) return;
+      if (!ctx?.registerTool) return;
       registered = true;
 
       const tools: ToolRegistration[] = [

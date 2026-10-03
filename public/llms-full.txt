@@ -16,8 +16,7 @@ Rakhuno допомагає українським ФОП швидко виста
 
 - https://rakhuno.com/ — огляд продукту
 - https://rakhuno.com/invoice — виставити рахунок і PDF
-- https://rakhuno.com/guides
-  — гіди для ФОП
+- https://rakhuno.com/guides — гіди для ФОП
 - https://rakhuno.com/llms.txt — короткий AI summary
 - https://rakhuno.com/auth.md — agent auth / discovery
 
