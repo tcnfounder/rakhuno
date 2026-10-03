@@ -27,14 +27,20 @@ export function trackAdsConversion() {
   const fire = () => {
     const gtag = getGtag();
     if (typeof gtag !== "function") return false;
-    gtag("event", "conversion", { send_to: ADS_CONVERSION_SEND_TO });
+    // Keep payload minimal + explicit send_to so Ads verification matches the action.
+    gtag("event", "conversion", {
+      send_to: ADS_CONVERSION_SEND_TO,
+      value: 1.0,
+      currency: "TRY",
+      transaction_id: `rakhuno_${Date.now()}`,
+    });
     return true;
   };
 
   if (fire()) return;
 
   let attempts = 0;
-  const maxAttempts = 20; // ~10s
+  const maxAttempts = 40; // ~20s
   const timer = window.setInterval(() => {
     attempts += 1;
     if (fire() || attempts >= maxAttempts) {
