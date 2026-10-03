@@ -20,9 +20,25 @@ export function trackEvent(
   gtag("event", name, params || {});
 }
 
-/** Fire Google Ads signup/invoice conversion (once per successful unlock). */
+/** Fire Google Ads signup/invoice conversion; retry briefly if gtag is still loading. */
 export function trackAdsConversion() {
-  const gtag = getGtag();
-  if (typeof gtag !== "function") return;
-  gtag("event", "conversion", { send_to: ADS_CONVERSION_SEND_TO });
+  if (typeof window === "undefined") return;
+
+  const fire = () => {
+    const gtag = getGtag();
+    if (typeof gtag !== "function") return false;
+    gtag("event", "conversion", { send_to: ADS_CONVERSION_SEND_TO });
+    return true;
+  };
+
+  if (fire()) return;
+
+  let attempts = 0;
+  const maxAttempts = 20; // ~10s
+  const timer = window.setInterval(() => {
+    attempts += 1;
+    if (fire() || attempts >= maxAttempts) {
+      window.clearInterval(timer);
+    }
+  }, 500);
 }
