@@ -1,0 +1,63 @@
+# Rakhuno — full AI context
+# https://rakhuno.com
+
+> Простий онлайн рахунок-фактура (проформа) у PDF для ФОП в Україні. Email-нагадування про єдиний податок і ЄСВ. Без Word, Checkbox і складної бухгалтерії.
+
+## Product
+
+Rakhuno допомагає українським ФОП швидко виставити рахунок на оплату / рахунок-фактуру:
+1. Заповнити реквізити ФОП і позиції в браузері
+2. Завантажити PDF (~2 хвилини)
+3. Залишити email для нагадувань про типові строки податків
+
+Створення рахунку та PDF зараз безкоштовні. Це не податкова консультація і не заміна повноцінної бухгалтерії.
+
+## Primary URLs
+
+- https://rakhuno.com/ — огляд продукту
+- https://rakhuno.com/invoice — виставити рахунок і PDF
+- https://rakhuno.com/guides — гіди для ФОП
+- https://rakhuno.com/llms.txt — короткий AI summary
+- https://rakhuno.com/auth.md — agent auth / discovery
+
+## Guides
+
+- https://rakhuno.com/guides/rahunok-faktura — що таке рахунок-фактура для ФОП
+- https://rakhuno.com/guides/rakhunok-na-oplatu — рахунок на оплату: зразок і PDF
+- https://rakhuno.com/guides/blank-rakhunku-faktury — бланк рахунку-фактури онлайн
+- https://rakhuno.com/guides/zrazok-rahunku-faktury — зразок рахунку-фактури
+- https://rakhuno.com/guides/rakhunok-u-word — рахунок у Word vs онлайн PDF
+- https://rakhuno.com/guides/vystavyty-rakhunok — як виставити рахунок
+- https://rakhuno.com/guides/rahunok-onlayn — рахунок онлайн за 2 хвилини
+- https://rakhuno.com/guides/fop-3-grupa — ФОП 3 група
+- https://rakhuno.com/guides/yedynyy-podatok — єдиний податок
+- https://rakhuno.com/guides/podatky-fop — податки ФОП
+
+## Contact
+
+- Email: info@rakhuno.com
+- Area: Ukraine
+- Hours: online service (Europe/Kyiv)
+
+## Agent discovery
+
+- MCP server card: https://rakhuno.com/.well-known/mcp/server-card.json
+- MCP endpoint (JSON-RPC POST): https://rakhuno.com/mcp
+- API catalog: https://rakhuno.com/.well-known/api-catalog
+- Agent skills: https://rakhuno.com/.well-known/agent-skills/index.json
+- Agent card: https://rakhuno.com/.well-known/agent-card.json
+- AI catalog: https://rakhuno.com/.well-known/ai-catalog.json
+- OAuth AS metadata: https://rakhuno.com/.well-known/oauth-authorization-server
+- OAuth protected resource: https://rakhuno.com/.well-known/oauth-protected-resource
+- Health: https://rakhuno.com/api/health
+
+## Public MCP tools
+
+- get_company_info
+- get_contact
+- get_product_summary
+
+## Lead API
+
+POST https://rakhuno.com/api/leads
+JSON body: { "email": "...", "source"?: "...", "fopGroup"?: "..." }
