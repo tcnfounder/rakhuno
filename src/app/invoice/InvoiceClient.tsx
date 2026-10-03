@@ -21,7 +21,7 @@ import {
   todayIso,
   validateInvoice,
 } from "@/lib/invoice";
-import { trackEvent } from "@/lib/analytics";
+import { trackAdsConversion, trackEvent } from "@/lib/analytics";
 import { prepareLogo } from "@/lib/logo";
 import { downloadInvoicePdf, downloadPdfBlob, type PdfResult } from "@/lib/pdf";
 
@@ -222,6 +222,7 @@ export default function InvoiceClient() {
         item_count: data.items.length,
       });
       trackEvent("generate_lead", { method: "invoice_pdf" });
+      trackAdsConversion();
     } catch {
       setError("Не вдалося створити PDF. Спробуйте ще раз кнопкою нижче.");
       setUnlocked(true);
