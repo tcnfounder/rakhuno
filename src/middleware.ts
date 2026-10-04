@@ -73,6 +73,12 @@ export function middleware(request: NextRequest) {
   const hostFix = canonicalRedirect(request);
   if (hostFix) return withAgentHeaders(hostFix, origin);
 
+  // Short hub URL people type / paste in GSC — canonical lives under /guides.
+  if (pathname === "/rahunok-faktura" || pathname === "/rahunok-faktura/") {
+    const target = new URL("/guides/rahunok-faktura", origin);
+    return withAgentHeaders(NextResponse.redirect(target, 301), origin);
+  }
+
   const isUuidPath =
     /^\/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\/?$/.test(
       pathname,

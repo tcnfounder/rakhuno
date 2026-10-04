@@ -4,20 +4,20 @@ import { JsonLd } from "@/components/JsonLd";
 import InvoiceClient from "./InvoiceClient";
 
 export const metadata: Metadata = {
-  title: "Рахунок-фактура онлайн для ФОП: виставити PDF за 2 хвилини",
+  title: "Рахунок-фактура PDF для ФОП за 2 хвилини — безкоштовно",
   description:
-    "Виставити рахунок на оплату / рахунок-фактуру для ФОП онлайн: заповніть реквізити, скачайте PDF. Проформа-інвойс без Word і Checkbox — безкоштовно.",
+    "Виставити рахунок на оплату для ФОП: реквізити → PDF у браузері за ~2 хвилини. Без Word і Checkbox. Email лише для податкових нагадувань.",
   alternates: { canonical: "https://rakhuno.com/invoice" },
   openGraph: {
-    title: "Рахунок-фактура онлайн для ФОП · Rakhuno",
+    title: "Рахунок-фактура PDF для ФОП · Rakhuno",
     description:
-      "Виставити рахунок на оплату за 2 хвилини: PDF у браузері, email-нагадування про податки.",
+      "Безкоштовний рахунок на оплату за 2 хвилини: PDF у браузері + податкові нагадування.",
     url: "https://rakhuno.com/invoice",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Рахунок-фактура онлайн для ФОП · Rakhuno",
-    description: "Виставити рахунок на оплату й скачати PDF за 2 хвилини.",
+    title: "Рахунок-фактура PDF для ФОП · Rakhuno",
+    description: "PDF за 2 хвилини. Безкоштовно. Без Word.",
     images: ["/brand/og-default.png"],
   },
 };
