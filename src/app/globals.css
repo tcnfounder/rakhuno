@@ -11,6 +11,8 @@
   --signal-deep: #8fbf2e;
   --line: rgba(198, 242, 109, 0.18);
   --muted: #8aa394;
+  --font-display: "Unbounded", system-ui, sans-serif;
+  --font-body: "Onest", system-ui, sans-serif;
 }
 
 html {
