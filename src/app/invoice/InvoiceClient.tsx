@@ -271,12 +271,18 @@ export default function InvoiceClient() {
         <div className="mx-auto w-full max-w-content px-5 py-8 md:px-10 md:py-10">
           <div className="print:hidden mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <h1 className="font-display text-3xl font-semibold text-paper md:text-4xl">
-                Рахунок-фактура онлайн
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-signal">
+                Безкоштовно · ~2 хвилини
+              </p>
+              <h1 className="mt-2 font-display text-3xl font-semibold text-paper md:text-4xl">
+                Рахунок-фактура PDF для ФОП
               </h1>
               <p className="mt-2 max-w-xl text-mist">
-                Виставити рахунок на оплату для ФОП: сторони, таблиця, сума прописом, PDF у браузері.
-                Багато рядків — кілька аркушів. Логотип опційно.
+                Заповніть реквізити → вкажіть email → скачайте PDF. Без Word, без Checkbox, без
+                реєстрації. Лист — лише податкові нагадування (PDF у браузері).
+              </p>
+              <p className="mt-3 text-sm text-paper/80">
+                1) ФОП і покупець · 2) позиції · 3) email + «Отримати PDF»
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -690,8 +696,12 @@ export default function InvoiceClient() {
                 </div>
               ) : null}
 
-              <p className="text-sm text-mist">
-                Email — для податкових нагадувань. PDF завжди в браузері.
+              <p className="font-display text-lg font-semibold text-paper">
+                Отримати PDF безкоштовно
+              </p>
+              <p className="mt-1 text-sm text-mist">
+                Email потрібен для податкових нагадувань. PDF завантажиться одразу — у листі вкладення
+                немає.
               </p>
               <div className="mt-3 flex flex-col gap-3 sm:flex-row">
                 <input
@@ -833,7 +843,7 @@ export default function InvoiceClient() {
             ? "…"
             : unlocked
               ? `Завантажити PDF · ${formatUah(total)}`
-              : `Отримати PDF · ${formatUah(total)}`}
+              : `PDF безкоштовно · ${formatUah(total)}`}
         </button>
       </div>
     </main>
