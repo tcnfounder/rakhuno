@@ -90,7 +90,7 @@ export default function InvoicePage() {
     <>
       <JsonLd data={[faqLd, howToLd]} />
       <InvoiceClient />
-      <section className="print:hidden border-t border-line bg-ink px-5 py-12 md:px-10">
+      <section className="print:hidden hidden border-t border-line bg-ink px-5 py-12 md:block md:px-10">
         <div className="mx-auto w-full max-w-3xl">
           <h2 className="font-display text-2xl text-paper md:text-3xl">
             Рахунок-фактура онлайн за 2 хвилини
