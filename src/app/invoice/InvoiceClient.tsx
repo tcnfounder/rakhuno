@@ -16,6 +16,7 @@ import {
   formatUah,
   loadSellerProfile,
   nextInvoiceNumber,
+  parseAmount,
   paymentText,
   saveSellerProfile,
   todayIso,
@@ -92,6 +93,9 @@ export default function InvoiceClient() {
   const [lastPdf, setLastPdf] = useState<PdfResult | null>(null);
   const [pdfReady, setPdfReady] = useState(false);
   const [mounted, setMounted] = useState(false);
+  /** Mobile wizard: 0 ФОП → 1 клієнт → 2 позиції → 3 PDF */
+  const [mobileStep, setMobileStep] = useState(0);
+  const [showSellerExtra, setShowSellerExtra] = useState(false);
 
   const [data, setData] = useState<InvoiceData>({
     number: "1",
@@ -133,12 +137,63 @@ export default function InvoiceClient() {
 
   useEffect(() => {
     if (!pdfReady) return;
+    setMobileStep(3);
     readyRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
   }, [pdfReady]);
 
   const total = useMemo(() => calcTotal(data.items), [data.items]);
   const hasLogo = Boolean(data.sellerLogo);
   const words = useMemo(() => amountInWordsUk(total), [total]);
+
+  const MOBILE_STEPS = ["ФОП", "Клієнт", "Позиції", "PDF"] as const;
+
+  function validateMobileStep(step: number): string | null {
+    if (step === 0) {
+      if (!data.sellerName.trim()) return "Вкажіть ПІБ ФОП.";
+      if (!data.sellerIban.trim() || data.sellerIban.replace(/\s/g, "").length < 15) {
+        return "Вкажіть IBAN.";
+      }
+      return null;
+    }
+    if (step === 1) {
+      if (!data.buyerName.trim()) return "Вкажіть замовника.";
+      return null;
+    }
+    if (step === 2) {
+      const lines = data.items.filter((i) => i.description.trim());
+      if (!lines.length) return "Додайте позицію з описом.";
+      for (const line of lines) {
+        if (!(parseAmount(line.qty) > 0)) return "Кількість > 0.";
+        if (line.price.trim() === "" || parseAmount(line.price) < 0) {
+          return "Вкажіть ціну.";
+        }
+      }
+      return null;
+    }
+    return null;
+  }
+
+  function goMobileNext() {
+    setError("");
+    const err = validateMobileStep(mobileStep);
+    if (err) {
+      setError(err);
+      return;
+    }
+    if (mobileStep === 0) persistProfile();
+    if (mobileStep < MOBILE_STEPS.length - 1) {
+      setMobileStep((s) => s + 1);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }
+
+  function goMobileBack() {
+    setError("");
+    if (mobileStep > 0) {
+      setMobileStep((s) => s - 1);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }
 
   if (!mounted) {
     return (
@@ -287,13 +342,40 @@ export default function InvoiceClient() {
 
   return (
     <main className="min-h-screen bg-ink print:bg-white">
-      <div className="grid-atmosphere min-h-screen pb-36 print:bg-white print:pb-0 print:[background-image:none]">
+      <div className="grid-atmosphere min-h-screen pb-28 print:bg-white print:pb-0 print:[background-image:none] md:pb-10">
         <div className="print:hidden">
           <SiteHeader />
         </div>
 
         <div className="mx-auto w-full max-w-content px-5 py-8 md:px-10 md:py-10">
-          <div className="print:hidden mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          {/* Compact mobile header */}
+          <div className="print:hidden mb-4 md:hidden">
+            <h1 className="font-display text-2xl font-semibold text-paper">Рахунок PDF</h1>
+            <div className="mt-3 flex gap-1.5" aria-label="Кроки">
+              {MOBILE_STEPS.map((label, i) => (
+                <button
+                  key={label}
+                  type="button"
+                  onClick={() => {
+                    if (i <= mobileStep) {
+                      setError("");
+                      setMobileStep(i);
+                    }
+                  }}
+                  className={`h-1.5 flex-1 rounded-full transition ${
+                    i <= mobileStep ? "bg-signal" : "bg-white/15"
+                  }`}
+                  aria-label={`${i + 1}. ${label}`}
+                />
+              ))}
+            </div>
+            <p className="mt-2 text-sm text-mist">
+              Крок {mobileStep + 1}/4 · {MOBILE_STEPS[mobileStep]}
+            </p>
+          </div>
+
+          {/* Desktop header */}
+          <div className="print:hidden mb-6 hidden flex-col gap-4 sm:flex-row sm:items-end sm:justify-between md:flex">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-signal">
                 Безкоштовно · ~2 хвилини
@@ -311,7 +393,7 @@ export default function InvoiceClient() {
             </div>
             <div className="flex flex-wrap gap-2">
               <select
-                className="min-h-11 rounded-lg border border-white/15 bg-ink-2 px-3 py-2.5 text-base text-paper md:min-h-0 md:py-2 md:text-sm"
+                className="rounded-lg border border-white/15 bg-ink-2 px-3 py-2 text-sm text-paper"
                 value={data.fopGroup}
                 onChange={(e) => update("fopGroup", e.target.value as InvoiceData["fopGroup"])}
                 aria-label="Група ФОП"
@@ -323,7 +405,7 @@ export default function InvoiceClient() {
               <button
                 type="button"
                 onClick={persistProfile}
-                className="min-h-11 rounded-lg border border-white/15 px-3 py-2.5 text-base text-mist transition hover:border-signal hover:text-signal md:min-h-0 md:py-2 md:text-sm"
+                className="rounded-lg border border-white/15 px-3 py-2 text-sm text-mist transition hover:border-signal hover:text-signal"
               >
                 Зберегти ФОП
               </button>
@@ -341,199 +423,258 @@ export default function InvoiceClient() {
             }}
           />
 
-          {/* —— Mobile editor: stacked, large targets (A4 stays for PDF) —— */}
-          <div className="print:hidden mb-8 space-y-5 md:hidden">
-            <div className="rounded-2xl border border-white/10 bg-ink-2/70 p-4">
-              <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-                <p className="font-display text-lg font-semibold text-paper">Документ</p>
+          {/* —— Mobile wizard: one step per screen —— */}
+          <div className="print:hidden mb-4 md:hidden">
+            {mobileStep === 0 ? (
+              <div className="space-y-3 rounded-2xl border border-white/10 bg-ink-2/80 p-4">
+                <div className="flex items-center justify-between gap-2">
+                  <p className="font-display text-lg font-semibold text-paper">Ваш ФОП</p>
+                  <select
+                    className="min-h-10 rounded-lg border border-white/15 bg-ink px-2 text-sm text-paper"
+                    value={data.fopGroup}
+                    onChange={(e) => update("fopGroup", e.target.value as InvoiceData["fopGroup"])}
+                    aria-label="Група ФОП"
+                  >
+                    <option value="">Група</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                  </select>
+                </div>
+                <MobileField label="ПІБ ФОП">
+                  <input
+                    className={mobileInput}
+                    autoComplete="name"
+                    placeholder="ПІБ ФОП"
+                    value={data.sellerName}
+                    onChange={(e) => update("sellerName", e.target.value)}
+                  />
+                </MobileField>
+                <MobileField label="IBAN" hint="обовʼязково">
+                  <input
+                    className={`${mobileInput} font-mono tracking-wide`}
+                    placeholder="UA00…"
+                    autoComplete="off"
+                    value={data.sellerIban}
+                    onChange={(e) => update("sellerIban", formatIban(e.target.value))}
+                  />
+                </MobileField>
+                <MobileField label="ІПН" hint="опційно">
+                  <input
+                    className={mobileInput}
+                    inputMode="numeric"
+                    placeholder="1234567890"
+                    value={data.sellerTaxId}
+                    onChange={(e) => update("sellerTaxId", formatTaxId(e.target.value))}
+                  />
+                </MobileField>
                 <button
                   type="button"
-                  onClick={() => logoInputRef.current?.click()}
-                  className="rounded-full border border-dashed border-white/25 px-3 py-2 text-sm text-mist"
+                  onClick={() => setShowSellerExtra((v) => !v)}
+                  className="text-sm text-signal"
                 >
-                  {hasLogo ? "Змінити логотип" : "+ Логотип"}
+                  {showSellerExtra ? "Сховати додаткові" : "+ Банк, адреса, лого, №"}
                 </button>
+                {showSellerExtra ? (
+                  <div className="space-y-3 border-t border-white/10 pt-3">
+                    <div className="grid grid-cols-2 gap-2">
+                      <MobileField label="№">
+                        <input
+                          className={mobileInput}
+                          value={data.number}
+                          onChange={(e) => update("number", e.target.value.slice(0, 20))}
+                        />
+                      </MobileField>
+                      <MobileField label="Дата">
+                        <input
+                          className={mobileInput}
+                          type="date"
+                          value={data.date}
+                          onChange={(e) => update("date", e.target.value)}
+                        />
+                      </MobileField>
+                    </div>
+                    <MobileField label="Банк">
+                      <input
+                        className={mobileInput}
+                        placeholder="ПриватБанк"
+                        value={data.sellerBank}
+                        onChange={(e) => update("sellerBank", e.target.value)}
+                      />
+                    </MobileField>
+                    <MobileField label="Адреса">
+                      <input
+                        className={mobileInput}
+                        value={data.sellerAddress}
+                        onChange={(e) => update("sellerAddress", e.target.value)}
+                      />
+                    </MobileField>
+                    <button
+                      type="button"
+                      onClick={() => logoInputRef.current?.click()}
+                      className="w-full rounded-xl border border-dashed border-white/25 py-3 text-sm text-mist"
+                    >
+                      {hasLogo ? "Змінити логотип" : "+ Логотип"}
+                    </button>
+                  </div>
+                ) : null}
               </div>
-              <div className="grid grid-cols-2 gap-3">
-                <MobileField label="№">
+            ) : null}
+
+            {mobileStep === 1 ? (
+              <div className="space-y-3 rounded-2xl border border-white/10 bg-ink-2/80 p-4">
+                <p className="font-display text-lg font-semibold text-paper">Замовник</p>
+                <MobileField label="Назва / ПІБ">
                   <input
                     className={mobileInput}
-                    value={data.number}
-                    onChange={(e) => update("number", e.target.value.slice(0, 20))}
+                    placeholder="ТОВ «Клієнт»"
+                    value={data.buyerName}
+                    onChange={(e) => update("buyerName", e.target.value)}
                   />
                 </MobileField>
-                <MobileField label="Дата">
+                <MobileField label="ЄДРПОУ / ІПН" hint="опційно">
                   <input
                     className={mobileInput}
-                    type="date"
-                    value={data.date}
-                    onChange={(e) => update("date", e.target.value)}
+                    inputMode="numeric"
+                    value={data.buyerTaxId}
+                    onChange={(e) => update("buyerTaxId", formatTaxId(e.target.value))}
+                  />
+                </MobileField>
+                <MobileField label="Адреса" hint="опційно">
+                  <input
+                    className={mobileInput}
+                    value={data.buyerAddress}
+                    onChange={(e) => update("buyerAddress", e.target.value)}
                   />
                 </MobileField>
               </div>
-            </div>
+            ) : null}
 
-            <div className="rounded-2xl border border-white/10 bg-ink-2/70 p-4 space-y-3">
-              <p className="font-display text-lg font-semibold text-paper">Виконавець (ФОП)</p>
-              <MobileField label="ПІБ / назва">
-                <input
-                  className={mobileInput}
-                  placeholder="ПІБ ФОП"
-                  value={data.sellerName}
-                  onChange={(e) => update("sellerName", e.target.value)}
-                />
-              </MobileField>
-              <MobileField label="ІПН / ЄДРПОУ">
-                <input
-                  className={mobileInput}
-                  inputMode="numeric"
-                  placeholder="1234567890"
-                  value={data.sellerTaxId}
-                  onChange={(e) => update("sellerTaxId", formatTaxId(e.target.value))}
-                />
-              </MobileField>
-              <MobileField label="Адреса" hint="опційно">
-                <input
-                  className={mobileInput}
-                  placeholder="м. Київ…"
-                  value={data.sellerAddress}
-                  onChange={(e) => update("sellerAddress", e.target.value)}
-                />
-              </MobileField>
-              <MobileField label="Банк" hint="опційно">
-                <input
-                  className={mobileInput}
-                  placeholder="ПриватБанк"
-                  value={data.sellerBank}
-                  onChange={(e) => update("sellerBank", e.target.value)}
-                />
-              </MobileField>
-              <MobileField label="IBAN" hint="обовʼязково">
-                <input
-                  className={`${mobileInput} font-mono tracking-wide`}
-                  placeholder="UA00…"
-                  value={data.sellerIban}
-                  onChange={(e) => update("sellerIban", formatIban(e.target.value))}
-                />
-              </MobileField>
-            </div>
-
-            <div className="rounded-2xl border border-white/10 bg-ink-2/70 p-4 space-y-3">
-              <p className="font-display text-lg font-semibold text-paper">Замовник</p>
-              <MobileField label="Назва / ПІБ">
-                <input
-                  className={mobileInput}
-                  placeholder="ТОВ «Клієнт»"
-                  value={data.buyerName}
-                  onChange={(e) => update("buyerName", e.target.value)}
-                />
-              </MobileField>
-              <MobileField label="ІПН / ЄДРПОУ" hint="опційно">
-                <input
-                  className={mobileInput}
-                  inputMode="numeric"
-                  value={data.buyerTaxId}
-                  onChange={(e) => update("buyerTaxId", formatTaxId(e.target.value))}
-                />
-              </MobileField>
-              <MobileField label="Адреса" hint="опційно">
-                <input
-                  className={mobileInput}
-                  value={data.buyerAddress}
-                  onChange={(e) => update("buyerAddress", e.target.value)}
-                />
-              </MobileField>
-            </div>
-
-            <div className="space-y-3">
-              <div className="flex items-center justify-between gap-2">
-                <p className="font-display text-lg font-semibold text-paper">Позиції</p>
+            {mobileStep === 2 ? (
+              <div className="space-y-3">
+                {data.items.map((item, index) => (
+                  <div
+                    key={item.id}
+                    className="space-y-3 rounded-2xl border border-white/10 bg-ink-2/80 p-4"
+                  >
+                    <div className="flex items-center justify-between">
+                      <p className="font-display text-lg font-semibold text-paper">
+                        Позиція {index + 1}
+                      </p>
+                      {data.items.length > 1 ? (
+                        <button
+                          type="button"
+                          onClick={() => removeItem(item.id)}
+                          className="text-mist"
+                          aria-label="Видалити"
+                        >
+                          ×
+                        </button>
+                      ) : null}
+                    </div>
+                    <MobileField label="Опис">
+                      <input
+                        className={mobileInput}
+                        placeholder="Послуга / товар"
+                        value={item.description}
+                        onChange={(e) => updateItem(item.id, { description: e.target.value })}
+                      />
+                    </MobileField>
+                    <div className="grid grid-cols-2 gap-2">
+                      <MobileField label="К-сть">
+                        <input
+                          className={mobileInput}
+                          inputMode="decimal"
+                          value={item.qty}
+                          onChange={(e) =>
+                            updateItem(item.id, {
+                              qty: e.target.value.replace(/[^\d.,]/g, "").slice(0, 12),
+                            })
+                          }
+                        />
+                      </MobileField>
+                      <MobileField label="Ціна, грн">
+                        <input
+                          className={mobileInput}
+                          inputMode="decimal"
+                          value={item.price}
+                          onChange={(e) =>
+                            updateItem(item.id, {
+                              price: e.target.value.replace(/[^\d.,]/g, "").slice(0, 14),
+                            })
+                          }
+                        />
+                      </MobileField>
+                    </div>
+                    <p className="text-right text-sm font-semibold text-paper">
+                      {formatUah(calcLine(item))}
+                    </p>
+                  </div>
+                ))}
                 <button
                   type="button"
                   onClick={() => update("items", [...data.items, emptyItem()])}
-                  className="rounded-full border border-white/15 px-3 py-2 text-sm text-signal"
+                  className="w-full rounded-xl border border-white/15 py-3 text-sm text-signal"
                 >
-                  + рядок
+                  + Ще позиція
                 </button>
+                <MobileField label="Призначення платежу">
+                  <textarea
+                    className={`${mobileInput} min-h-[4rem] resize-y`}
+                    value={data.note}
+                    onChange={(e) => update("note", e.target.value)}
+                  />
+                </MobileField>
+                <p className="rounded-xl bg-signal/15 px-4 py-3 text-center font-display text-xl font-semibold text-paper">
+                  {formatUah(total)}
+                </p>
               </div>
-              {data.items.map((item, index) => (
-                <div
-                  key={item.id}
-                  className="rounded-2xl border border-white/10 bg-ink-2/70 p-4 space-y-3"
-                >
-                  <div className="flex items-center justify-between">
-                    <p className="text-sm font-semibold text-mist">#{index + 1}</p>
+            ) : null}
+
+            {mobileStep === 3 ? (
+              <div className="space-y-4 rounded-2xl border border-white/10 bg-ink-2/80 p-4">
+                <p className="font-display text-lg font-semibold text-paper">Отримати PDF</p>
+                <p className="text-sm text-mist">
+                  {data.sellerName || "ФОП"} → {data.buyerName || "клієнт"} · {formatUah(total)}
+                </p>
+                {pdfReady ? (
+                  <div className="rounded-xl border border-signal/40 bg-signal/10 p-4">
+                    <p className="font-semibold text-paper">PDF готовий</p>
                     <button
                       type="button"
-                      aria-label="Видалити"
-                      onClick={() => removeItem(item.id)}
-                      className="rounded-lg px-2 py-1 text-lg text-mist hover:text-paper"
+                      onClick={() => void downloadAgain()}
+                      disabled={busy}
+                      className="mt-3 w-full rounded-xl bg-signal py-3.5 font-semibold text-ink disabled:opacity-60"
                     >
-                      ×
+                      {busy ? "…" : "Завантажити PDF"}
                     </button>
                   </div>
-                  <MobileField label="Найменування">
-                    <input
-                      className={mobileInput}
-                      placeholder="Опис послуги / товару"
-                      value={item.description}
-                      onChange={(e) => updateItem(item.id, { description: e.target.value })}
-                    />
-                  </MobileField>
-                  <div className="grid grid-cols-3 gap-2">
-                    <MobileField label="Од.">
-                      <input
-                        className={mobileInput}
-                        value={item.unit || "послуга"}
-                        onChange={(e) =>
-                          updateItem(item.id, { unit: e.target.value.slice(0, 16) })
-                        }
-                      />
-                    </MobileField>
-                    <MobileField label="К-сть">
-                      <input
-                        className={mobileInput}
-                        inputMode="decimal"
-                        value={item.qty}
-                        onChange={(e) =>
-                          updateItem(item.id, {
-                            qty: e.target.value.replace(/[^\d.,]/g, "").slice(0, 12),
-                          })
-                        }
-                      />
-                    </MobileField>
-                    <MobileField label="Ціна">
-                      <input
-                        className={mobileInput}
-                        inputMode="decimal"
-                        value={item.price}
-                        onChange={(e) =>
-                          updateItem(item.id, {
-                            price: e.target.value.replace(/[^\d.,]/g, "").slice(0, 14),
-                          })
-                        }
-                      />
-                    </MobileField>
-                  </div>
-                  <p className="text-right text-sm font-semibold text-paper">
-                    {formatUah(calcLine(item))}
-                  </p>
-                </div>
-              ))}
-              <p className="rounded-xl border border-signal/30 bg-signal/10 px-4 py-3 text-right font-display text-xl font-semibold text-paper">
-                Всього: {formatUah(total)}
-              </p>
-            </div>
+                ) : null}
+                <MobileField label="Email" hint="податкові нагадування">
+                  <input
+                    className={mobileInput}
+                    type="email"
+                    autoComplete="email"
+                    placeholder="you@email.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </MobileField>
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => void unlockAndDownload()}
+                  className="w-full rounded-xl bg-signal py-4 text-base font-semibold text-ink disabled:opacity-60"
+                >
+                  {busy ? "…" : unlocked ? "Завантажити знову" : "Отримати PDF безкоштовно"}
+                </button>
+                {error ? <p className="text-sm text-red-300">{error}</p> : null}
+                {okMsg ? <p className="text-sm text-signal">{okMsg}</p> : null}
+              </div>
+            ) : null}
 
-            <div className="rounded-2xl border border-white/10 bg-ink-2/70 p-4">
-              <MobileField label="Призначення / умови">
-                <textarea
-                  className={`${mobileInput} min-h-[5rem] resize-y`}
-                  value={data.note}
-                  onChange={(e) => update("note", e.target.value)}
-                />
-              </MobileField>
-            </div>
+            {mobileStep < 3 && error ? (
+              <p className="mt-3 text-sm text-red-300">{error}</p>
+            ) : null}
           </div>
 
           {/* Desktop logo controls */}
@@ -873,8 +1014,8 @@ export default function InvoiceClient() {
             </div>
           </div>
 
-          {/* Download / email — inline success, no overlay (adblock-safe) */}
-          <div className="mx-auto mt-8 max-w-[210mm] print:hidden">
+          {/* Download / email — desktop only (mobile uses wizard step 4) */}
+          <div className="mx-auto mt-8 hidden max-w-[210mm] print:hidden md:block">
             <div
               ref={readyRef}
               className="rounded-xl border border-white/10 bg-ink-2/80 p-4 sm:p-5"
@@ -1011,7 +1152,7 @@ export default function InvoiceClient() {
             </div>
           </div>
 
-          <aside className="print:hidden mx-auto mt-14 w-full max-w-[210mm] border-t border-line pt-8">
+          <aside className="print:hidden mx-auto mt-14 hidden w-full max-w-[210mm] border-t border-line pt-8 md:block">
             <p className="font-display text-sm uppercase tracking-[0.18em] text-signal">
               Гіди для ФОП
             </p>
@@ -1050,22 +1191,49 @@ export default function InvoiceClient() {
         </div>
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-white/10 bg-ink/95 p-3 backdrop-blur sm:hidden print:hidden">
-        <button
-          type="button"
-          disabled={busy}
-          onClick={() => {
-            if (unlocked) void downloadAgain();
-            else void unlockAndDownload();
-          }}
-          className="w-full rounded-lg bg-signal py-3.5 font-semibold text-ink disabled:opacity-60"
-        >
-          {busy
-            ? "…"
-            : unlocked
-              ? `Завантажити PDF · ${formatUah(total)}`
-              : `PDF безкоштовно · ${formatUah(total)}`}
-        </button>
+      {/* Mobile wizard nav */}
+      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-white/10 bg-ink/95 p-3 backdrop-blur md:hidden print:hidden">
+        {mobileStep < 3 ? (
+          <div className="flex gap-2">
+            {mobileStep > 0 ? (
+              <button
+                type="button"
+                onClick={goMobileBack}
+                className="min-h-12 w-28 rounded-xl border border-white/20 px-3 text-base font-medium text-paper"
+              >
+                Назад
+              </button>
+            ) : null}
+            <button
+              type="button"
+              onClick={goMobileNext}
+              className="min-h-12 flex-1 rounded-xl bg-signal text-base font-semibold text-ink"
+            >
+              Далі · {MOBILE_STEPS[mobileStep + 1]}
+            </button>
+          </div>
+        ) : (
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={goMobileBack}
+              className="min-h-12 w-28 rounded-xl border border-white/20 px-3 text-base font-medium text-paper"
+            >
+              Назад
+            </button>
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() => {
+                if (unlocked) void downloadAgain();
+                else void unlockAndDownload();
+              }}
+              className="min-h-12 flex-1 rounded-xl bg-signal text-base font-semibold text-ink disabled:opacity-60"
+            >
+              {busy ? "…" : unlocked ? "Завантажити PDF" : `PDF · ${formatUah(total)}`}
+            </button>
+          </div>
+        )}
       </div>
     </main>
   );
