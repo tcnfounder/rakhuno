@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Onest, Unbounded } from "next/font/google";
 import { Analytics } from "@/components/Analytics";
 import { JsonLd, organizationLd, softwareLd, websiteLd } from "@/components/JsonLd";
 import WebMcpRegister from "@/components/WebMcpRegister";
@@ -7,17 +6,10 @@ import "./globals.css";
 
 const googleVerification = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION?.trim();
 
-const display = Unbounded({
-  variable: "--font-display",
-  subsets: ["latin", "cyrillic"],
-  weight: ["500", "600", "700"],
-});
-
-const body = Onest({
-  variable: "--font-body",
-  subsets: ["latin", "cyrillic"],
-  weight: ["400", "500", "600"],
-});
+/**
+ * Fonts load via CSS link (not next/font/google).
+ * Railway Turbopack builds were failing on @vercel/turbopack-next font resolution.
+ */
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://rakhuno.com"),
@@ -72,7 +64,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="uk">
-      <body className={`${display.variable} ${body.variable} antialiased`}>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600&family=Unbounded:wght@500;600;700&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body className="antialiased">
         <JsonLd data={[organizationLd, softwareLd, websiteLd]} />
         <Analytics />
         <WebMcpRegister />
