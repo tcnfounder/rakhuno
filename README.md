@@ -49,6 +49,10 @@ Do **not** re-attach custom domains to the legacy `rakhuno` OpenNext Worker or t
 
 Legacy path remains in repo (`npm run deploy`, optional Actions workflow) for previews only.
 
+## Growth / ads
+
+See [docs/GROWTH-STRATEGY.md](docs/GROWTH-STRATEGY.md) for channel strategy, KPI cadence, and Google Ads change log.
+
 ## Notes
 
 - Not tax advice. Reminders are generic FOP schedule hints.
