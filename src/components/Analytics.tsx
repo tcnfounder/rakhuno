@@ -19,6 +19,16 @@ export function Analytics() {
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
+          (function () {
+            try {
+              var keys = ['utm_source','utm_medium','utm_campaign','utm_term','utm_content','gclid','gbraid','wbraid'];
+              var p = new URLSearchParams(location.search);
+              keys.forEach(function (k) {
+                var v = p.get(k);
+                if (v) sessionStorage.setItem('rakhuno_' + k, v);
+              });
+            } catch (e) {}
+          })();
           var path = (location && location.pathname) || '';
           if (path.indexOf('/api/') === 0) { /* no page_view */ }
           else {
