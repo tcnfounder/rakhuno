@@ -66,6 +66,12 @@ Manual follow-up in Google UI:
 - Confirm `generate_lead` / Ads conversion action match.
 - Optional: remove duplicate negatives if UI shows conflicts.
 
+## Google Ads change log (2026-10-08)
+
+- **12 campaign negatives (phrase):** template/download/RU waste + bank-account confusion (`картковий`, `розрахунковий`, `електронний`, `инвойс`, `фоп 3 група`, …).
+- **6 more negatives:** `приклад/зразок рахунку`, info (`… це`), `бланк` combo, broad `онлайн рахунок` (order-flip noise).
+- **7 new EXACT positives:** `сформувати/зробити …`, `як створити/виставити …`, `рахунок на оплату онлайн`, `рахунок фактура фоп`.
+
 ## Review cadence
 
 | When | Action |
