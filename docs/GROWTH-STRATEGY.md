@@ -69,7 +69,8 @@ Manual follow-up in Google UI:
 ## Google Ads change log (2026-10-08)
 
 - **12 campaign negatives (phrase):** template/download/RU waste + bank-account confusion (`картковий`, `розрахунковий`, `електронний`, `инвойс`, `фоп 3 група`, …).
-- **6 more negatives:** `приклад/зразок рахунку`, info (`… це`), `бланк` combo, broad `онлайн рахунок` (order-flip noise).
+- **5 more negatives:** `приклад/зразок рахунку`, info (`… це`), `бланк` combo.
+- **Network:** turned off **Display expansion** on Search (`target_content_network: false`).
 - **7 new EXACT positives:** `сформувати/зробити …`, `як створити/виставити …`, `рахунок на оплату онлайн`, `рахунок фактура фоп`.
 
 ## Review cadence
