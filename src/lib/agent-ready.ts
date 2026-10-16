@@ -90,12 +90,12 @@ export const PRIORITY_PAGES: Record<string, { title: string; summary: string }> 
     summary: "Рахунок на оплату: зразок і PDF онлайн.",
   },
   "/guides/blank-rakhunku-faktury": {
-    title: "Бланк рахунку-фактури",
-    summary: "Бланк рахунку-фактури онлайн без Word.",
+    title: "Бланк рахунку-фактури для ФОП",
+    summary: "Бланк рахунку фактури: поля онлайн і PDF без Word.",
   },
   "/guides/zrazok-rahunku-faktury": {
-    title: "Зразок рахунку-фактури",
-    summary: "Зразок рахунку-фактури для ФОП.",
+    title: "Зразок рахунку-фактури для ФОП",
+    summary: "Зразок рахунку на оплату ФОП і перехід у конструктор PDF.",
   },
   "/guides/rakhunok-u-word": {
     title: "Рахунок у Word vs онлайн PDF",

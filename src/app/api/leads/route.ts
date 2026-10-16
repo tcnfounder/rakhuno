@@ -87,7 +87,9 @@ async function pushToBrevo(
       body: payload,
     });
 
-    if (res.ok || res.status === 204) return "brevo";
+    // 201 = new contact. 204 = updateEnabled hit an existing contact.
+    if (res.status === 201) return "brevo";
+    if (res.status === 204) return "brevo_exists";
 
     lastStatus = res.status;
     lastBody = await res.text();
@@ -138,16 +140,13 @@ export async function POST(req: NextRequest) {
   const backend = await storeLead(email, source, env, { fopGroup });
   const brevo = await pushToBrevo(email, source, env, { fopGroup });
 
-  // New list members get Welcome + Day 3 schedule + Day 7 queue.
-  // Existing contacts still get Welcome; drip not re-stacked.
-  const enrolled = brevo === "brevo";
-  const welcome =
-    enrolled || brevo === "brevo_exists"
-      ? await sendWelcomeEmail(email, env)
-      : "skipped";
-  const drip = enrolled
+  // Only a brand-new Brevo contact is a lead. Existing emails update
+  // attributes but do not get another welcome, drip, or conversion.
+  const created = brevo === "brevo";
+  const welcome = created ? await sendWelcomeEmail(email, env) : "skipped";
+  const drip = created
     ? await scheduleDripEmails(email, env)
     : { day3: "skipped", day7: "skipped" };
 
-  return NextResponse.json({ ok: true, backend, brevo, welcome, drip });
+  return NextResponse.json({ ok: true, created, backend, brevo, welcome, drip });
 }

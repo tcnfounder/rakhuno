@@ -1,6 +1,6 @@
 # Rakhuno — growth & product strategy
 
-Last updated: 2026-10-07. Baseline: **3 verified Brevo leads**, GA4 property live since 2026-09-27, Search campaign **Rakhuno Search UA — Invoice** (~100 TRY/day).
+Last updated: 2026-10-16. Baseline: **3 verified Brevo leads**, GA4 property live since 2026-09-27, Search campaign **Rakhuno Search UA — Invoice** (~100 TRY/day).
 
 ## North star
 
@@ -65,6 +65,22 @@ Manual follow-up in Google UI:
 
 - Confirm `generate_lead` / Ads conversion action match.
 - Optional: remove duplicate negatives if UI shows conflicts.
+
+## Google Ads change log (2026-10-16)
+
+Applied on campaign `24303377012` after the 16 Oct review:
+
+- Paused exact keywords `зробити рахунок онлайн` and `створити рахунок на оплату` (CPC 89–169 TRY, 606 TRY for 1 conversion).
+- Paused remaining BROAD keywords (`рахунок фактура`, `рахунок на оплату`, `рахунок онлайн`, `рахунок фактура онлайн`, `зробити рахунок онлайн`, `створити рахунок на оплату`).
+- Set `target_content_network` to false. Search and partner search were already off.
+- Did not add new negatives: `зразок`, `бланк`, and `приклад` are already BROAD negatives, so the top-20 sample queries are already excluded. `рахунок фактура онлайн` stays (1 conversion, unstable rank).
+- Budget stays 100 TRY/day.
+
+Code (ships with the next production deploy):
+
+- `generate_lead` and the Ads conversion fire only after Brevo returns 201 for a new contact and the PDF succeeds. Order id is a hash of the email.
+- Existing contacts (Brevo 204) no longer get another welcome or drip.
+- Guide titles and early `/invoice` CTAs updated on the zrazok and blank pages.
 
 ## Review cadence
 
