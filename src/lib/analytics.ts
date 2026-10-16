@@ -60,9 +60,22 @@ export function trackEvent(
   gtag("event", name, params || {});
 }
 
+/** Stable Ads order id so the same email cannot count twice. */
+export async function leadTransactionId(email: string): Promise<string> {
+  const normalized = email.trim().toLowerCase();
+  const digest = await crypto.subtle.digest(
+    "SHA-256",
+    new TextEncoder().encode(`rakhuno:${normalized}`),
+  );
+  return Array.from(new Uint8Array(digest), (b) => b.toString(16).padStart(2, "0"))
+    .join("")
+    .slice(0, 32);
+}
+
 /** Fire Google Ads signup/invoice conversion; retry briefly if gtag is still loading. */
-export function trackAdsConversion() {
+export async function trackAdsConversion(email: string) {
   if (typeof window === "undefined") return;
+  const transactionId = await leadTransactionId(email);
 
   const fire = () => {
     const gtag = getGtag();
@@ -72,7 +85,7 @@ export function trackAdsConversion() {
       send_to: ADS_CONVERSION_SEND_TO,
       value: 1.0,
       currency: "UAH",
-      transaction_id: `rakhuno_${Date.now()}`,
+      transaction_id: transactionId,
     });
     return true;
   };

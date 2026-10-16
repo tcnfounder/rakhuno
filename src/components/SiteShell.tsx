@@ -48,9 +48,11 @@ export function InvoiceCta() {
 export function MidInvoiceCta({
   title = "Створити рахунок-фактуру зараз",
   text = "Заповніть реквізити ФОП і позиції — PDF завантажиться в браузері за ~2 хвилини.",
+  ctaLabel = "Відкрити рахунок",
 }: {
   title?: string;
   text?: string;
+  ctaLabel?: string;
 }) {
   return (
     <aside className="not-prose my-8 rounded-2xl border border-signal/40 bg-signal/5 px-5 py-5">
@@ -60,7 +62,7 @@ export function MidInvoiceCta({
         href="/invoice"
         className="mt-4 inline-flex rounded-full bg-signal px-4 py-2 text-sm font-semibold text-ink transition hover:bg-white"
       >
-        Відкрити рахунок →
+        {ctaLabel}
       </Link>
     </aside>
   );

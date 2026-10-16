@@ -3,15 +3,16 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArticleLayout } from "@/components/ArticleLayout";
 import { JsonLd } from "@/components/JsonLd";
+import { MidInvoiceCta } from "@/components/SiteShell";
 
 export const metadata: Metadata = {
-  title: "Бланк рахунку-фактури для ФОП: скачати PDF онлайн без Word",
+  title: "Бланк рахунку-фактури для ФОП без Word",
   description:
-    "Бланк рахунку-фактури для ФОП: які поля потрібні замість Word/Excel і як одразу заповнити й скачати PDF онлайн у Rakhuno — безкоштовно.",
+    "Бланк рахунку фактури для ФОП: поля замість Excel і Word. Заповніть бланк онлайн і скачайте PDF у Rakhuno.",
   alternates: { canonical: "https://rakhuno.com/guides/blank-rakhunku-faktury" },
   openGraph: {
     title: "Бланк рахунку-фактури для ФОП · Rakhuno",
-    description: "Не копипастити IBAN у Word — заповніть онлайн і скачайте PDF.",
+    description: "Бланк рахунку фактури без файлу Word: заповніть поля і скачайте PDF.",
     url: "https://rakhuno.com/guides/blank-rakhunku-faktury",
   },
 };
@@ -55,7 +56,7 @@ const articleLd = {
   headline: "Бланк рахунку-фактури для ФОП",
   description: metadata.description,
   datePublished: "2026-09-28",
-  dateModified: "2026-09-28",
+  dateModified: "2026-10-16",
   author: { "@type": "Organization", name: "Rakhuno" },
   publisher: {
     "@type": "Organization",
@@ -113,6 +114,11 @@ export default function Page() {
           </Link>{" "}
           бланк уже зібраний у формі: заповнюєте → PDF.
         </p>
+        <MidInvoiceCta
+          title="Бланк рахунку фактури — у формі"
+          text="Порожній Word не потрібен. Відкрийте рахунок, внесіть IBAN і позиції, скачайте PDF."
+          ctaLabel="Заповнити бланк рахунку"
+        />
 
         <figure className="not-prose my-8">
           <Image

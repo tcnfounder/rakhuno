@@ -23,6 +23,7 @@ import {
   validateInvoice,
 } from "@/lib/invoice";
 import { getCampaignParams, trackAdsConversion, trackEvent } from "@/lib/analytics";
+import { markPendingLead, submitInvoiceLead, takePendingLead } from "@/lib/invoice-lead";
 import { prepareLogo } from "@/lib/logo";
 import { downloadInvoicePdf, downloadPdfBlob, type PdfResult } from "@/lib/pdf";
 
@@ -266,6 +267,15 @@ export default function InvoiceClient() {
     return result;
   }
 
+  async function recordVerifiedLead() {
+    if (!takePendingLead(email)) return;
+    trackEvent("generate_lead", {
+      method: "invoice_pdf",
+      ...getCampaignParams(),
+    });
+    await trackAdsConversion(email);
+  }
+
   async function unlockAndDownload() {
     setError("");
     setOkMsg("");
@@ -280,15 +290,10 @@ export default function InvoiceClient() {
     }
     setBusy(true);
     try {
-      void fetch("/api/leads", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email,
-          source: "invoice_pdf",
-          fopGroup: data.fopGroup || undefined,
-        }),
-      }).catch(() => null);
+      const created = await submitInvoiceLead(email, data.fopGroup || undefined).catch(
+        () => false,
+      );
+      if (created) markPendingLead(email);
 
       persistProfile();
       await makePdf();
@@ -300,11 +305,7 @@ export default function InvoiceClient() {
         fop_group: data.fopGroup || "none",
         item_count: data.items.length,
       });
-      trackEvent("generate_lead", {
-        method: "invoice_pdf",
-        ...getCampaignParams(),
-      });
-      trackAdsConversion();
+      await recordVerifiedLead();
     } catch {
       setError("Не вдалося створити PDF. Спробуйте ще раз кнопкою нижче.");
       setUnlocked(true);
@@ -334,6 +335,7 @@ export default function InvoiceClient() {
       trackEvent("invoice_pdf_redownload", {
         from_cache: Boolean(lastPdf),
       });
+      await recordVerifiedLead();
     } catch {
       setError("Не вдалося створити PDF.");
       setPdfReady(true);

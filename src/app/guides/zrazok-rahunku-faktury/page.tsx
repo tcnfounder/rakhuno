@@ -6,13 +6,13 @@ import { JsonLd } from "@/components/JsonLd";
 import { MidInvoiceCta } from "@/components/SiteShell";
 
 export const metadata: Metadata = {
-  title: "Рахунок-фактура зразок для ФОП: поля, приклад, PDF онлайн",
+  title: "Зразок рахунку-фактури для ФОП: приклад рахунку на оплату",
   description:
-    "Рахунок-фактура зразок для ФОП: які поля заповнити, приклад структури без Word і як одразу скачати PDF онлайн у Rakhuno.",
+    "Зразок рахунку на оплату для ФОП: приклад полів рахунку-фактури без Word і як заповнити свій PDF онлайн у Rakhuno.",
   alternates: { canonical: "https://rakhuno.com/guides/zrazok-rahunku-faktury" },
   openGraph: {
-    title: "Рахунок-фактура зразок для ФОП · Rakhuno",
-    description: "Приклад полів + онлайн PDF за 2 хвилини — без бланка Word.",
+    title: "Зразок рахунку-фактури для ФОП · Rakhuno",
+    description: "Зразок рахунку на оплату: поля прикладу і свій PDF за 2 хвилини.",
     url: "https://rakhuno.com/guides/zrazok-rahunku-faktury",
     images: ["/brand/sample-rakhunok-faktury-card.webp"],
   },
@@ -57,7 +57,7 @@ const articleLd = {
   headline: "Зразок рахунку-фактури для ФОП",
   description: metadata.description,
   datePublished: "2026-09-28",
-  dateModified: "2026-09-30",
+  dateModified: "2026-10-16",
   author: { "@type": "Organization", name: "Rakhuno" },
   publisher: {
     "@type": "Organization",
@@ -112,10 +112,16 @@ export default function Page() {
         ]}
       >
         <p>
-          Запит <strong>«зразок рахунку-фактури»</strong> майже ніколи не означає «потрібна теорія
-          про ПДВ». Люди шукають приклад полів: що поставити в шапці, які рядки в таблиці, як
-          написати «без ПДВ» і призначення платежу — щоб не вигадувати бланк у Word з нуля.
+          Запит <strong>«зразок рахунку-фактури»</strong> або{" "}
+          <strong>«зразок рахунку на оплату»</strong> майже ніколи не означає «потрібна теорія про
+          ПДВ». Люди шукають приклад полів: що поставити в шапці, які рядки в таблиці, як написати
+          «без ПДВ» і призначення платежу — щоб не вигадувати бланк у Word з нуля.
         </p>
+        <MidInvoiceCta
+          title="Зразок уже в конструкторі"
+          text="Ті самі поля, що нижче на сторінці. Відкрийте рахунок і скачайте свій PDF з ІПН та IBAN."
+          ctaLabel="Створити рахунок за зразком"
+        />
         <p>
           Нижче — робочий приклад структури для ФОП і шлях до готового PDF у{" "}
           <Link href="/invoice" className="text-signal underline-offset-2 hover:underline">
@@ -160,6 +166,7 @@ export default function Page() {
         <MidInvoiceCta
           title="Заповнити зразок онлайн"
           text="Не копіюйте Word — відкрийте конструктор і отримайте свій PDF з ІПН та IBAN."
+          ctaLabel="Створити рахунок за зразком"
         />
 
         <h2 className="!mt-10 font-display text-2xl text-paper">Зразок полів (приклад)</h2>
@@ -248,6 +255,7 @@ export default function Page() {
         <MidInvoiceCta
           title="Перетворити зразок на свій PDF"
           text="Ті самі поля, що в прикладі вище — у конструкторі. Заповніть IBAN і позиції, скачайте рахунок."
+          ctaLabel="Створити рахунок за зразком"
         />
 
         <p className="!mt-8 text-sm text-muted">
