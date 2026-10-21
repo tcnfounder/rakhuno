@@ -46,10 +46,9 @@ export const metadata: Metadata = {
       },
     ],
   },
+  // No title/description here: X falls back to each page's og:title / og:description.
   twitter: {
     card: "summary_large_image",
-    title: "Rakhuno — простий рахунок для ФОП",
-    description: "Створіть рахунок-фактуру за 2 хвилини. Email-нагадування про податки.",
     images: ["/brand/og-default.png"],
   },
   ...(googleVerification

@@ -4,11 +4,12 @@ import Link from "next/link";
 import { ArticleLayout } from "@/components/ArticleLayout";
 import { JsonLd } from "@/components/JsonLd";
 import { MidInvoiceCta } from "@/components/SiteShell";
+import { TemplateDownload } from "@/components/TemplateDownload";
 
 export const metadata: Metadata = {
-  title: "Зразок рахунку-фактури для ФОП: приклад рахунку на оплату",
+  title: "Зразок рахунку-фактури ФОП 2026: готовий приклад + Word",
   description:
-    "Зразок рахунку на оплату для ФОП: приклад полів рахунку-фактури без Word і як заповнити свій PDF онлайн у Rakhuno.",
+    "Готовий приклад рахунку на оплату ФОП без ПДВ: усі поля заповнені, призначення платежу, сума прописом. Скачайте бланк Word/Excel або зробіть PDF онлайн безкоштовно.",
   alternates: { canonical: "https://rakhuno.com/guides/zrazok-rahunku-faktury" },
   openGraph: {
     title: "Зразок рахунку-фактури для ФОП · Rakhuno",
@@ -57,7 +58,7 @@ const articleLd = {
   headline: "Зразок рахунку-фактури для ФОП",
   description: metadata.description,
   datePublished: "2026-09-28",
-  dateModified: "2026-10-16",
+  dateModified: "2026-10-21",
   author: { "@type": "Organization", name: "Rakhuno" },
   publisher: {
     "@type": "Organization",
@@ -127,12 +128,12 @@ export default function Page() {
           <Link href="/invoice" className="text-signal underline-offset-2 hover:underline">
             Rakhuno
           </Link>
-          . Що таке документ загалом — у{" "}
+          . Що таке документ загалом — у гіді{" "}
           <Link
             href="/guides/rahunok-faktura"
             className="text-signal underline-offset-2 hover:underline"
           >
-            гіді про рахунок-фактуру
+            що таке рахунок-фактура
           </Link>
           .
         </p>
@@ -207,6 +208,15 @@ export default function Page() {
           </Link>
           .
         </p>
+
+        <TemplateDownload
+          title="Потрібен файл? Скачайте бланк за цим зразком"
+          text="Ті самі поля, що в прикладі вище: порожній рахунок-фактура у Word і Excel (Excel рахує суму сам)."
+          files={[
+            { href: "/templates/blank-rakhunku-faktury.docx", label: "Word (.docx)", format: "docx" },
+            { href: "/templates/blank-rakhunku-faktury.xlsx", label: "Excel (.xlsx)", format: "xlsx" },
+          ]}
+        />
 
         <h2 className="!mt-10 font-display text-2xl text-paper">Що обов’язково перевірити</h2>
         <ul className="list-disc space-y-2 pl-5 text-mist">

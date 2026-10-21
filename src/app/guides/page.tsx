@@ -6,7 +6,7 @@ import { SiteShell } from "@/components/SiteShell";
 export const metadata: Metadata = {
   title: "Гіди для ФОП: рахунок, податки, 3 група",
   description:
-    "Практичні гіди Rakhuno: рахунок на оплату, бланк, зразок, виставити рахунок, рахунок-фактура, ФОП 3 група.",
+    "Практичні гіди Rakhuno: що таке рахунок-фактура, зразок і бланк Word/Excel, акт виконаних робіт, рахунок на оплату, ФОП 3 група.",
   alternates: { canonical: "https://rakhuno.com/guides" },
   openGraph: {
     title: "Гіди для ФОП · Rakhuno",
@@ -19,8 +19,8 @@ export const metadata: Metadata = {
 const guides = [
   {
     href: "/guides/rahunok-faktura",
-    title: "Що таке рахунок-фактура для ФОП",
-    blurb: "Опорний гід: що це для ФОП, реквізити, акт vs ПН, PDF онлайн.",
+    title: "Що таке рахунок-фактура",
+    blurb: "Визначення простими словами, реквізити, різниця з актом і накладною.",
   },
   {
     href: "/guides/rakhunok-na-oplatu",
@@ -49,8 +49,13 @@ const guides = [
   },
   {
     href: "/guides/blank-rakhunku-faktury",
-    title: "Бланк рахунку-фактури",
-    blurb: "Замість Word: заповніть онлайн і скачайте PDF.",
+    title: "Бланк рахунку-фактури: Word і Excel",
+    blurb: "Скачайте бланк безкоштовно або заповніть онлайн і отримайте PDF.",
+  },
+  {
+    href: "/guides/akt-vykonanykh-robit",
+    title: "Акт виконаних робіт для ФОП",
+    blurb: "Реквізити, зразок заповнення без ПДВ і бланк Word.",
   },
   {
     href: "/guides/fop-3-grupa",
