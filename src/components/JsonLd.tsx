@@ -27,7 +27,7 @@ export const organizationLd = {
     "єдиний податок",
     "ЄСВ",
   ],
-  sameAs: [],
+  sameAs: ["https://github.com/tcnfounder/ukrainian-invoice-templates"],
 };
 
 export const softwareLd = {

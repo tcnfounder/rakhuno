@@ -18,6 +18,7 @@ export function TemplateDownload({
   text: string;
   files: TemplateFile[];
 }) {
+  // Same blanks are mirrored in a public CC0 repo — a durable, linkable source for other sites.
   return (
     <aside className="not-prose my-8 rounded-2xl border border-line bg-ink-2/40 px-5 py-5">
       <p className="font-display text-lg text-paper">{title}</p>
@@ -37,6 +38,16 @@ export function TemplateDownload({
           </a>
         ))}
       </div>
+      <p className="mt-3 text-xs text-muted">
+        Ці бланки також є на{" "}
+        <a
+          href="https://github.com/tcnfounder/ukrainian-invoice-templates"
+          className="text-signal underline-offset-2 hover:underline"
+        >
+          GitHub
+        </a>{" "}
+        (ліцензія CC0, можна вільно використовувати й поширювати).
+      </p>
     </aside>
   );
 }
