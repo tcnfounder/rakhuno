@@ -12,12 +12,12 @@ type Entry = {
 const entries: Entry[] = [
   { path: "", priority: 1, changeFrequency: "weekly", lastModified: "2026-09-30" },
   { path: "/invoice", priority: 0.95, changeFrequency: "weekly", lastModified: "2026-09-30" },
-  { path: "/guides", priority: 0.9, changeFrequency: "weekly", lastModified: "2026-09-30" },
+  { path: "/guides", priority: 0.9, changeFrequency: "weekly", lastModified: "2026-10-21" },
   {
     path: "/guides/rahunok-faktura",
     priority: 0.95,
-    changeFrequency: "daily",
-    lastModified: "2026-09-30",
+    changeFrequency: "weekly",
+    lastModified: "2026-10-21",
     images: [
       "https://rakhuno.com/brand/sample-rakhunok-faktury.webp",
       "https://rakhuno.com/brand/sample-rakhunok-faktury-card.webp",
@@ -27,7 +27,7 @@ const entries: Entry[] = [
     path: "/guides/zrazok-rahunku-faktury",
     priority: 0.94,
     changeFrequency: "weekly",
-    lastModified: "2026-09-30",
+    lastModified: "2026-10-21",
     images: [
       "https://rakhuno.com/brand/sample-rakhunok-faktury.webp",
       "https://rakhuno.com/brand/sample-rakhunok-na-oplatu-card.webp",
@@ -57,7 +57,13 @@ const entries: Entry[] = [
     path: "/guides/blank-rakhunku-faktury",
     priority: 0.93,
     changeFrequency: "weekly",
-    lastModified: "2026-09-28",
+    lastModified: "2026-10-21",
+  },
+  {
+    path: "/guides/akt-vykonanykh-robit",
+    priority: 0.93,
+    changeFrequency: "monthly",
+    lastModified: "2026-10-21",
   },
   {
     path: "/guides/fop-3-grupa",

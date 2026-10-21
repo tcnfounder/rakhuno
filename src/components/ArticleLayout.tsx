@@ -17,6 +17,10 @@ export function ArticleLayout({
   children: React.ReactNode;
   related?: { href: string; label: string }[];
 }) {
+  const hub = { href: "/guides/rahunok-faktura", label: "Що таке рахунок-фактура" };
+  const relatedLinks =
+    path === hub.href || related.some((r) => r.href === hub.href) ? related : [hub, ...related];
+
   const breadcrumbLd = path
     ? {
         "@context": "https://schema.org",
@@ -76,11 +80,11 @@ export function ArticleLayout({
         <div className="prose-rakhuno mt-10 max-w-3xl space-y-5 text-base leading-relaxed text-paper/90">
           {children}
         </div>
-        {related.length > 0 && (
+        {relatedLinks.length > 0 && (
           <aside className="mt-12 max-w-3xl border-t border-line pt-8">
             <p className="font-display text-sm uppercase tracking-[0.18em] text-signal">Читайте також</p>
             <ul className="mt-4 space-y-3">
-              {related.map((r) => (
+              {relatedLinks.map((r) => (
                 <li key={r.href}>
                   <Link href={r.href} className="text-paper transition hover:text-signal">
                     → {r.label}

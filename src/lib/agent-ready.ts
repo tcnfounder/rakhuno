@@ -93,6 +93,10 @@ export const PRIORITY_PAGES: Record<string, { title: string; summary: string }> 
     title: "Бланк рахунку-фактури для ФОП",
     summary: "Бланк рахунку фактури: поля онлайн і PDF без Word.",
   },
+  "/guides/akt-vykonanykh-robit": {
+    title: "Акт виконаних робіт для ФОП",
+    summary: "Реквізити акту, зразок заповнення й бланк Word безкоштовно.",
+  },
   "/guides/zrazok-rahunku-faktury": {
     title: "Зразок рахунку-фактури для ФОП",
     summary: "Зразок рахунку на оплату ФОП і перехід у конструктор PDF.",

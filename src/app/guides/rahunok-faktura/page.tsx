@@ -6,14 +6,14 @@ import { JsonLd } from "@/components/JsonLd";
 import { MidInvoiceCta } from "@/components/SiteShell";
 
 export const metadata: Metadata = {
-  title: "Рахунок-фактура для ФОП: зразок, реквізити, PDF онлайн",
+  title: "Рахунок-фактура — що це таке: реквізити й зразок для ФОП",
   description:
-    "Рахунок-фактура для ФОП: що це, які реквізити потрібні, чим відрізняється від акту й податкової накладної, як зібрати PDF онлайн у Rakhuno — без Word і Checkbox.",
+    "Рахунок-фактура — це документ на оплату з реквізитами продавця, покупця, переліком товарів чи послуг і сумою. Що обов’язково вказати ФОП, чим він відрізняється від акту й накладної.",
   alternates: { canonical: "https://rakhuno.com/guides/rahunok-faktura" },
   openGraph: {
-    title: "Рахунок-фактура для ФОП: зразок і PDF · Rakhuno",
+    title: "Рахунок-фактура — що це таке · Rakhuno",
     description:
-      "Зразок полів, реквізити й онлайн PDF за 2 хвилини — без Checkbox і Медок.",
+      "Визначення простими словами, обов’язкові реквізити, зразок полів і різниця з актом та накладною.",
     url: "https://rakhuno.com/guides/rahunok-faktura",
     images: ["/brand/sample-rakhunok-faktury-card.webp"],
   },
@@ -71,10 +71,10 @@ const faqLd = {
 const articleLd = {
   "@context": "https://schema.org",
   "@type": "Article",
-  headline: "Рахунок-фактура для ФОП: зразок, реквізити, PDF онлайн",
+  headline: "Рахунок-фактура — що це таке: реквізити й зразок для ФОП",
   description: metadata.description,
   datePublished: "2026-09-27",
-  dateModified: "2026-09-30T22:36:47+00:00",
+  dateModified: "2026-10-21",
   author: { "@type": "Organization", name: "Rakhuno" },
   publisher: {
     "@type": "Organization",
@@ -121,8 +121,8 @@ export default function Page() {
     <>
       <JsonLd data={[articleLd, faqLd, howToLd]} />
       <ArticleLayout
-        title="Рахунок-фактура для ФОП: зразок і PDF"
-        description="Зразок полів, обов’язкові реквізити й онлайн PDF клієнту за кілька хвилин — без Word."
+        title="Рахунок-фактура: що це таке і як її виписати ФОП"
+        description="Визначення простими словами, обов’язкові реквізити, зразок полів і різниця з актом та податковою накладною."
         path="/guides/rahunok-faktura"
         related={[
           { href: "/guides/zrazok-rahunku-faktury", label: "Зразок рахунку-фактури" },
@@ -131,6 +131,17 @@ export default function Page() {
           { href: "/guides/rahunok-onlayn", label: "Рахунок онлайн за 2 хвилини" },
         ]}
       >
+        <p className="rounded-xl border border-line bg-ink-2/40 p-5 text-paper">
+          <strong>Рахунок-фактура</strong> — це документ, яким продавець (зокрема ФОП) просить
+          покупця оплатити товари чи послуги. У ньому вказують номер і дату, реквізити продавця й
+          покупця, перелік позицій з кількістю й ціною, загальну суму та IBAN для оплати. Інші назви:
+          рахунок на оплату, проформа, інвойс. Рахунок-фактура не підтверджує, що послугу вже
+          надано, — для цього складають{" "}
+          <Link href="/guides/akt-vykonanykh-robit" className="text-signal underline-offset-2 hover:underline">
+            акт виконаних робіт
+          </Link>
+          .
+        </p>
         <p>
           У Google під запитом <strong>«рахунок-фактура»</strong> змішані Word-бланки, податкові
           накладні й інвойси. Для ФОП на спрощеній системі без ПДВ потрібне інше: короткий документ
@@ -264,6 +275,43 @@ export default function Page() {
           що роботу прийнято. <strong>Інвойс</strong> у міжнародній практиці часто означає те саме,
           що рахунок; українською для локальних клієнтів звичніше «рахунок» / «рахунок-фактура».
         </p>
+        <div className="not-prose overflow-x-auto">
+          <table className="w-full min-w-[320px] border-collapse text-left text-sm text-mist">
+            <thead>
+              <tr className="border-b border-line text-paper">
+                <th className="py-2 pr-3 font-display font-medium">Документ</th>
+                <th className="py-2 pr-3 font-display font-medium">Навіщо</th>
+                <th className="py-2 font-display font-medium">Коли</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr className="border-b border-line/80">
+                <td className="py-2 pr-3 text-paper/90">Рахунок-фактура</td>
+                <td className="py-2 pr-3">Просить оплатити, містить IBAN і суму</td>
+                <td className="py-2">До оплати</td>
+              </tr>
+              <tr className="border-b border-line/80">
+                <td className="py-2 pr-3 text-paper/90">
+                  <Link href="/guides/akt-vykonanykh-robit" className="text-signal underline-offset-2 hover:underline">
+                    Акт виконаних робіт
+                  </Link>
+                </td>
+                <td className="py-2 pr-3">Підтверджує, що послугу надано й прийнято</td>
+                <td className="py-2">Після виконання</td>
+              </tr>
+              <tr className="border-b border-line/80">
+                <td className="py-2 pr-3 text-paper/90">Видаткова накладна</td>
+                <td className="py-2 pr-3">Підтверджує передачу товару</td>
+                <td className="py-2">При відвантаженні</td>
+              </tr>
+              <tr>
+                <td className="py-2 pr-3 text-paper/90">Податкова накладна</td>
+                <td className="py-2 pr-3">ПДВ-облік, реєструється в ЄРПН</td>
+                <td className="py-2">Лише платники ПДВ</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
         <p>
           Якщо клієнт — ФОП чи ТОВ на загальній системі, можуть просити і рахунок, і акт. Якщо
           клієнт — фізособа за послугу «під ключ», іноді достатньо одного рахунку + квитанції банку.

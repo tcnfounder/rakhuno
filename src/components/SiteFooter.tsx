@@ -15,7 +15,7 @@ export function SiteFooter() {
               Гіди
             </Link>
             <Link href="/guides/rahunok-faktura" className="hover:text-signal">
-              Рахунок-фактура
+              Що таке рахунок-фактура
             </Link>
             <Link href="/guides/zrazok-rahunku-faktury" className="hover:text-signal">
               Зразок
@@ -28,6 +28,12 @@ export function SiteFooter() {
             </Link>
             <Link href="/guides/rakhunok-na-oplatu" className="hover:text-signal">
               На оплату
+            </Link>
+            <Link href="/guides/blank-rakhunku-faktury" className="hover:text-signal">
+              Бланк Word / Excel
+            </Link>
+            <Link href="/guides/akt-vykonanykh-robit" className="hover:text-signal">
+              Акт виконаних робіт
             </Link>
             <Link href="/invoice" className="hover:text-signal">
               Рахунок

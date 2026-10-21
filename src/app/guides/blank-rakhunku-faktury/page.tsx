@@ -4,15 +4,16 @@ import Link from "next/link";
 import { ArticleLayout } from "@/components/ArticleLayout";
 import { JsonLd } from "@/components/JsonLd";
 import { MidInvoiceCta } from "@/components/SiteShell";
+import { TemplateDownload } from "@/components/TemplateDownload";
 
 export const metadata: Metadata = {
-  title: "Бланк рахунку-фактури для ФОП без Word",
+  title: "Бланк рахунку-фактури ФОП — скачати Word і Excel безкоштовно",
   description:
-    "Бланк рахунку фактури для ФОП: поля замість Excel і Word. Заповніть бланк онлайн і скачайте PDF у Rakhuno.",
+    "Бланк рахунку-фактури (рахунку на оплату) для ФОП без ПДВ: скачайте безкоштовно у Word .docx або Excel .xlsx з формулами. Або заповніть онлайн і отримайте PDF за 2 хвилини.",
   alternates: { canonical: "https://rakhuno.com/guides/blank-rakhunku-faktury" },
   openGraph: {
-    title: "Бланк рахунку-фактури для ФОП · Rakhuno",
-    description: "Бланк рахунку фактури без файлу Word: заповніть поля і скачайте PDF.",
+    title: "Бланк рахунку-фактури: Word і Excel · Rakhuno",
+    description: "Безкоштовний бланк рахунку на оплату ФОП у Word та Excel — або PDF онлайн за 2 хвилини.",
     url: "https://rakhuno.com/guides/blank-rakhunku-faktury",
   },
 };
@@ -20,7 +21,11 @@ export const metadata: Metadata = {
 const faqs = [
   {
     q: "Де скачати бланк рахунку-фактури?",
-    a: "Можна знайти Word/Excel у мережі, але для регулярних рахунків зручніше онлайн-форма: поля вже готові, PDF збирається за хвилини. У Rakhuno бланк = форма → PDF.",
+    a: "На цій сторінці: бланк у Word (.docx) і Excel (.xlsx) безкоштовно, без реєстрації. В Excel-версії сума рядків і підсумок рахуються формулами. Для регулярних рахунків зручніше онлайн-форма Rakhuno: реквізити зберігаються, PDF збирається за 2 хвилини.",
+  },
+  {
+    q: "Бланк рахунку на оплату у Word чи Excel — що обрати?",
+    a: "Word зручніший, якщо рахунок простий і ви редагуєте текст. Excel — якщо позицій багато: формули самі рахують суму. Обидва бланки з однаковими полями.",
   },
   {
     q: "Чи є офіційний бланк з гербом?",
@@ -56,7 +61,7 @@ const articleLd = {
   headline: "Бланк рахунку-фактури для ФОП",
   description: metadata.description,
   datePublished: "2026-09-28",
-  dateModified: "2026-10-16",
+  dateModified: "2026-10-21",
   author: { "@type": "Organization", name: "Rakhuno" },
   publisher: {
     "@type": "Organization",
@@ -97,8 +102,8 @@ export default function Page() {
     <>
       <JsonLd data={[articleLd, faqLd, howToLd]} />
       <ArticleLayout
-        title="Бланк рахунку-фактури для ФОП"
-        description="Порожній Word не потрібен: заповніть поля онлайн і скачайте PDF."
+        title="Бланк рахунку-фактури для ФОП: Word, Excel або онлайн"
+        description="Скачайте порожній бланк безкоштовно або заповніть його онлайн і отримайте PDF за 2 хвилини."
         path="/guides/blank-rakhunku-faktury"
         related={[
           { href: "/guides/rakhunok-na-oplatu", label: "Рахунок на оплату" },
@@ -107,16 +112,28 @@ export default function Page() {
         ]}
       >
         <p>
-          Шукаєте <strong>бланк рахунку-фактури</strong> у Word або Excel — зазвичай потрібна не
-          «порожня таблиця», а швидкий спосіб зібрати документ з IBAN і позиціями. У{" "}
+          Нижче — безкоштовний <strong>бланк рахунку-фактури</strong> (рахунку на оплату) для ФОП
+          без ПДВ у Word і Excel. Поля ті самі, що клієнти очікують: номер і дата, реквізити ФОП з
+          IBAN, покупець, таблиця позицій, сума прописом і призначення платежу.
+        </p>
+        <TemplateDownload
+          title="Скачати бланк рахунку-фактури"
+          text="Без реєстрації. Excel-версія сама рахує суми рядків і підсумок."
+          files={[
+            { href: "/templates/blank-rakhunku-faktury.docx", label: "Бланк у Word (.docx)", format: "docx" },
+            { href: "/templates/blank-rakhunku-faktury.xlsx", label: "Бланк в Excel (.xlsx)", format: "xlsx" },
+          ]}
+        />
+        <p>
+          Якщо рахунки потрібні регулярно, швидше заповнити бланк онлайн у{" "}
           <Link href="/invoice" className="text-signal underline-offset-2 hover:underline">
             Rakhuno
-          </Link>{" "}
-          бланк уже зібраний у формі: заповнюєте → PDF.
+          </Link>
+          : реквізити ФОП зберігаються в браузері, а клієнт одразу отримує PDF, а не .docx.
         </p>
         <MidInvoiceCta
-          title="Бланк рахунку фактури — у формі"
-          text="Порожній Word не потрібен. Відкрийте рахунок, внесіть IBAN і позиції, скачайте PDF."
+          title="Або заповніть бланк онлайн"
+          text="Без Word: внесіть IBAN і позиції, скачайте готовий PDF за 2 хвилини."
           ctaLabel="Заповнити бланк рахунку"
         />
 

@@ -82,6 +82,18 @@ Code (ships with the next production deploy):
 - Existing contacts (Brevo 204) no longer get another welcome or drip.
 - Guide titles and early `/invoice` CTAs updated on the zrazok and blank pages.
 
+### 2026-10-21 — SEO sprint 5
+
+Data: GSC 664 impressions / 12 clicks since 2026-09-27 (last 7 days: 406 / 6). URL Inspection: `/guides/rahunok-faktura` is **Crawled – currently not indexed**; the same queries split across 4–6 guides.
+
+- Hub `/guides/rahunok-faktura` retargeted to the definition intent («рахунок фактура це» 720/mo, «що таке рахунок фактура» 320/mo): definition first, comparison table with act and invoices. Every guide now links to it via `ArticleLayout`.
+- `zrazok-rahunku-faktury`: new title and description. It ranks #1 for «зразок рахунку фактури» and «приклад рахунку на оплату» but had 0 clicks.
+- `blank-rakhunku-faktury`: free Word/Excel blanks (`/public/templates`) for «бланк … word/excel скачати» queries (~#10). GA4 event `template_download`.
+- New `/guides/akt-vykonanykh-robit` («акт виконаних робіт» 1.6k/mo, «… зразок» 720/mo) with a Word blank.
+- Twitter cards follow each page's OG title.
+
+Next: request indexing for the hub and the act page in GSC. Re-check CTR for zrazok and blank in 14 days.
+
 ## Review cadence
 
 | When | Action |
