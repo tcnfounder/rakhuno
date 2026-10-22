@@ -7,9 +7,9 @@ import { MidInvoiceCta } from "@/components/SiteShell";
 import { TemplateDownload } from "@/components/TemplateDownload";
 
 export const metadata: Metadata = {
-  title: "Бланк рахунку-фактури ФОП — скачати Word і Excel безкоштовно",
+  title: "Бланк рахунку-фактури ФОП: Word і Excel безкоштовно",
   description:
-    "Бланк рахунку-фактури (рахунку на оплату) для ФОП без ПДВ: скачайте безкоштовно у Word .docx або Excel .xlsx з формулами. Або заповніть онлайн і отримайте PDF за 2 хвилини.",
+    "Бланк рахунку-фактури (рахунку на оплату) для ФОП без ПДВ: Word .docx або Excel .xlsx з формулами, безкоштовно. Або заповніть онлайн і скачайте PDF.",
   alternates: { canonical: "https://rakhuno.com/guides/blank-rakhunku-faktury" },
   openGraph: {
     title: "Бланк рахунку-фактури: Word і Excel · Rakhuno",

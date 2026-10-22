@@ -4,7 +4,7 @@ import { ArticleLayout } from "@/components/ArticleLayout";
 import { JsonLd } from "@/components/JsonLd";
 
 export const metadata: Metadata = {
-  title: "Єдиний податок ФОП: коли платити, типові строки, нагадування",
+  title: "Єдиний податок ФОП: коли платити і строки сплати",
   description:
     "Єдиний податок для ФОП: як не пропустити строк, що тримати в календарі, різниця з ЄСВ і як налаштувати email-нагадування в Rakhuno. Не податкова консультація.",
   alternates: { canonical: "https://rakhuno.com/guides/yedynyy-podatok" },

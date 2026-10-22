@@ -197,123 +197,103 @@ export function paymentText(data: InvoiceData) {
     .join("\n");
 }
 
-/** Amount in Ukrainian words for proforma footer (грн + коп.). */
+/** Ukrainian plural form for 1 / 2–4 / 5+ (e.g. гривня, гривні, гривень). */
+export function pluralUk(n: number, one: string, few: string, many: string): string {
+  const mod10 = n % 10;
+  const mod100 = n % 100;
+  if (mod10 === 1 && mod100 !== 11) return one;
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return few;
+  return many;
+}
+
+const ONES_F = ["", "одна", "дві", "три", "чотири", "пʼять", "шість", "сім", "вісім", "девʼять"];
+const ONES_M = ["", "один", "два", "три", "чотири", "пʼять", "шість", "сім", "вісім", "девʼять"];
+const TEENS = [
+  "десять",
+  "одинадцять",
+  "дванадцять",
+  "тринадцять",
+  "чотирнадцять",
+  "пʼятнадцять",
+  "шістнадцять",
+  "сімнадцять",
+  "вісімнадцять",
+  "девʼятнадцять",
+];
+const TENS = [
+  "",
+  "",
+  "двадцять",
+  "тридцять",
+  "сорок",
+  "пʼятдесят",
+  "шістдесят",
+  "сімдесят",
+  "вісімдесят",
+  "девʼяносто",
+];
+const HUNDREDS = [
+  "",
+  "сто",
+  "двісті",
+  "триста",
+  "чотириста",
+  "пʼятсот",
+  "шістсот",
+  "сімсот",
+  "вісімсот",
+  "девʼятсот",
+];
+
+function triadUk(n: number, feminine: boolean): string {
+  const h = Math.floor(n / 100);
+  const t = Math.floor((n % 100) / 10);
+  const o = n % 10;
+  const parts: string[] = [];
+  if (h) parts.push(HUNDREDS[h]);
+  if (t === 1) {
+    parts.push(TEENS[o]);
+  } else {
+    if (t) parts.push(TENS[t]);
+    if (o) parts.push((feminine ? ONES_F : ONES_M)[o]);
+  }
+  return parts.join(" ");
+}
+
+/**
+ * Whole number in Ukrainian words, lowercase (up to 999 999 999 999).
+ * `feminine` sets the gender of the last group: «одна гривня», but «один долар».
+ */
+export function integerToWordsUk(value: number, feminine = false): string {
+  const n = Math.floor(Math.abs(value));
+  if (n === 0) return "нуль";
+
+  const groups: [number, boolean, [string, string, string] | null][] = [
+    [Math.floor(n / 1_000_000_000) % 1000, false, ["мільярд", "мільярди", "мільярдів"]],
+    [Math.floor(n / 1_000_000) % 1000, false, ["мільйон", "мільйони", "мільйонів"]],
+    [Math.floor(n / 1000) % 1000, true, ["тисяча", "тисячі", "тисяч"]],
+    [n % 1000, feminine, null],
+  ];
+
+  return groups
+    .filter(([g]) => g > 0)
+    .map(([g, fem, forms]) =>
+      forms ? `${triadUk(g, fem)} ${pluralUk(g, ...forms)}` : triadUk(g, fem),
+    )
+    .join(" ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/** Amount in Ukrainian words for proforma footer (грн + коп.). Гривня is feminine. */
 export function amountInWordsUk(value: number): string {
   const safe = Math.max(0, Math.round(value * 100) / 100);
   const hryvni = Math.floor(safe);
   const kopiyky = Math.round((safe - hryvni) * 100);
 
-  const ones = [
-    "",
-    "одна",
-    "дві",
-    "три",
-    "чотири",
-    "пʼять",
-    "шість",
-    "сім",
-    "вісім",
-    "девʼять",
-  ];
-  const onesM = [
-    "",
-    "один",
-    "два",
-    "три",
-    "чотири",
-    "пʼять",
-    "шість",
-    "сім",
-    "вісім",
-    "девʼять",
-  ];
-  const teens = [
-    "десять",
-    "одинадцять",
-    "дванадцять",
-    "тринадцять",
-    "чотирнадцять",
-    "пʼятнадцять",
-    "шістнадцять",
-    "сімнадцять",
-    "вісімнадцять",
-    "девʼятнадцять",
-  ];
-  const tens = [
-    "",
-    "",
-    "двадцять",
-    "тридцять",
-    "сорок",
-    "пʼятдесят",
-    "шістдесят",
-    "сімдесят",
-    "вісімдесят",
-    "девʼяносто",
-  ];
-  const hundreds = [
-    "",
-    "сто",
-    "двісті",
-    "триста",
-    "чотириста",
-    "пʼятсот",
-    "шістсот",
-    "сімсот",
-    "вісімсот",
-    "девʼятсот",
-  ];
-
-  function triad(n: number, feminine: boolean): string {
-    const h = Math.floor(n / 100);
-    const t = Math.floor((n % 100) / 10);
-    const o = n % 10;
-    const parts: string[] = [];
-    if (h) parts.push(hundreds[h]);
-    if (t === 1) {
-      parts.push(teens[o]);
-    } else {
-      if (t) parts.push(tens[t]);
-      if (o) parts.push((feminine ? ones : onesM)[o]);
-    }
-    return parts.join(" ");
-  }
-
-  function plural(n: number, one: string, few: string, many: string) {
-    const mod10 = n % 10;
-    const mod100 = n % 100;
-    if (mod10 === 1 && mod100 !== 11) return one;
-    if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return few;
-    return many;
-  }
-
-  if (hryvni === 0) {
-    const kopWord = plural(kopiyky, "копійка", "копійки", "копійок");
-    return `нуль гривень ${String(kopiyky).padStart(2, "0")} ${kopWord}`;
-  }
-
-  const millions = Math.floor(hryvni / 1_000_000);
-  const thousands = Math.floor((hryvni % 1_000_000) / 1000);
-  const rest = hryvni % 1000;
-  const chunks: string[] = [];
-
-  if (millions) {
-    chunks.push(
-      `${triad(millions, false)} ${plural(millions, "мільйон", "мільйони", "мільйонів")}`,
-    );
-  }
-  if (thousands) {
-    chunks.push(
-      `${triad(thousands, true)} ${plural(thousands, "тисяча", "тисячі", "тисяч")}`,
-    );
-  }
-  if (rest || (!millions && !thousands)) {
-    chunks.push(triad(rest, false) || "нуль");
-  }
-
-  const hrWord = plural(hryvni, "гривня", "гривні", "гривень");
-  const kopWord = plural(kopiyky, "копійка", "копійки", "копійок");
-  const body = chunks.join(" ").replace(/\s+/g, " ").trim();
+  const body = hryvni === 0 ? "нуль" : integerToWordsUk(hryvni, true);
   const capitalized = body.charAt(0).toUpperCase() + body.slice(1);
+  const hrWord = pluralUk(hryvni, "гривня", "гривні", "гривень");
+  const kopWord = pluralUk(kopiyky, "копійка", "копійки", "копійок");
   return `${capitalized} ${hrWord} ${String(kopiyky).padStart(2, "0")} ${kopWord}`;
 }

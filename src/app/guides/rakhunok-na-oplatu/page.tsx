@@ -6,7 +6,7 @@ import { JsonLd } from "@/components/JsonLd";
 import { MidInvoiceCta } from "@/components/SiteShell";
 
 export const metadata: Metadata = {
-  title: "Рахунок на оплату для ФОП: зразок, реквізити, PDF онлайн",
+  title: "Рахунок на оплату ФОП: зразок, реквізити, PDF",
   description:
     "Рахунок на оплату для ФОП: які поля потрібні, зразок структури, бланк без Word і як одразу виставити PDF онлайн у Rakhuno.",
   alternates: { canonical: "https://rakhuno.com/guides/rakhunok-na-oplatu" },
@@ -53,7 +53,7 @@ const faqLd = {
 const articleLd = {
   "@context": "https://schema.org",
   "@type": "Article",
-  headline: "Рахунок на оплату для ФОП: зразок, реквізити, PDF онлайн",
+  headline: "Рахунок на оплату ФОП: зразок, реквізити, PDF",
   description: metadata.description,
   datePublished: "2026-09-28",
   dateModified: "2026-09-30",

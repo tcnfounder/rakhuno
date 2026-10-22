@@ -94,6 +94,21 @@ Data: GSC 664 impressions / 12 clicks since 2026-09-27 (last 7 days: 406 / 6). U
 
 Next: request indexing for the hub and the act page in GSC. Re-check CTR for zrazok and blank in 14 days.
 
+### 2026-10-22 — SEO sprint 6
+
+SE Ranking audit (16 pages, score 97%, 0 errors) found the following:
+- `/invoice` had **no H1 in the server-rendered HTML**. The client renders a loading state until mount. This matters for Ads QS: «рахунок фактура» QS is 4.
+- 6 titles were over 65 characters and 4 descriptions over 158.
+
+Changes:
+- `/invoice` now has an H1 in the server-rendered loading state.
+- Titles are ≤65 characters and descriptions ≤155.
+- Fixed `amountInWordsUk`: «гривня» is feminine, so it is now «одна/дві гривні». It used to print «Один гривня» / «Два гривні» in every invoice PDF. It also supports billions now.
+- New tool `/suma-propysom` for «сума прописом» (12.1k/mo, KD 31 in SE Ranking UA).
+- Akt page targets «акт наданих послуг» too (590/mo, KD 6).
+
+Next: new guides for акт звірки (480+210), інвойс/проформа (390+320+170) and видаткова накладна зразок (390), with Word blanks.
+
 ## Review cadence
 
 | When | Action |

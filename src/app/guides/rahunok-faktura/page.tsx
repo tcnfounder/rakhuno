@@ -6,9 +6,9 @@ import { JsonLd } from "@/components/JsonLd";
 import { MidInvoiceCta } from "@/components/SiteShell";
 
 export const metadata: Metadata = {
-  title: "Рахунок-фактура — що це таке: реквізити й зразок для ФОП",
+  title: "Рахунок-фактура — що це: реквізити й зразок для ФОП",
   description:
-    "Рахунок-фактура — це документ на оплату з реквізитами продавця, покупця, переліком товарів чи послуг і сумою. Що обов’язково вказати ФОП, чим він відрізняється від акту й накладної.",
+    "Рахунок-фактура — документ на оплату з реквізитами продавця й покупця, переліком послуг і сумою. Що вказати ФОП і чим він відрізняється від акту.",
   alternates: { canonical: "https://rakhuno.com/guides/rahunok-faktura" },
   openGraph: {
     title: "Рахунок-фактура — що це таке · Rakhuno",
@@ -71,7 +71,7 @@ const faqLd = {
 const articleLd = {
   "@context": "https://schema.org",
   "@type": "Article",
-  headline: "Рахунок-фактура — що це таке: реквізити й зразок для ФОП",
+  headline: "Рахунок-фактура — що це: реквізити й зразок для ФОП",
   description: metadata.description,
   datePublished: "2026-09-27",
   dateModified: "2026-10-21",
