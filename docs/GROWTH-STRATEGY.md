@@ -107,7 +107,7 @@ Changes:
 - New tool `/suma-propysom` for «сума прописом» (12.1k/mo, KD 31 in SE Ranking UA).
 - Akt page targets «акт наданих послуг» too (590/mo, KD 6).
 
-Next: new guides for акт звірки (480+210), інвойс/проформа (390+320+170) and видаткова накладна зразок (390), with Word blanks.
+Sprint 7 (same day) shipped `/guides/akt-zvirky`, `/guides/invoys-proforma` and `/guides/vydatkova-nakladna`. Each has a Word blank in `public/templates`, and they are linked from the hub, the akt page and the guides index. The guide H1 now uses `break-words`, because a long single word overflowed at 390px.
 
 ## Review cadence
 
