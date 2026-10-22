@@ -35,6 +35,9 @@ export function SiteFooter() {
             <Link href="/guides/akt-vykonanykh-robit" className="hover:text-signal">
               Акт виконаних робіт
             </Link>
+            <Link href="/suma-propysom" className="hover:text-signal">
+              Сума прописом
+            </Link>
             <Link href="/invoice" className="hover:text-signal">
               Рахунок
             </Link>

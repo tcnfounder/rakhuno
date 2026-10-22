@@ -5,7 +5,7 @@ import { JsonLd } from "@/components/JsonLd";
 import { MidInvoiceCta } from "@/components/SiteShell";
 
 export const metadata: Metadata = {
-  title: "Рахунок онлайн для ФОП за 2 хвилини: PDF без Word і Checkbox",
+  title: "Рахунок онлайн для ФОП за 2 хвилини: PDF без Word",
   description:
     "Як виставити рахунок онлайн для ФОП: реквізити, позиції, PDF за 2 хвилини, email-нагадування. Без шаблону Word і без важкої бухгалтерії.",
   alternates: { canonical: "https://rakhuno.com/guides/rahunok-onlayn" },

@@ -9,7 +9,7 @@ import { TemplateDownload } from "@/components/TemplateDownload";
 export const metadata: Metadata = {
   title: "Зразок рахунку-фактури ФОП 2026: готовий приклад + Word",
   description:
-    "Готовий приклад рахунку на оплату ФОП без ПДВ: усі поля заповнені, призначення платежу, сума прописом. Скачайте бланк Word/Excel або зробіть PDF онлайн безкоштовно.",
+    "Готовий приклад рахунку на оплату ФОП без ПДВ: усі поля, призначення платежу, сума прописом. Бланк Word/Excel або PDF онлайн безкоштовно.",
   alternates: { canonical: "https://rakhuno.com/guides/zrazok-rahunku-faktury" },
   openGraph: {
     title: "Зразок рахунку-фактури для ФОП · Rakhuno",
@@ -190,6 +190,13 @@ export default function Page() {
           <p className="mt-2">
             <strong className="text-paper/90">Разом:</strong> 12 000,00 грн (дванадцять тисяч грн 00
             коп.), без ПДВ
+          </p>
+          <p className="mt-2 text-xs">
+            Суму прописом для своєї суми можна отримати в{" "}
+            <Link href="/suma-propysom" className="text-signal underline-offset-2 hover:underline">
+              конвертері «сума прописом»
+            </Link>
+            .
           </p>
           <p className="mt-2">
             <strong className="text-paper/90">Примітка:</strong> оплата протягом 5 банківських днів;

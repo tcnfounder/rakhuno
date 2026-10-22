@@ -5,7 +5,7 @@ import { JsonLd } from "@/components/JsonLd";
 import { MidInvoiceCta } from "@/components/SiteShell";
 
 export const metadata: Metadata = {
-  title: "Як виставити рахунок на оплату ФОП онлайн: крок за кроком",
+  title: "Як виставити рахунок на оплату ФОП: крок за кроком",
   description:
     "Як виставити рахунок на оплату для ФОП: коли надсилати клієнту, які реквізити вказати й як за 2 хвилини скачати PDF онлайн у Rakhuno — без Word і Checkbox.",
   alternates: { canonical: "https://rakhuno.com/guides/vystavyty-rakhunok" },

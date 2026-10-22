@@ -6,6 +6,7 @@ const DEFAULT_URLS = [
   "https://rakhuno.com/",
   "https://rakhuno.com/invoice",
   "https://rakhuno.com/guides",
+  "https://rakhuno.com/suma-propysom",
   "https://rakhuno.com/guides/rahunok-faktura",
   "https://rakhuno.com/guides/zrazok-rahunku-faktury",
   "https://rakhuno.com/guides/rakhunok-u-word",

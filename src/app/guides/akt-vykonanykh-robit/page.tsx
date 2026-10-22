@@ -6,9 +6,9 @@ import { MidInvoiceCta } from "@/components/SiteShell";
 import { TemplateDownload } from "@/components/TemplateDownload";
 
 export const metadata: Metadata = {
-  title: "Акт виконаних робіт ФОП: зразок 2026 і бланк Word",
+  title: "Акт виконаних робіт і наданих послуг ФОП: зразок, бланк",
   description:
-    "Акт виконаних робіт (наданих послуг) для ФОП: обов’язкові реквізити, готовий зразок заповнення без ПДВ і безкоштовний бланк Word. Чим акт відрізняється від рахунку-фактури.",
+    "Акт виконаних робіт (наданих послуг) для ФОП: реквізити, зразок заповнення без ПДВ і безкоштовний бланк Word. Чим акт відрізняється від рахунку.",
   alternates: { canonical: "https://rakhuno.com/guides/akt-vykonanykh-robit" },
   openGraph: {
     title: "Акт виконаних робіт ФОП: зразок і бланк · Rakhuno",
@@ -57,10 +57,10 @@ const faqLd = {
 const articleLd = {
   "@context": "https://schema.org",
   "@type": "Article",
-  headline: "Акт виконаних робіт ФОП: зразок 2026 і бланк Word",
+  headline: "Акт виконаних робіт і наданих послуг ФОП: зразок, бланк",
   description: metadata.description,
   datePublished: "2026-10-21",
-  dateModified: "2026-10-21",
+  dateModified: "2026-10-22",
   author: { "@type": "Organization", name: "Rakhuno" },
   publisher: {
     "@type": "Organization",
@@ -101,7 +101,7 @@ export default function Page() {
     <>
       <JsonLd data={[articleLd, faqLd, howToLd]} />
       <ArticleLayout
-        title="Акт виконаних робіт для ФОП: зразок і бланк"
+        title="Акт виконаних робіт (наданих послуг) для ФОП: зразок і бланк"
         description="Що це за документ, які реквізити обов’язкові, приклад заповнення без ПДВ і бланк Word безкоштовно."
         path="/guides/akt-vykonanykh-robit"
         related={[
@@ -129,6 +129,17 @@ export default function Page() {
           ]}
         />
 
+        <h2 className="!mt-10 font-display text-2xl text-paper">
+          Акт виконаних робіт чи акт наданих послуг?
+        </h2>
+        <p>
+          Це один і той самий тип документа, різниться лише назва. <strong>Акт виконаних робіт</strong>{" "}
+          пишуть, коли є відчутний результат: ремонт, розробка сайту, дизайн-макет.{" "}
+          <strong>Акт наданих послуг</strong> складають для процесу без окремого результату:
+          консультації, супровід, маркетинг, абонентське обслуговування. Реквізити однакові, тож
+          бланк вище підходить для обох — змініть лише заголовок.
+        </p>
+
         <h2 className="!mt-10 font-display text-2xl text-paper">Обов’язкові реквізити акту</h2>
         <p>
           Акт — первинний документ, тож має містити реквізити зі статті 9 Закону «Про бухгалтерський
@@ -141,7 +152,13 @@ export default function Page() {
           <li>
             зміст і обсяг операції: перелік робіт чи послуг, одиниці виміру, кількість, ціну й суму;
           </li>
-          <li>загальну вартість цифрами й прописом, позначку «без ПДВ», якщо ви не платник ПДВ;</li>
+          <li>
+            загальну вартість цифрами й{" "}
+            <Link href="/suma-propysom" className="text-signal underline-offset-2 hover:underline">
+              прописом
+            </Link>
+            , позначку «без ПДВ», якщо ви не платник ПДВ;
+          </li>
           <li>підписи осіб, які відповідають за операцію, з обох сторін.</li>
         </ul>
         <p>

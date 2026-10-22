@@ -201,7 +201,13 @@ export default function InvoiceClient() {
       <main className="min-h-screen bg-ink">
         <div className="grid-atmosphere min-h-screen">
           <SiteHeader />
-          <div className="mx-auto max-w-content px-5 py-16 text-mist">Завантаження…</div>
+          {/* Server-rendered HTML is this state — keep the page H1 here for crawlers and Ads QS. */}
+          <div className="mx-auto max-w-content px-5 py-8 md:px-10 md:py-10">
+            <h1 className="font-display text-2xl font-semibold text-paper md:text-4xl">
+              Рахунок-фактура PDF для ФОП
+            </h1>
+            <p className="mt-4 text-mist">Завантаження…</p>
+          </div>
         </div>
       </main>
     );
