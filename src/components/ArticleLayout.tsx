@@ -73,7 +73,7 @@ export function ArticleLayout({
             <li className="text-mist">{title}</li>
           </ol>
         </nav>
-        <h1 className="mt-4 max-w-3xl font-display text-3xl font-semibold leading-tight text-paper md:text-5xl">
+        <h1 className="mt-4 max-w-3xl break-words font-display text-3xl font-semibold leading-tight text-paper md:text-5xl">
           {title}
         </h1>
         <p className="mt-4 max-w-3xl text-lg text-mist">{description}</p>

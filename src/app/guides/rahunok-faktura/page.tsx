@@ -274,6 +274,11 @@ export default function Page() {
           <strong>Рахунок-фактура</strong> — прохання заплатити. <strong>Акт</strong> — підтвердження,
           що роботу прийнято. <strong>Інвойс</strong> у міжнародній практиці часто означає те саме,
           що рахунок; українською для локальних клієнтів звичніше «рахунок» / «рахунок-фактура».
+          Як оформити інвойс для іноземного клієнта — у гіді{" "}
+          <Link href="/guides/invoys-proforma" className="text-signal underline-offset-2 hover:underline">
+            інвойс і проформа
+          </Link>
+          .
         </p>
         <div className="not-prose overflow-x-auto">
           <table className="w-full min-w-[320px] border-collapse text-left text-sm text-mist">
@@ -300,7 +305,11 @@ export default function Page() {
                 <td className="py-2">Після виконання</td>
               </tr>
               <tr className="border-b border-line/80">
-                <td className="py-2 pr-3 text-paper/90">Видаткова накладна</td>
+                <td className="py-2 pr-3 text-paper/90">
+                  <Link href="/guides/vydatkova-nakladna" className="text-signal underline-offset-2 hover:underline">
+                    Видаткова накладна
+                  </Link>
+                </td>
                 <td className="py-2 pr-3">Підтверджує передачу товару</td>
                 <td className="py-2">При відвантаженні</td>
               </tr>

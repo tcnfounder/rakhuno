@@ -101,6 +101,18 @@ export const PRIORITY_PAGES: Record<string, { title: string; summary: string }> 
     title: "Акт виконаних робіт для ФОП",
     summary: "Реквізити акту, зразок заповнення й бланк Word безкоштовно.",
   },
+  "/guides/akt-zvirky": {
+    title: "Акт звірки взаєморозрахунків",
+    summary: "Дебет, кредит, сальдо — приклад заповнення й бланк Word.",
+  },
+  "/guides/invoys-proforma": {
+    title: "Інвойс і проформа для ФОП",
+    summary: "Інвойс для іноземного клієнта, проформа, двомовний бланк UA/EN.",
+  },
+  "/guides/vydatkova-nakladna": {
+    title: "Видаткова накладна для ФОП",
+    summary: "Реквізити, зразок заповнення й бланк Word.",
+  },
   "/guides/zrazok-rahunku-faktury": {
     title: "Зразок рахунку-фактури для ФОП",
     summary: "Зразок рахунку на оплату ФОП і перехід у конструктор PDF.",
