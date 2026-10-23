@@ -13,6 +13,9 @@ if (!onRailway && process.env.NODE_ENV !== "production") {
   }
 }
 
-const nextConfig: NextConfig = {};
+const nextConfig: NextConfig = {
+  // Smaller Railway image (standalone server + static assets only).
+  output: "standalone",
+};
 
 export default nextConfig;
