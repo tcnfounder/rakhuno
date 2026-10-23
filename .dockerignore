@@ -1,0 +1,12 @@
+.git
+.github
+.next
+node_modules
+npm-debug.log*
+README.md
+content
+docs
+CLOUDFLARE.md
+wrangler.jsonc
+wrangler.preview.jsonc
+open-next.config.ts
