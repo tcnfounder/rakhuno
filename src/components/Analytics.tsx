@@ -3,9 +3,14 @@ import Script from "next/script";
 /** Google Ads (same Ads account as Jettfy — Rakhuno conversions). */
 const ADS_ID = "AW-18117109986";
 
-/** Optional GA4 — set NEXT_PUBLIC_GA_MEASUREMENT_ID (e.g. G-XXXXXXXX). */
+/**
+ * GA4 «Rakhuno» web stream. Pages are prerendered, so the ID is baked in at build time;
+ * keep a fallback so a build without NEXT_PUBLIC_* env (e.g. Docker) still tracks.
+ */
+const GA4_ID = "G-G71XV1YQJ0";
+
 export function Analytics() {
-  const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID?.trim();
+  const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID?.trim() || GA4_ID;
 
   return (
     <>
