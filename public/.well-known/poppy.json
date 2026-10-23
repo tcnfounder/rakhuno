@@ -1,0 +1,11 @@
+{
+  "pap": "0.1",
+  "organization": {
+    "name": "Rakhuno",
+    "url": "https://rakhuno.com"
+  },
+  "domain": "rakhuno.com",
+  "interfaces": {
+    "web": {}
+  }
+}
