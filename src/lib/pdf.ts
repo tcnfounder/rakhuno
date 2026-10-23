@@ -80,8 +80,12 @@ export type PdfResult = {
   filename: string;
 };
 
-/** Build A4 PDF from the live invoice node; always returns a blob for re-download UI. */
-export async function buildInvoicePdf(data: InvoiceData, node: HTMLElement): Promise<PdfResult> {
+/** Build A4 PDF from a document node (invoice or act); always returns a blob for re-download UI. */
+export async function buildInvoicePdf(
+  data: InvoiceData,
+  node: HTMLElement,
+  filePrefix = "rahunok",
+): Promise<PdfResult> {
   const clone = node.cloneNode(true) as HTMLElement;
   // Exact A4 content width at 96dpi ≈ 794px for 210mm
   const a4WidthPx = 794;
@@ -159,7 +163,7 @@ export async function buildInvoicePdf(data: InvoiceData, node: HTMLElement): Pro
     }
 
     const safeNum = (data.number || "draft").replace(/[^\w\-]+/g, "_");
-    const filename = `rahunok-${safeNum}.pdf`;
+    const filename = `${filePrefix}-${safeNum}.pdf`;
     const blob = pdf.output("blob");
     return { blob, filename };
   } finally {

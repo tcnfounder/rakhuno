@@ -2,6 +2,7 @@
 
 import { ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { ActDocument } from "@/components/ActDocument";
 import { SiteHeader } from "@/components/SiteHeader";
 import {
   InvoiceData,
@@ -11,6 +12,7 @@ import {
   calcLine,
   calcTotal,
   emptyItem,
+  formatDateUk,
   formatIban,
   formatTaxId,
   formatUah,
@@ -25,7 +27,12 @@ import {
 import { getCampaignParams, trackAdsConversion, trackEvent } from "@/lib/analytics";
 import { markPendingLead, submitInvoiceLead, takePendingLead } from "@/lib/invoice-lead";
 import { prepareLogo } from "@/lib/logo";
-import { downloadInvoicePdf, downloadPdfBlob, type PdfResult } from "@/lib/pdf";
+import {
+  buildInvoicePdf,
+  downloadInvoicePdf,
+  downloadPdfBlob,
+  type PdfResult,
+} from "@/lib/pdf";
 
 const LAST_PDF_META_KEY = "rakhuno.lastPdfMeta.v1";
 
@@ -85,6 +92,8 @@ export default function InvoiceClient() {
   const previewRef = useRef<HTMLDivElement>(null);
   const logoInputRef = useRef<HTMLInputElement>(null);
   const readyRef = useRef<HTMLDivElement>(null);
+  const actRef = useRef<HTMLDivElement>(null);
+  const [actDate, setActDate] = useState(todayIso());
   const [email, setEmail] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -196,6 +205,25 @@ export default function InvoiceClient() {
     }
   }
 
+  /** Act of completed work from the same data — offered after the email unlock. */
+  async function downloadAct() {
+    const node = actRef.current;
+    if (!node) return;
+    setBusy(true);
+    setError("");
+    try {
+      const result = await buildInvoicePdf(data, node, "akt");
+      downloadPdfBlob(result.blob, result.filename);
+      setOkMsg("Акт завантажено.");
+      trackEvent("act_pdf_download", { item_count: data.items.length });
+    } catch {
+      setError("Не вдалося створити акт. Спробуйте ще раз.");
+      trackEvent("invoice_pdf_error", { stage: "act" });
+    } finally {
+      setBusy(false);
+    }
+  }
+
   if (!mounted) {
     return (
       <main className="min-h-screen bg-ink">
@@ -212,6 +240,35 @@ export default function InvoiceClient() {
       </main>
     );
   }
+
+  const actPanel = (
+    <div className="mt-4 rounded-lg border border-white/10 bg-ink/60 p-3">
+      <p className="font-semibold text-paper">Потрібен акт виконаних робіт?</p>
+      <p className="mt-1 text-sm text-mist">
+        Ті самі сторони, позиції й сума — акт до рахунку № {data.number || "—"} одним PDF.
+      </p>
+      <div className="mt-3 flex flex-wrap items-center gap-3">
+        <label className="flex items-center gap-2 text-sm text-mist">
+          Дата акту
+          <input
+            type="date"
+            value={actDate}
+            onChange={(e) => setActDate(e.target.value || todayIso())}
+            className="rounded-lg border border-white/15 bg-ink px-2 py-1.5 text-paper outline-none focus:border-signal"
+          />
+        </label>
+        <button
+          type="button"
+          onClick={() => void downloadAct()}
+          disabled={busy}
+          className="rounded-lg border border-signal px-4 py-2 text-sm font-semibold text-signal transition hover:bg-signal hover:text-ink disabled:opacity-60"
+        >
+          {busy ? "…" : "Скачати акт PDF"}
+        </button>
+      </div>
+      <p className="mt-2 text-xs text-muted">Акт від {formatDateUk(actDate)} · підпишіть з обох сторін.</p>
+    </div>
+  );
 
   function update<K extends keyof InvoiceData>(key: K, value: InvoiceData[K]) {
     setData((prev) => ({ ...prev, [key]: value }));
@@ -658,6 +715,7 @@ export default function InvoiceClient() {
                     >
                       {busy ? "…" : "Завантажити PDF"}
                     </button>
+                    {unlocked ? actPanel : null}
                   </div>
                 ) : null}
                 <MobileField label="Email" hint="податкові нагадування">
@@ -1066,6 +1124,7 @@ export default function InvoiceClient() {
                       </a>
                     </div>
                   ) : null}
+                  {unlocked ? actPanel : null}
                 </div>
               ) : null}
 
@@ -1246,6 +1305,16 @@ export default function InvoiceClient() {
           </div>
         )}
       </div>
+
+      {/* Off-screen act for PDF capture (html2canvas needs a laid-out node). */}
+      {unlocked ? (
+        <div
+          aria-hidden="true"
+          className="pointer-events-none fixed left-[-10000px] top-0 -z-10 print:hidden"
+        >
+          <ActDocument ref={actRef} data={data} actDate={actDate} />
+        </div>
+      ) : null}
     </main>
   );
 }
