@@ -115,7 +115,15 @@ export default function InvoicePage() {
             IBAN — цієї форми достатньо.
           </p>
           <p className="mt-4 text-mist">
-            PDF зберігається локально в завантаженнях — зручно надіслати в Telegram, email чи Drive.
+            Після рахунку можна одним кліком скачати й{" "}
+            <Link
+              href="/guides/akt-vykonanykh-robit"
+              className="text-signal underline-offset-2 hover:underline"
+            >
+              акт виконаних робіт
+            </Link>{" "}
+            з тими самими даними. PDF зберігається локально в завантаженнях — зручно надіслати в
+            Telegram, email чи Drive.
             Лист від Rakhuno — welcome і нагадування про типові податкові строки, не копія PDF у
             вкладенні.
           </p>
