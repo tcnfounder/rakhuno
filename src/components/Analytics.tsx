@@ -1,4 +1,5 @@
 import Script from "next/script";
+import { CookieBar } from "@/components/CookieBar";
 
 /**
  * GA4 «Rakhuno» web stream. Pages are prerendered, so the ID is baked in at build time;
@@ -9,6 +10,7 @@ import Script from "next/script";
 const GA4_ID = "G-G71XV1YQJ0";
 /** Not the Rakhuno stream. A stale Railway value must not override the fallback. */
 const REJECTED_GA_ID = "G-PCKSHLEWQE";
+const CONSENT_KEY = "rakhuno_cookie_consent";
 
 export function Analytics() {
   const fromEnv = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID?.trim();
@@ -24,6 +26,10 @@ export function Analytics() {
         {`
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
+          gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',wait_for_update:500});
+          gtag('set','ads_data_redaction',true);
+          gtag('set','url_passthrough',true);
+          try{if(localStorage.getItem('${CONSENT_KEY}')==='accepted'){gtag('consent','update',{analytics_storage:'granted'});}}catch(e){}
           gtag('js', new Date());
           (function () {
             try {
@@ -42,6 +48,16 @@ export function Analytics() {
           }
         `}
       </Script>
+      <CookieBar
+        storageKey={CONSENT_KEY}
+        lang="uk"
+        accent="#1f6b4a"
+        bg="#fffdf8"
+        fg="#1c1915"
+        muted="#5e574e"
+        policyHref="/privacy"
+        policyLabel="Політика конфіденційності"
+      />
     </>
   );
 }
