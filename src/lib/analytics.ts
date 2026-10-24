@@ -1,5 +1,29 @@
 /** Google Ads conversion: Rakhuno — Invoice oluşturma / kayıt */
-const ADS_CONVERSION_SEND_TO = "AW-18117109986/pc0jCMTom40dEOLR9L5D";
+const ADS_CONVERSION_ID = "18117109986";
+const ADS_CONVERSION_LABEL = "pc0jCMTom40dEOLR9L5D";
+
+/**
+ * Image pixel, not gtag send_to. Loading AW-18117109986 also configures the
+ * Jettfy GA4 destination and copies Rakhuno sessions into that property.
+ */
+function adsConversionPixelUrl(transactionId: string): string {
+  const params = new URLSearchParams({
+    label: ADS_CONVERSION_LABEL,
+    guid: "ON",
+    script: "0",
+    value: "1.0",
+    currency_code: "UAH",
+    oid: transactionId,
+  });
+  try {
+    const gclid = sessionStorage.getItem("rakhuno_gclid");
+    if (gclid) params.set("gclid", gclid);
+  } catch {
+    /* private mode / blocked storage */
+  }
+  return "https://www.googleadservices.com/pagead/conversion/" + ADS_CONVERSION_ID + "/?" + params.toString();
+}
+
 
 const CAMPAIGN_PARAM_KEYS = [
   "utm_source",
@@ -72,32 +96,15 @@ export async function leadTransactionId(email: string): Promise<string> {
     .slice(0, 32);
 }
 
-/** Fire Google Ads signup/invoice conversion; retry briefly if gtag is still loading. */
+/** Fire the Ads conversion without initializing the AW gtag destination. */
 export async function trackAdsConversion(email: string) {
   if (typeof window === "undefined") return;
   const transactionId = await leadTransactionId(email);
-
-  const fire = () => {
-    const gtag = getGtag();
-    if (typeof gtag !== "function") return false;
-    // Keep payload minimal + explicit send_to so Ads verification matches the action.
-    gtag("event", "conversion", {
-      send_to: ADS_CONVERSION_SEND_TO,
-      value: 1.0,
-      currency: "UAH",
-      transaction_id: transactionId,
-    });
-    return true;
-  };
-
-  if (fire()) return;
-
-  let attempts = 0;
-  const maxAttempts = 40; // ~20s
-  const timer = window.setInterval(() => {
-    attempts += 1;
-    if (fire() || attempts >= maxAttempts) {
-      window.clearInterval(timer);
-    }
-  }, 500);
+  const url = adsConversionPixelUrl(transactionId);
+  const img = new Image(1, 1);
+  img.alt = "";
+  img.src = url;
+  const bucket = window as unknown as { __rakhunoConv?: HTMLImageElement[] };
+  bucket.__rakhunoConv = bucket.__rakhunoConv || [];
+  bucket.__rakhunoConv.push(img);
 }
