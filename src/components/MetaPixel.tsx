@@ -4,8 +4,8 @@ import Script from "next/script";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
 
-/** Meta Pixel «Rakhuno» (Events Manager dataset). */
-export const META_PIXEL_ID = "1127580029738794";
+/** Meta Pixel «Rakhuno»: owned by the Atakan Dindar portfolio and linked to ad account 810047513628155. */
+export const META_PIXEL_ID = "873287603818661";
 const CONSENT_KEY = "rakhuno_cookie_consent";
 
 type Fbq = (...args: unknown[]) => void;
