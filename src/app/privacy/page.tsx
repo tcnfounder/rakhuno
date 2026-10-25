@@ -78,8 +78,10 @@ export default function PrivacyPage() {
           <section>
             <h2 className="font-display text-xl text-paper">6. Cookies</h2>
             <p className="mt-3">
-              Сервіс використовує лише технічно необхідні cookies / localStorage для роботи
-              інтерфейсу рахунку. Окремої маркетингової аналітики cookies наразі немає.
+              Сервіс використовує технічно необхідні cookies / localStorage для роботи
+              інтерфейсу рахунку. Для аналітики та реклами ми використовуємо Google Analytics
+              і Meta Pixel. Meta Pixel ставить cookies лише після того, як ви натиснете
+              «Прийняти» в банері cookies; якщо відхилите, дані в Meta не надсилаються.
             </p>
           </section>
         </div>

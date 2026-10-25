@@ -90,6 +90,8 @@ export function CookieBar({
     if (next === "accepted") {
       const gtag = (window as Window & { gtag?: (...args: unknown[]) => void }).gtag;
       gtag?.("consent", "update", { analytics_storage: "granted" });
+      const fbq = (window as Window & { fbq?: (...args: unknown[]) => void }).fbq;
+      fbq?.("consent", "grant");
     }
     setOpen(false);
   }

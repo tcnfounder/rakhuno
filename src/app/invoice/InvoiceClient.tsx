@@ -24,7 +24,13 @@ import {
   todayIso,
   validateInvoice,
 } from "@/lib/invoice";
-import { getCampaignParams, trackAdsConversion, trackEvent } from "@/lib/analytics";
+import {
+  getCampaignParams,
+  leadTransactionId,
+  trackAdsConversion,
+  trackEvent,
+} from "@/lib/analytics";
+import { trackMetaLead } from "@/components/MetaPixel";
 import { markPendingLead, submitInvoiceLead, takePendingLead } from "@/lib/invoice-lead";
 import { prepareLogo } from "@/lib/logo";
 import { recordInvoiceCreated, recordReturnVisit } from "@/lib/usage";
@@ -358,6 +364,7 @@ export default function InvoiceClient({
       ...getCampaignParams(),
     });
     await trackAdsConversion(email);
+    trackMetaLead(await leadTransactionId(email));
   }
 
   async function unlockAndDownload() {
