@@ -1,5 +1,6 @@
 import Script from "next/script";
 import { CookieBar } from "@/components/CookieBar";
+import { MetaPixel } from "@/components/MetaPixel";
 
 /**
  * GA4 «Rakhuno» web stream. Pages are prerendered, so the ID is baked in at build time;
@@ -48,6 +49,7 @@ export function Analytics() {
           }
         `}
       </Script>
+      <MetaPixel />
       <CookieBar
         storageKey={CONSENT_KEY}
         lang="uk"
