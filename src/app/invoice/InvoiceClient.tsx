@@ -27,6 +27,7 @@ import {
 import { getCampaignParams, trackAdsConversion, trackEvent } from "@/lib/analytics";
 import { markPendingLead, submitInvoiceLead, takePendingLead } from "@/lib/invoice-lead";
 import { prepareLogo } from "@/lib/logo";
+import { DEFAULT_INVOICE_HEADING, type InvoiceHeading } from "@/lib/invoice-headings";
 import {
   buildInvoicePdf,
   downloadInvoicePdf,
@@ -88,7 +89,11 @@ function MobileField({
   );
 }
 
-export default function InvoiceClient() {
+export default function InvoiceClient({
+  heading = DEFAULT_INVOICE_HEADING,
+}: {
+  heading?: InvoiceHeading;
+}) {
   const previewRef = useRef<HTMLDivElement>(null);
   const logoInputRef = useRef<HTMLInputElement>(null);
   const readyRef = useRef<HTMLDivElement>(null);
@@ -231,10 +236,24 @@ export default function InvoiceClient() {
           <SiteHeader />
           {/* Server-rendered HTML is this state — keep the page H1 here for crawlers and Ads QS. */}
           <div className="mx-auto max-w-content px-5 py-8 md:px-10 md:py-10">
-            <h1 className="font-display text-2xl font-semibold text-paper md:text-4xl">
-              Рахунок-фактура PDF для ФОП
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-signal">
+              Безкоштовно · ~2 хвилини
+            </p>
+            <h1 className="mt-2 font-display text-2xl font-semibold text-paper md:text-4xl">
+              {heading.h1}
             </h1>
-            <p className="mt-4 text-mist">Завантаження…</p>
+            <p className="mt-3 max-w-xl text-mist">
+              Заповніть реквізити → вкажіть email → скачайте PDF. Без Word, без Checkbox, без
+              реєстрації.
+            </p>
+            <ol className="mt-4 space-y-1 text-sm text-paper/80">
+              <li>1. Ваш ФОП: ПІБ та IBAN</li>
+              <li>2. Клієнт і позиції</li>
+              <li>3. Email → PDF у браузері</li>
+            </ol>
+            <p className="mt-6 text-sm text-mist" aria-live="polite">
+              Форма відкривається…
+            </p>
           </div>
         </div>
       </main>
@@ -418,7 +437,7 @@ export default function InvoiceClient() {
         <div className="mx-auto w-full max-w-content px-5 py-8 md:px-10 md:py-10">
           {/* Compact mobile header */}
           <div className="print:hidden mb-4 md:hidden">
-            <h1 className="font-display text-2xl font-semibold text-paper">Рахунок PDF</h1>
+            <h1 className="font-display text-2xl font-semibold text-paper">{heading.mobileH1}</h1>
             <div className="mt-3 flex gap-1.5" aria-label="Кроки">
               {MOBILE_STEPS.map((label, i) => (
                 <button
@@ -449,7 +468,7 @@ export default function InvoiceClient() {
                 Безкоштовно · ~2 хвилини
               </p>
               <h1 className="mt-2 font-display text-3xl font-semibold text-paper md:text-4xl">
-                Рахунок-фактура PDF для ФОП
+                {heading.h1}
               </h1>
               <p className="mt-2 max-w-xl text-mist">
                 Заповніть реквізити → вкажіть email → скачайте PDF. Без Word, без Checkbox, без
