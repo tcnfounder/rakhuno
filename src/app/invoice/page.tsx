@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { JsonLd } from "@/components/JsonLd";
+import { resolveInvoiceHeading } from "@/lib/invoice-headings";
 import InvoiceClient from "./InvoiceClient";
 
 export const metadata: Metadata = {
@@ -85,11 +86,17 @@ const howToLd = {
   ],
 };
 
-export default function InvoicePage() {
+export default async function InvoicePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ kw?: string | string[] }>;
+}) {
+  const { kw } = await searchParams;
+  const heading = resolveInvoiceHeading(kw);
   return (
     <>
       <JsonLd data={[faqLd, howToLd]} />
-      <InvoiceClient />
+      <InvoiceClient heading={heading} />
       <section className="print:hidden hidden border-t border-line bg-ink px-5 py-12 md:block md:px-10">
         <div className="mx-auto w-full max-w-3xl">
           <h2 className="font-display text-2xl text-paper md:text-3xl">
