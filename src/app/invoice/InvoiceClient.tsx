@@ -27,6 +27,7 @@ import {
 import { getCampaignParams, trackAdsConversion, trackEvent } from "@/lib/analytics";
 import { markPendingLead, submitInvoiceLead, takePendingLead } from "@/lib/invoice-lead";
 import { prepareLogo } from "@/lib/logo";
+import { recordInvoiceCreated, recordReturnVisit } from "@/lib/usage";
 import { DEFAULT_INVOICE_HEADING, type InvoiceHeading } from "@/lib/invoice-headings";
 import {
   buildInvoicePdf,
@@ -138,6 +139,7 @@ export default function InvoiceClient({
       ...(profile || {}),
       sellerLogo: profile?.sellerLogo || prev.sellerLogo || "",
     }));
+    recordReturnVisit(Boolean(profile?.sellerName?.trim()));
     try {
       const meta = window.sessionStorage.getItem(LAST_PDF_META_KEY);
       if (meta) {
@@ -379,6 +381,7 @@ export default function InvoiceClient({
 
       persistProfile();
       await makePdf();
+      recordInvoiceCreated(data.number, data.date);
       bumpInvoiceCounter(data.number);
       setUnlocked(true);
       setPdfReady(true);
@@ -411,6 +414,7 @@ export default function InvoiceClient({
         downloadPdfBlob(lastPdf.blob, lastPdf.filename);
       } else {
         await makePdf();
+        recordInvoiceCreated(data.number, data.date);
       }
       setPdfReady(true);
       setOkMsg("PDF завантажено.");
