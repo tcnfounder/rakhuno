@@ -32,13 +32,14 @@ export function takePendingLead(email: string): boolean {
 export async function submitInvoiceLead(
   email: string,
   fopGroup?: string,
+  source = "invoice_pdf",
 ): Promise<boolean> {
   const res = await fetch("/api/leads", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       email,
-      source: "invoice_pdf",
+      source,
       ...(fopGroup ? { fopGroup } : {}),
     }),
   });

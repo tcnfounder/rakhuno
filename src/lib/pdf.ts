@@ -180,3 +180,14 @@ export async function downloadInvoicePdf(data: InvoiceData, node: HTMLElement): 
 export function downloadPdfBlob(blob: Blob, filename: string) {
   triggerBlobDownload(blob, filename);
 }
+
+/** Any A4 document node (накладна, акт, акт звірки) → PDF download. */
+export async function downloadNodePdf(
+  node: HTMLElement,
+  filePrefix: string,
+  number: string,
+): Promise<PdfResult> {
+  const result = await buildInvoicePdf({ number } as InvoiceData, node, filePrefix);
+  triggerBlobDownload(result.blob, result.filename);
+  return result;
+}

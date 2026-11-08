@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArticleLayout } from "@/components/ArticleLayout";
 import { JsonLd } from "@/components/JsonLd";
 import { MidInvoiceCta } from "@/components/SiteShell";
+import { DocQuickFill } from "@/components/DocQuickFill";
 import { TemplateDownload } from "@/components/TemplateDownload";
 
 export const metadata: Metadata = {
@@ -87,6 +88,8 @@ export default function Page() {
           хто кому винен на кінець періоду (сальдо). Він не є первинним документом, але допомагає
           знайти розбіжності між обліком ФОП і бухгалтерією клієнта.
         </p>
+
+        <DocQuickFill kind="akt-zvirky" />
 
         <TemplateDownload
           title="Скачати бланк акту звірки"

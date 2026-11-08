@@ -7,9 +7,9 @@ import { amountInWordsUk } from "@/lib/invoice";
 import { AmountWordsTool } from "./AmountWordsTool";
 
 export const metadata: Metadata = {
-  title: "Сума прописом онлайн: гривні й копійки українською",
+  title: "Сума прописом українською онлайн: будь-яке число гривень словами",
   description:
-    "Перетворіть суму цифрами на суму прописом українською: гривні, копійки, готовий рядок для рахунку чи акту. Безкоштовно, одразу в браузері.",
+    "500 → «Пʼятсот гривень 00 копійок», 12 000 → «Дванадцять тисяч гривень 00 копійок». Впишіть суму — готовий рядок для рахунку чи акту.",
   alternates: { canonical: "https://rakhuno.com/suma-propysom" },
   openGraph: {
     title: "Сума прописом онлайн · Rakhuno",

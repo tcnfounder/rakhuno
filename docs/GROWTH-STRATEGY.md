@@ -109,6 +109,17 @@ Changes:
 
 Sprint 7 (same day) shipped `/guides/akt-zvirky`, `/guides/invoys-proforma` and `/guides/vydatkova-nakladna`. Each has a Word blank in `public/templates`, and they are linked from the hub, the akt page and the guides index. The guide H1 now uses `break-words`, because a long single word overflowed at 390px.
 
+### 2026-11-08 — Online fill on template guides
+
+Data (GA4, last 30 days): 8 `generate_lead`, all from Paid Search via `/invoice`; organic landings (guides) gave 0. Organic visitors download the Word blank (12 `template_download`) and leave. GSC: 200–260 impressions/day in November, up from 4–13 in late September.
+
+- `DocQuickFill` on `/guides/vydatkova-nakladna`, `/guides/akt-vykonanykh-robit`, `/guides/akt-zvirky`: fill the document on the page, PDF behind the same email gate as `/invoice`. Brevo `SOURCE` = `nakladna_pdf` / `akt_pdf` / `akt-zvirky_pdf`; GA4 `generate_lead` with the same `method`. Funnel events: `doc_fill_start`, `doc_pdf_unlock`, `doc_pdf_redownload`, `doc_to_invoice`.
+- Seller name and РНОКПП are shared with `/invoice` through the saved profile.
+- Word blanks stay, below the form.
+- CTR: new titles and descriptions for `/suma-propysom` (470 impressions, avg #8.4, 1 click; mostly «число прописом» long tail) and `/guides/zrazok-rahunku-faktury` («зразок рахунку на оплату» #4.4 with 0 clicks).
+
+Check in 14 days: organic `generate_lead` > 0, `doc_fill_start` → `doc_pdf_unlock` rate, CTR of the two pages.
+
 ## Review cadence
 
 | When | Action |
