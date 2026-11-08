@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArticleLayout } from "@/components/ArticleLayout";
 import { JsonLd } from "@/components/JsonLd";
 import { MidInvoiceCta } from "@/components/SiteShell";
+import { DocQuickFill } from "@/components/DocQuickFill";
 import { TemplateDownload } from "@/components/TemplateDownload";
 
 export const metadata: Metadata = {
@@ -120,6 +121,8 @@ export default function Page() {
           </Link>
           .
         </p>
+
+        <DocQuickFill kind="akt" />
 
         <TemplateDownload
           title="Скачати бланк акту виконаних робіт"

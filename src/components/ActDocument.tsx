@@ -22,8 +22,15 @@ function fopName(name: string) {
  * Act of completed work built from the same invoice data. Rendered off-screen and
  * captured by html2canvas, so keep it plain HTML (no inputs) and print-safe colours.
  */
-export const ActDocument = forwardRef<HTMLDivElement, { data: InvoiceData; actDate: string }>(
-  function ActDocument({ data, actDate }, ref) {
+export const ActDocument = forwardRef<
+  HTMLDivElement,
+  {
+    data: InvoiceData;
+    actDate: string;
+    /** Standalone act: «договору № 4 від …». Default links the act to the invoice. */
+    basis?: string;
+  }
+>(function ActDocument({ data, actDate, basis }, ref) {
     const total = calcTotal(data.items);
     const items = data.items.filter((i) => i.description.trim() || calcLine(i) > 0);
     const cell = "border border-neutral-400 px-2 py-1.5 align-top";
@@ -45,8 +52,13 @@ export const ActDocument = forwardRef<HTMLDivElement, { data: InvoiceData; actDa
           {data.sellerTaxId ? `, РНОКПП ${data.sellerTaxId}` : ""}, з одного боку, і Замовник —{" "}
           {data.buyerName.trim() || "____________________"}
           {data.buyerTaxId ? `, код ${data.buyerTaxId}` : ""}, з іншого боку, склали цей акт про те,
-          що Виконавець надав (виконав), а Замовник прийняв такі послуги (роботи) згідно з
-          рахунком-фактурою № {data.number || "—"} від {formatDateUk(data.date)}:
+          що Виконавець надав (виконав), а Замовник прийняв такі послуги (роботи)
+          {basis === undefined
+            ? ` згідно з рахунком-фактурою № ${data.number || "—"} від ${formatDateUk(data.date)}`
+            : basis.trim()
+              ? ` згідно з ${basis.trim()}`
+              : ""}
+          :
         </p>
 
         <table className="mt-4 w-full border-collapse text-[12px]">
@@ -111,5 +123,4 @@ export const ActDocument = forwardRef<HTMLDivElement, { data: InvoiceData; actDa
         </div>
       </div>
     );
-  },
-);
+});

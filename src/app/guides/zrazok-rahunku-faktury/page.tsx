@@ -7,9 +7,9 @@ import { MidInvoiceCta } from "@/components/SiteShell";
 import { TemplateDownload } from "@/components/TemplateDownload";
 
 export const metadata: Metadata = {
-  title: "Зразок рахунку-фактури ФОП 2026: готовий приклад + Word",
+  title: "Зразок рахунку на оплату ФОП 2026: приклад заповнення + Word",
   description:
-    "Готовий приклад рахунку на оплату ФОП без ПДВ: усі поля, призначення платежу, сума прописом. Бланк Word/Excel або PDF онлайн безкоштовно.",
+    "Приклад рахунку на оплату (рахунку-фактури) ФОП без ПДВ з усіма полями: IBAN, призначення платежу, сума прописом. Скачайте Word/Excel або зберіть PDF.",
   alternates: { canonical: "https://rakhuno.com/guides/zrazok-rahunku-faktury" },
   openGraph: {
     title: "Зразок рахунку-фактури для ФОП · Rakhuno",
