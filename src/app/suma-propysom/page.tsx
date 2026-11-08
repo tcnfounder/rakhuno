@@ -7,7 +7,7 @@ import { amountInWordsUk } from "@/lib/invoice";
 import { AmountWordsTool } from "./AmountWordsTool";
 
 export const metadata: Metadata = {
-  title: "Сума прописом українською онлайн: будь-яке число гривень словами",
+  title: "Сума прописом українською: число гривень словами",
   description:
     "500 → «Пʼятсот гривень 00 копійок», 12 000 → «Дванадцять тисяч гривень 00 копійок». Впишіть суму — готовий рядок для рахунку чи акту.",
   alternates: { canonical: "https://rakhuno.com/suma-propysom" },
