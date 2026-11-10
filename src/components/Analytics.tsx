@@ -12,6 +12,18 @@ const GA4_ID = "G-G71XV1YQJ0";
 /** Not the Rakhuno stream. A stale Railway value must not override the fallback. */
 const REJECTED_GA_ID = "G-PCKSHLEWQE";
 const CONSENT_KEY = "rakhuno_cookie_consent";
+/**
+ * Opt-in regions (EEA, UK, Switzerland): storage stays denied until «Прийняти».
+ * Everywhere else, including Ukraine, storage is granted by default and «Відхилити» revokes it.
+ * A denied default for Ukraine hid about two thirds of organic sessions and the Ads conversions.
+ */
+const OPT_IN_REGIONS = [
+  "AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "DE", "GR", "HU", "IE",
+  "IT", "LV", "LT", "LU", "MT", "NL", "PL", "PT", "RO", "SK", "SI", "ES", "SE",
+  "IS", "LI", "NO", "GB", "CH",
+];
+const DENIED = "analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'";
+const GRANTED = "analytics_storage:'granted',ad_storage:'granted',ad_user_data:'granted',ad_personalization:'granted'";
 
 export function Analytics() {
   const fromEnv = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID?.trim();
@@ -27,10 +39,11 @@ export function Analytics() {
         {`
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
-          gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',wait_for_update:500});
+          gtag('consent','default',{${DENIED},region:${JSON.stringify(OPT_IN_REGIONS).replace(/"/g, "'")},wait_for_update:500});
+          gtag('consent','default',{${GRANTED}});
           gtag('set','ads_data_redaction',true);
           gtag('set','url_passthrough',true);
-          try{if(localStorage.getItem('${CONSENT_KEY}')==='accepted'){gtag('consent','update',{analytics_storage:'granted'});}}catch(e){}
+          try{var c=localStorage.getItem('${CONSENT_KEY}');if(c==='accepted'){gtag('consent','update',{${GRANTED}});}else if(c==='rejected'){gtag('consent','update',{${DENIED}});}}catch(e){}
           gtag('js', new Date());
           (function () {
             try {

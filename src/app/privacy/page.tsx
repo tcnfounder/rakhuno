@@ -80,7 +80,10 @@ export default function PrivacyPage() {
             <p className="mt-3">
               Сервіс використовує технічно необхідні cookies / localStorage для роботи
               інтерфейсу рахунку. Для аналітики та реклами ми використовуємо Google Analytics
-              і Meta Pixel. Meta Pixel ставить cookies лише після того, як ви натиснете
+              і Meta Pixel. В Україні та інших країнах поза ЄС, Великою Британією й Швейцарією Google Analytics
+              працює одразу; кнопка «Відхилити» в
+              банері cookies вимикає його cookies. У ЄС, Великій Британії та Швейцарії Google
+              Analytics ставить cookies лише після «Прийняти». Meta Pixel ставить cookies лише після того, як ви натиснете
               «Прийняти» в банері cookies; якщо відхилите, дані в Meta не надсилаються.
             </p>
           </section>
