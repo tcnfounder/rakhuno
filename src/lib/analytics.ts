@@ -34,6 +34,7 @@ const CAMPAIGN_PARAM_KEYS = [
   "gclid",
   "gbraid",
   "wbraid",
+  "fbclid",
 ] as const;
 
 /** Persist first-touch campaign params for the session (fixes GA4 Unassigned on /invoice). */
@@ -63,6 +64,50 @@ export function getCampaignParams(): Record<string, string> {
     return out;
   }
   return out;
+}
+
+export type LeadAttribution = {
+  channel: string;
+  utm_source?: string;
+  utm_medium?: string;
+  utm_campaign?: string;
+  utm_content?: string;
+  landing?: string;
+  referrer?: string;
+};
+
+/**
+ * Where this session came from, for the Brevo contact. Click ids win over UTM tags,
+ * UTM tags over the referrer; no referrer means direct.
+ */
+export function getLeadAttribution(): LeadAttribution {
+  const p = getCampaignParams();
+  let landing: string | undefined;
+  let referrer: string | undefined;
+  try {
+    landing = sessionStorage.getItem("rakhuno_landing") || undefined;
+    referrer = sessionStorage.getItem("rakhuno_referrer") || undefined;
+  } catch {
+    /* blocked storage */
+  }
+  const src = (p.utm_source || "").toLowerCase();
+  let channel: string;
+  if (p.gclid || p.gbraid || p.wbraid || src === "google") channel = "google_ads";
+  else if (p.fbclid || ["meta", "facebook", "instagram", "fb", "ig"].includes(src)) channel = "meta_ads";
+  else if (src) channel = src;
+  else if (referrer && /(^|\.)(google|bing|duckduckgo|yahoo|ecosia)\./.test(referrer)) channel = "organic";
+  else if (referrer && /(chatgpt|openai|perplexity|claude|gemini|copilot)/.test(referrer)) channel = "ai_assistant";
+  else if (referrer) channel = "referral";
+  else channel = "direct";
+  return {
+    channel,
+    utm_source: p.utm_source,
+    utm_medium: p.utm_medium,
+    utm_campaign: p.utm_campaign,
+    utm_content: p.utm_content,
+    landing,
+    referrer,
+  };
 }
 
 function getGtag(): ((...args: unknown[]) => void) | undefined {

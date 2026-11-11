@@ -13,7 +13,53 @@ type LeadBody = {
   email?: string;
   source?: string;
   fopGroup?: string;
+  attribution?: Record<string, unknown>;
 };
+
+/** Brevo contact attributes for the lead source (last touch: a returning email overwrites them). */
+const ATTRIBUTION_FIELDS: Record<string, string> = {
+  channel: "LEAD_CHANNEL",
+  utm_source: "UTM_SOURCE",
+  utm_medium: "UTM_MEDIUM",
+  utm_campaign: "UTM_CAMPAIGN",
+  utm_content: "UTM_CONTENT",
+  landing: "LANDING_PAGE",
+  referrer: "REFERRER",
+};
+
+function attributionAttrs(raw: unknown): Record<string, string> {
+  if (!raw || typeof raw !== "object") return {};
+  const out: Record<string, string> = {};
+  for (const [key, attr] of Object.entries(ATTRIBUTION_FIELDS)) {
+    const value = (raw as Record<string, unknown>)[key];
+    if (typeof value !== "string") continue;
+    const clean = value.replace(/[\u0000-\u001f<>]/g, "").trim().slice(0, 120);
+    if (clean) out[attr] = clean;
+  }
+  return out;
+}
+
+let attributesReady = false;
+
+/** Create the text attributes once per server instance (400 = already exists). */
+async function ensureAttributionAttributes(env: WorkerEnv) {
+  if (attributesReady || !env.BREVO_API_KEY) return;
+  await Promise.all(
+    Object.values(ATTRIBUTION_FIELDS).map(async (name) => {
+      try {
+        const res = await fetch(`https://api.brevo.com/v3/contacts/attributes/normal/${name}`, {
+          method: "POST",
+          headers: { accept: "application/json", "content-type": "application/json", "api-key": env.BREVO_API_KEY! },
+          body: JSON.stringify({ type: "text" }),
+        });
+        if (!res.ok && res.status !== 400) console.error("[brevo-attr]", name, res.status, await res.text());
+      } catch (e) {
+        console.error("[brevo-attr]", name, e);
+      }
+    }),
+  );
+  attributesReady = true;
+}
 
 function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -23,7 +69,7 @@ async function storeLead(
   email: string,
   source: string,
   env: WorkerEnv,
-  extra: { fopGroup?: string } = {},
+  extra: { fopGroup?: string } & Record<string, string | undefined> = {},
 ) {
   const stamp = new Date().toISOString();
   const key = `lead:${stamp}:${email}`;
@@ -53,7 +99,7 @@ async function pushToBrevo(
   email: string,
   source: string,
   env: WorkerEnv,
-  extra: { fopGroup?: string } = {},
+  extra: { fopGroup?: string; attrs?: Record<string, string> } = {},
 ) {
   if (!env.BREVO_API_KEY || !env.BREVO_LIST_ID) {
     // Leads are lost while this is true (Railway has no KV and the disk is ephemeral).
@@ -71,6 +117,7 @@ async function pushToBrevo(
       SOURCE: source,
       SIGNUP_SITE: "rakhuno.com",
       ...(extra.fopGroup ? { FOP_GROUP: extra.fopGroup } : {}),
+      ...(extra.attrs || {}),
     },
   });
 
@@ -143,8 +190,10 @@ export async function POST(req: NextRequest) {
   const fopGroup =
     fopGroupRaw === "1" || fopGroupRaw === "2" || fopGroupRaw === "3" ? fopGroupRaw : undefined;
   const env = await getWorkerEnv();
-  const backend = await storeLead(email, source, env, { fopGroup });
-  const brevo = await pushToBrevo(email, source, env, { fopGroup });
+  const backend = await storeLead(email, source, env, { fopGroup, ...attributionAttrs(body.attribution) });
+  const attrs = attributionAttrs(body.attribution);
+  if (Object.keys(attrs).length) await ensureAttributionAttributes(env);
+  const brevo = await pushToBrevo(email, source, env, { fopGroup, attrs });
 
   // Only a brand-new Brevo contact is a lead. Existing emails update
   // attributes but do not get another welcome, drip, or conversion.

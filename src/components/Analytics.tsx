@@ -37,12 +37,19 @@ export function Analytics() {
           gtag('js', new Date());
           (function () {
             try {
-              var keys = ['utm_source','utm_medium','utm_campaign','utm_term','utm_content','gclid','gbraid','wbraid'];
+              var keys = ['utm_source','utm_medium','utm_campaign','utm_term','utm_content','gclid','gbraid','wbraid','fbclid'];
               var p = new URLSearchParams(location.search);
               keys.forEach(function (k) {
                 var v = p.get(k);
                 if (v) sessionStorage.setItem('rakhuno_' + k, v);
               });
+              // First page of the session and where it came from: the lead source when there is no UTM.
+              if (!sessionStorage.getItem('rakhuno_landing')) {
+                sessionStorage.setItem('rakhuno_landing', location.pathname);
+                var r = '';
+                try { r = document.referrer ? new URL(document.referrer).hostname : ''; } catch (e) {}
+                if (r && r !== location.hostname) sessionStorage.setItem('rakhuno_referrer', r);
+              }
             } catch (e) {}
           })();
           var path = (location && location.pathname) || '';

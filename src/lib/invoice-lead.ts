@@ -1,4 +1,4 @@
-import { trackEvent } from "@/lib/analytics";
+import { getLeadAttribution, trackEvent } from "@/lib/analytics";
 
 const PENDING_LEAD_KEY = "rakhuno.pendingLeadEmail";
 
@@ -43,6 +43,7 @@ export async function submitInvoiceLead(
       email,
       source,
       ...(fopGroup ? { fopGroup } : {}),
+      attribution: getLeadAttribution(),
     }),
   });
   if (!res.ok) {
