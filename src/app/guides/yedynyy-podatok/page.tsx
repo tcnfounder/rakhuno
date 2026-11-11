@@ -149,7 +149,11 @@ export default function Page() {
             чекліст податків ФОП
           </Link>
           , додайте туди пункт «ЄП сплачено / підтвердження збережено» — і не закривайте місяць без
-          нього.
+          нього. Скільки саме платити разом з ЄСВ і військовим збором — у{" "}
+          <Link href="/kalkulyator-podatkiv-fop" className="text-signal underline-offset-2 hover:underline">
+            калькуляторі податків ФОП
+          </Link>
+          .
         </p>
 
         <h2 className="!mt-10 font-display text-2xl text-paper">ЄП vs ЄСВ vs декларація</h2>

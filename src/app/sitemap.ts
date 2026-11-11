@@ -15,6 +15,12 @@ const entries: Entry[] = [
   { path: "/guides", priority: 0.9, changeFrequency: "weekly", lastModified: "2026-10-21" },
   { path: "/suma-propysom", priority: 0.9, changeFrequency: "monthly", lastModified: "2026-10-22" },
   {
+    path: "/kalkulyator-podatkiv-fop",
+    priority: 0.9,
+    changeFrequency: "monthly",
+    lastModified: "2026-11-11",
+  },
+  {
     path: "/guides/rahunok-faktura",
     priority: 0.95,
     changeFrequency: "weekly",

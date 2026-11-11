@@ -38,6 +38,9 @@ export function SiteFooter() {
             <Link href="/suma-propysom" className="hover:text-signal">
               Сума прописом
             </Link>
+            <Link href="/kalkulyator-podatkiv-fop" className="hover:text-signal">
+              Калькулятор податків
+            </Link>
             <Link href="/invoice" className="hover:text-signal">
               Рахунок
             </Link>

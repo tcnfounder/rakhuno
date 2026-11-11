@@ -77,6 +77,7 @@ export default function Page() {
         path="/guides/podatky-fop"
         related={[
           { href: "/guides/yedynyy-podatok", label: "Єдиний податок: коли платити" },
+          { href: "/kalkulyator-podatkiv-fop", label: "Калькулятор податків ФОП 2026" },
           { href: "/guides/fop-3-grupa", label: "ФОП 3 група — коротко" },
           { href: "/guides/rahunok-faktura", label: "Рахунок-фактура для ФОП" },
         ]}
@@ -92,7 +93,11 @@ export default function Page() {
         </p>
         <p>
           Це не заміна бухгалтера й не повний податковий гайд. Мета — щоб ви не відкривали місяць
-          питанням «а що я взагалі виставляв у лютому?».
+          питанням «а що я взагалі виставляв у лютому?». Суми й дати для своєї групи порахуйте в{" "}
+          <Link href="/kalkulyator-podatkiv-fop" className="text-signal underline-offset-2 hover:underline">
+            калькуляторі податків ФОП 2026
+          </Link>
+          .
         </p>
 
         <h2 className="!mt-10 font-display text-2xl text-paper">Щомісячний чекліст</h2>
