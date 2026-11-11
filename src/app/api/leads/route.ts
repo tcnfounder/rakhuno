@@ -7,6 +7,7 @@ import {
   sendTransactionalTemplate,
   type WorkerEnv,
 } from "@/lib/brevo-drip";
+import { parseGroup, sendHtmlEmail, unsubscribeUrl, welcomeTaxEmail } from "@/lib/tax-reminders";
 
 type LeadBody = {
   email?: string;
@@ -139,7 +140,8 @@ export async function POST(req: NextRequest) {
 
   const source = (body.source || "invoice").slice(0, 64);
   const fopGroupRaw = (body.fopGroup || "").trim();
-  const fopGroup = fopGroupRaw === "2" || fopGroupRaw === "3" ? fopGroupRaw : undefined;
+  const fopGroup =
+    fopGroupRaw === "1" || fopGroupRaw === "2" || fopGroupRaw === "3" ? fopGroupRaw : undefined;
   const env = await getWorkerEnv();
   const backend = await storeLead(email, source, env, { fopGroup });
   const brevo = await pushToBrevo(email, source, env, { fopGroup });
@@ -147,6 +149,22 @@ export async function POST(req: NextRequest) {
   // Only a brand-new Brevo contact is a lead. Existing emails update
   // attributes but do not get another welcome, drip, or conversion.
   const created = brevo === "brevo";
+
+  // Calculator sign-up asks for deadline reminders, not an invoice: confirm that instead of
+  // the invoice welcome and drip. Existing contacts get the confirmation too, since they asked.
+  if (source === "tax_calc") {
+    const saved = brevo === "brevo" || brevo === "brevo_exists";
+    const welcome = saved
+      ? await sendHtmlEmail(
+          env,
+          email,
+          welcomeTaxEmail(parseGroup(fopGroup), new Date(), unsubscribeUrl(email, env.CRON_SECRET)),
+          ["rakhuno-tax-welcome"],
+        )
+      : "skipped";
+    return NextResponse.json({ ok: true, created, backend, brevo, welcome, drip: { day3: "skipped", day7: "skipped" } });
+  }
+
   const welcome = created ? await sendWelcomeEmail(email, env) : "skipped";
   const drip = created
     ? await scheduleDripEmails(email, env)

@@ -2,13 +2,15 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { trackEvent } from "@/lib/analytics";
+import { leadTransactionId, trackEvent } from "@/lib/analytics";
 import {
   calcMonthly,
   formatMoney,
   upcomingDeadlines,
   type FopGroup,
 } from "@/lib/fop-tax";
+import { submitInvoiceLead } from "@/lib/invoice-lead";
+import { trackMetaLead } from "@/components/MetaPixel";
 
 function parseIncome(raw: string) {
   const n = Number(raw.replace(/[\s ₴]|грн/gi, "").replace(",", "."));
@@ -22,6 +24,8 @@ export function TaxCalculator() {
   const [vat, setVat] = useState(false);
   const [incomeRaw, setIncomeRaw] = useState("50 000");
   const [now, setNow] = useState<Date | null>(null);
+  const [email, setEmail] = useState("");
+  const [leadState, setLeadState] = useState<"idle" | "busy" | "done" | "error">("idle");
 
   // Dates depend on "today": compute after mount so server HTML and hydration agree.
   useEffect(() => setNow(new Date()), []);
@@ -33,6 +37,25 @@ export function TaxCalculator() {
   function pickGroup(g: FopGroup) {
     setGroup(g);
     trackEvent("tax_calc_group", { group: g });
+  }
+
+  async function subscribe() {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      setLeadState("error");
+      return;
+    }
+    setLeadState("busy");
+    try {
+      const created = await submitInvoiceLead(email.trim(), String(group), "tax_calc");
+      setLeadState("done");
+      trackEvent("tax_reminder_signup", { group, new_contact: created });
+      if (created) {
+        trackEvent("generate_lead", { method: "tax_calc" });
+        trackMetaLead(await leadTransactionId(email));
+      }
+    } catch {
+      setLeadState("error");
+    }
   }
 
   const row = "flex items-baseline justify-between gap-4 border-b border-line/80 py-2.5";
@@ -137,6 +160,38 @@ export function TaxCalculator() {
       <p className="mt-2 text-xs text-mist">
         Якщо дата припадає на вихідний, перевірте перенесення в календарі ДПС.
       </p>
+
+      <div className="mt-6 rounded-xl border border-white/10 bg-ink/60 p-4">
+        <p className="font-semibold text-paper">Нагадувати про терміни на email</p>
+        <p className="mt-1 text-sm text-mist">
+          Лист за 3 дні до кожного терміну для {group} групи. Безкоштовно, відписка в один клік.
+        </p>
+        {leadState === "done" ? (
+          <p className="mt-3 text-sm text-signal">Готово. Перевірте пошту — там найближчі дати.</p>
+        ) : (
+          <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+            <input
+              type="email"
+              autoComplete="email"
+              placeholder="you@email.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="min-w-0 flex-1 rounded-xl border border-white/15 bg-ink px-4 py-3 text-paper outline-none focus:border-signal"
+            />
+            <button
+              type="button"
+              disabled={leadState === "busy"}
+              onClick={() => void subscribe()}
+              className="rounded-xl bg-signal px-5 py-3 font-semibold text-ink disabled:opacity-60"
+            >
+              {leadState === "busy" ? "…" : "Нагадувати"}
+            </button>
+          </div>
+        )}
+        {leadState === "error" ? (
+          <p className="mt-2 text-sm text-red-300">Перевірте email і спробуйте ще раз.</p>
+        ) : null}
+      </div>
 
       <p className="mt-5 text-sm text-mist">
         Потрібен рахунок для клієнта?{" "}
