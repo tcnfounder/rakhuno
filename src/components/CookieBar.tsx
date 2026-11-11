@@ -95,10 +95,8 @@ export function CookieBar({
       ad_user_data: state,
       ad_personalization: state,
     });
-    if (next === "accepted") {
-      const fbq = (window as Window & { fbq?: (...args: unknown[]) => void }).fbq;
-      fbq?.("consent", "grant");
-    }
+    const fbq = (window as Window & { fbq?: (...args: unknown[]) => void }).fbq;
+    fbq?.("consent", next === "accepted" ? "grant" : "revoke");
     setOpen(false);
   }
 

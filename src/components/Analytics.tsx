@@ -1,6 +1,7 @@
 import Script from "next/script";
 import { CookieBar } from "@/components/CookieBar";
 import { MetaPixel } from "@/components/MetaPixel";
+import { CONSENT_KEY, OPT_IN_REGIONS } from "@/lib/consent";
 
 /**
  * GA4 «Rakhuno» web stream. Pages are prerendered, so the ID is baked in at build time;
@@ -11,17 +12,6 @@ import { MetaPixel } from "@/components/MetaPixel";
 const GA4_ID = "G-G71XV1YQJ0";
 /** Not the Rakhuno stream. A stale Railway value must not override the fallback. */
 const REJECTED_GA_ID = "G-PCKSHLEWQE";
-const CONSENT_KEY = "rakhuno_cookie_consent";
-/**
- * Opt-in regions (EEA, UK, Switzerland): storage stays denied until «Прийняти».
- * Everywhere else, including Ukraine, storage is granted by default and «Відхилити» revokes it.
- * A denied default for Ukraine hid about two thirds of organic sessions and the Ads conversions.
- */
-const OPT_IN_REGIONS = [
-  "AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "DE", "GR", "HU", "IE",
-  "IT", "LV", "LT", "LU", "MT", "NL", "PL", "PT", "RO", "SK", "SI", "ES", "SE",
-  "IS", "LI", "NO", "GB", "CH",
-];
 const DENIED = "analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'";
 const GRANTED = "analytics_storage:'granted',ad_storage:'granted',ad_user_data:'granted',ad_personalization:'granted'";
 

@@ -6,7 +6,7 @@ import { useEffect, useRef } from "react";
 
 /** Meta Pixel «Rakhuno»: owned by the Atakan Dindar portfolio and linked to ad account 810047513628155. */
 export const META_PIXEL_ID = "873287603818661";
-const CONSENT_KEY = "rakhuno_cookie_consent";
+import { CONSENT_KEY, COUNTRY_COOKIE, OPT_IN_REGIONS } from "@/lib/consent";
 
 type Fbq = (...args: unknown[]) => void;
 
@@ -16,8 +16,10 @@ function getFbq(): Fbq | undefined {
 }
 
 /**
- * Loads the Pixel with consent revoked unless the visitor already accepted cookies.
- * While revoked, fbq queues events and sends nothing; CookieBar grants on «Прийняти».
+ * Same regional rule as GA4: outside the EEA, UK and Switzerland the Pixel runs by default
+ * and «Відхилити» revokes it; inside them it waits for «Прийняти». The country comes from the
+ * middleware cookie; without it (unknown country) the Pixel stays revoked until consent.
+ * While revoked, fbq queues events and sends nothing.
  * The init script sends the first PageView; client-side route changes send the rest.
  */
 export function MetaPixel() {
@@ -41,7 +43,7 @@ export function MetaPixel() {
         n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
         t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
         document,'script','https://connect.facebook.net/en_US/fbevents.js');
-        try{if(localStorage.getItem('${CONSENT_KEY}')!=='accepted'){fbq('consent','revoke');}}catch(e){fbq('consent','revoke');}
+        try{var c=localStorage.getItem('${CONSENT_KEY}');var m=document.cookie.match(/(?:^|; )${COUNTRY_COOKIE}=([A-Z]{2})/);var cc=m?m[1]:'';var optIn=!cc||${JSON.stringify(OPT_IN_REGIONS).replace(/"/g, "'")}.indexOf(cc)!==-1;if(c==='rejected'||(c!=='accepted'&&optIn)){fbq('consent','revoke');}}catch(e){fbq('consent','revoke');}
         fbq('init','${META_PIXEL_ID}');
         if((location.pathname||'').indexOf('/api/')!==0){fbq('track','PageView');}
       `}

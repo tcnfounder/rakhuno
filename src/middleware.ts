@@ -8,6 +8,7 @@ import {
   prefersMarkdown,
 } from "@/lib/agent-ready";
 import { getSiteUrl } from "@/lib/site";
+import { COUNTRY_COOKIE } from "@/lib/consent";
 
 const CANONICAL_HOST = "rakhuno.com";
 
@@ -115,6 +116,16 @@ export function middleware(request: NextRequest) {
   }
 
   const response = NextResponse.next();
+  // Country for the Meta Pixel's regional consent rule (pages are static, so the client reads it).
+  const country = (request.headers.get("x-vercel-ip-country") || "").toUpperCase();
+  if (/^[A-Z]{2}$/.test(country) && request.cookies.get(COUNTRY_COOKIE)?.value !== country) {
+    response.cookies.set(COUNTRY_COOKIE, country, {
+      path: "/",
+      maxAge: 60 * 60 * 24,
+      sameSite: "lax",
+      secure: true,
+    });
+  }
   return withAgentHeaders(response, origin);
 }
 
