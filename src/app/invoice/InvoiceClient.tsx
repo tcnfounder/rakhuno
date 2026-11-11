@@ -34,6 +34,15 @@ import { trackMetaLead } from "@/components/MetaPixel";
 import { markPendingLead, submitInvoiceLead, takePendingLead } from "@/lib/invoice-lead";
 import { prepareLogo } from "@/lib/logo";
 import { buildNbuLink, renderNbuQr, toNbuPayment } from "@/lib/nbu-qr";
+import {
+  cloneItems,
+  loadClients,
+  loadHistory,
+  rememberInvoice,
+  type SavedClient,
+  type SavedInvoice,
+} from "@/lib/history";
+import { ClientChips, RecentInvoices } from "@/components/InvoiceMemory";
 import { recordInvoiceCreated, recordReturnVisit } from "@/lib/usage";
 import { DEFAULT_INVOICE_HEADING, type InvoiceHeading } from "@/lib/invoice-headings";
 import {
@@ -119,6 +128,8 @@ export default function InvoiceClient({
   /** Mobile wizard: 0 ФОП → 1 клієнт → 2 позиції → 3 PDF */
   const [mobileStep, setMobileStep] = useState(0);
   const [showSellerExtra, setShowSellerExtra] = useState(false);
+  const [clients, setClients] = useState<SavedClient[]>([]);
+  const [history, setHistory] = useState<SavedInvoice[]>([]);
 
   const [data, setData] = useState<InvoiceData>({
     number: "1",
@@ -147,6 +158,8 @@ export default function InvoiceClient({
       sellerLogo: profile?.sellerLogo || prev.sellerLogo || "",
     }));
     recordReturnVisit(Boolean(profile?.sellerName?.trim()));
+    setClients(loadClients());
+    setHistory(loadHistory());
     try {
       const meta = window.sessionStorage.getItem(LAST_PDF_META_KEY);
       if (meta) {
@@ -243,6 +256,57 @@ export default function InvoiceClient({
       setMobileStep((s) => s - 1);
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
+  }
+
+  /** Save client + invoice locally after a PDF exists, and refresh the pickers. */
+  function rememberCurrent() {
+    rememberInvoice(data);
+    setClients(loadClients());
+    setHistory(loadHistory());
+  }
+
+  function resetForNewInvoice() {
+    setUnlocked(false);
+    setLastPdf(null);
+    setPdfReady(false);
+    try {
+      window.sessionStorage.removeItem(LAST_PDF_META_KEY);
+    } catch {
+      /* ignore */
+    }
+  }
+
+  function pickClient(client: SavedClient) {
+    setData((prev) => ({
+      ...prev,
+      buyerName: client.name,
+      buyerTaxId: client.taxId,
+      buyerAddress: client.address,
+    }));
+    setError("");
+    trackEvent("client_reused", { uses: client.uses });
+  }
+
+  function repeatInvoice(invoice: SavedInvoice) {
+    setData((prev) => ({
+      ...prev,
+      number: nextInvoiceNumber(),
+      date: todayIso(),
+      buyerName: invoice.buyerName,
+      buyerTaxId: invoice.buyerTaxId,
+      buyerAddress: invoice.buyerAddress,
+      items: cloneItems(invoice.items),
+      note: invoice.note || prev.note,
+    }));
+    resetForNewInvoice();
+    setError("");
+    setOkMsg(`Копія рахунку № ${invoice.number || "—"} з новим номером. Перевірте суму й дату.`);
+    setMobileStep(2);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    trackEvent("invoice_repeated", {
+      days_since: Math.max(0, Math.floor((Date.now() - invoice.savedAt) / 86_400_000)),
+      item_count: invoice.items.length,
+    });
   }
 
   /** Act of completed work from the same data — offered after the email unlock. */
@@ -416,6 +480,7 @@ export default function InvoiceClient({
       persistProfile();
       await makePdf();
       recordInvoiceCreated(data.number, data.date);
+      rememberCurrent();
       bumpInvoiceCounter(data.number);
       setUnlocked(true);
       setPdfReady(true);
@@ -450,6 +515,7 @@ export default function InvoiceClient({
       } else {
         await makePdf();
         recordInvoiceCreated(data.number, data.date);
+        rememberCurrent();
       }
       setPdfReady(true);
       setOkMsg("PDF завантажено.");
@@ -552,6 +618,9 @@ export default function InvoiceClient({
           {/* —— Mobile wizard: one step per screen —— */}
           <div className="print:hidden mb-4 md:hidden">
             {mobileStep === 0 ? (
+              <RecentInvoices history={history} onRepeat={repeatInvoice} limit={3} className="mb-4" />
+            ) : null}
+            {mobileStep === 0 ? (
               <div className="space-y-3 rounded-2xl border border-white/10 bg-ink-2/80 p-4">
                 <div className="flex items-center justify-between gap-2">
                   <p className="font-display text-lg font-semibold text-paper">Ваш ФОП</p>
@@ -649,6 +718,7 @@ export default function InvoiceClient({
             {mobileStep === 1 ? (
               <div className="space-y-3 rounded-2xl border border-white/10 bg-ink-2/80 p-4">
                 <p className="font-display text-lg font-semibold text-paper">Замовник</p>
+                <ClientChips clients={clients} activeName={data.buyerName} onPick={pickClient} />
                 <MobileField label="Назва / ПІБ">
                   <input
                     className={mobileInput}
@@ -803,6 +873,19 @@ export default function InvoiceClient({
               <p className="mt-3 text-sm text-red-300">{error}</p>
             ) : null}
           </div>
+
+          <ClientChips
+            clients={clients}
+            activeName={data.buyerName}
+            onPick={pickClient}
+            className="print:hidden mx-auto mb-4 hidden w-full max-w-[210mm] md:block"
+          />
+          <RecentInvoices
+            history={history}
+            onRepeat={repeatInvoice}
+            limit={3}
+            className="print:hidden mx-auto mb-6 hidden w-full max-w-[210mm] md:block"
+          />
 
           {/* Desktop logo controls */}
           <div className="print:hidden mx-auto mb-3 hidden w-full max-w-[210mm] flex-wrap items-center gap-3 md:flex">
@@ -1281,15 +1364,8 @@ export default function InvoiceClient({
                         buyerAddress: "",
                         items: [emptyItem()],
                       }));
-                      setUnlocked(false);
-                      setLastPdf(null);
-                      setPdfReady(false);
+                      resetForNewInvoice();
                       setOkMsg("Новий рахунок-проформа.");
-                      try {
-                        window.sessionStorage.removeItem(LAST_PDF_META_KEY);
-                      } catch {
-                        /* ignore */
-                      }
                     }}
                     className="rounded-full border border-white/15 px-3 py-1.5 text-sm text-mist hover:border-signal hover:text-signal"
                   >
