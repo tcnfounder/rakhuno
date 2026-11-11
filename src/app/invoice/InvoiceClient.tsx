@@ -33,6 +33,7 @@ import {
 import { trackMetaLead } from "@/components/MetaPixel";
 import { markPendingLead, submitInvoiceLead, takePendingLead } from "@/lib/invoice-lead";
 import { prepareLogo } from "@/lib/logo";
+import { buildNbuLink, renderNbuQr, toNbuPayment } from "@/lib/nbu-qr";
 import { recordInvoiceCreated, recordReturnVisit } from "@/lib/usage";
 import { DEFAULT_INVOICE_HEADING, type InvoiceHeading } from "@/lib/invoice-headings";
 import {
@@ -167,6 +168,32 @@ export default function InvoiceClient({
   const total = useMemo(() => calcTotal(data.items), [data.items]);
   const hasLogo = Boolean(data.sellerLogo);
   const words = useMemo(() => amountInWordsUk(total), [total]);
+
+  // NBU payment QR: the client scans it in a bank app and gets name, IBAN, sum and purpose filled in.
+  const qrLink = useMemo(() => {
+    const payment = toNbuPayment({
+      name: data.sellerName,
+      iban: data.sellerIban,
+      taxId: data.sellerTaxId,
+      amount: total,
+      purpose: `Оплата за рахунком № ${data.number || "—"} від ${formatDateUk(data.date)}`,
+    });
+    return payment ? buildNbuLink(payment) : null;
+  }, [data.sellerName, data.sellerIban, data.sellerTaxId, data.number, data.date, total]);
+  const [qrSrc, setQrSrc] = useState<string | null>(null);
+  useEffect(() => {
+    let alive = true;
+    if (!qrLink) {
+      setQrSrc(null);
+      return;
+    }
+    renderNbuQr(qrLink).then((src) => {
+      if (alive) setQrSrc(src);
+    });
+    return () => {
+      alive = false;
+    };
+  }, [qrLink]);
 
   const MOBILE_STEPS = ["ФОП", "Клієнт", "Позиції", "PDF"] as const;
 
@@ -396,6 +423,7 @@ export default function InvoiceClient({
       trackEvent("invoice_pdf_unlock", {
         fop_group: data.fopGroup || "none",
         item_count: data.items.length,
+        payment_qr: Boolean(qrSrc),
       });
       await recordVerifiedLead();
     } catch {
@@ -1084,13 +1112,35 @@ export default function InvoiceClient({
                 </div>
               </div>
 
-              <SoftField label="Призначення платежу / умови оплати" className="mt-4">
-                <textarea
-                  className={`${lineInput} min-h-[3rem] resize-y`}
-                  value={data.note}
-                  onChange={(e) => update("note", e.target.value)}
-                />
-              </SoftField>
+              <div className="mt-4 flex items-start gap-5">
+                <SoftField label="Призначення платежу / умови оплати" className="min-w-0 flex-1">
+                  <textarea
+                    className={`${lineInput} min-h-[3rem] resize-y`}
+                    value={data.note}
+                    onChange={(e) => update("note", e.target.value)}
+                  />
+                </SoftField>
+                {qrSrc ? (
+                  <div className="w-[34mm] shrink-0 text-center">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={qrSrc}
+                      alt="QR-код НБУ для оплати рахунку в застосунку банку"
+                      className="block h-[34mm] w-[34mm]"
+                    />
+                    <p className="mt-1 text-[9px] leading-tight text-neutral-600">
+                      Скануйте камерою або в застосунку банку, щоб оплатити
+                    </p>
+                  </div>
+                ) : (
+                  <p
+                    data-pdf-hide
+                    className="w-[34mm] shrink-0 rounded border border-dashed border-neutral-300 p-2 text-center text-[9px] leading-tight text-neutral-400"
+                  >
+                    QR для оплати зʼявиться, коли заповните ПІБ, ІПН (10 цифр), IBAN і суму
+                  </p>
+                )}
+              </div>
 
               <div className="mt-8 grid grid-cols-2 gap-8 text-[12px]">
                 <div>
