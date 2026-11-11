@@ -14,7 +14,7 @@ const COPY: Record<Lang, { title: string; body: string; reject: string; accept: 
   },
   uk: {
     title: "Файли cookie",
-    body: "Ми використовуємо cookie, щоб розуміти візити. Якщо відхилите, ідентифікатор не зберігається, але анонімний сигнал вимірювання все одно надсилається.",
+    body: "Cookie для аналітики й реклами. Якщо відхилите, cookie не ставимо — лишається лише анонімний сигнал вимірювання.",
     reject: "Відхилити",
     accept: "Прийняти",
   },
@@ -34,7 +34,7 @@ const COPY: Record<Lang, { title: string; body: string; reject: string; accept: 
 
 const STYLES = `
 .cookie-bar{position:fixed;z-index:90;left:12px;right:12px;bottom:max(12px,env(safe-area-inset-bottom));display:flex;flex-wrap:wrap;box-sizing:border-box;gap:8px 12px;align-items:center;padding:10px 12px;border-radius:18px;background:var(--jb-bg);color:var(--jb-fg);border:1px solid color-mix(in srgb,var(--jb-fg) 14%,transparent);box-shadow:0 16px 40px rgba(0,0,0,.18);font-family:inherit;max-width:720px;margin-inline:auto}
-.cookie-bar__copy{flex:1 1 220px;min-width:0}
+.cookie-bar__copy{flex:1 1 220px;min-width:0;line-height:1.35}
 .cookie-bar__copy strong{display:inline;font-size:13px;font-weight:700;line-height:1.35;margin:0 .35em 0 0;color:var(--jb-fg)}
 .cookie-bar__copy p{display:inline;margin:0;font-size:13px;line-height:1.35;color:var(--jb-muted)}
 .cookie-bar__copy a{color:var(--jb-fg);font-weight:600}
@@ -42,7 +42,7 @@ const STYLES = `
 .cookie-bar button{appearance:none;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;width:auto;height:40px;min-height:40px;max-height:40px;margin:0;padding:0 14px;border-radius:999px;font-family:inherit;font-size:13px;font-weight:600;line-height:1;white-space:nowrap;cursor:pointer}
 .cookie-bar__no{background:transparent;color:var(--jb-fg);border:1px solid color-mix(in srgb,var(--jb-fg) 24%,transparent)}
 .cookie-bar__yes{background:var(--jb-accent);color:var(--jb-accent-fg);border:0}
-@media(max-width:640px){.cookie-bar{flex-direction:column;align-items:stretch;left:10px;right:10px;gap:8px;padding:10px 10px 10px 12px}.cookie-bar__actions{width:100%;margin-left:0}.cookie-bar__actions button{flex:1 1 0;min-width:0;width:auto;padding:0 10px}}
+@media(max-width:640px){.cookie-bar{flex-direction:column;align-items:stretch;left:10px;right:10px;gap:8px;padding:10px 10px 10px 12px;border-radius:16px}.cookie-bar__copy{flex:0 0 auto;line-height:1.35}.cookie-bar__copy strong,.cookie-bar__copy p{font-size:12px;line-height:1.35}.cookie-bar__actions{width:100%;margin-left:0}.cookie-bar__actions button{flex:1 1 0;min-width:0;width:auto;height:36px;min-height:36px;max-height:36px;padding:0 10px}}
 `;
 
 export function CookieBar({
