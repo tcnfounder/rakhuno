@@ -3,16 +3,13 @@
 Простий [рахунок-фактура](https://rakhuno.com/invoice) та email-нагадування про податки для ФОП.
 
 **Live:** [rakhuno.com](https://rakhuno.com)  
-**App host:** [Railway](https://railway.com) ← GitHub `main` auto-deploy  
-**Edge:** Cloudflare Worker `rakhuno-proxy` → `rakhuno-production.up.railway.app`  
-**Direct Railway URL:** https://rakhuno-production.up.railway.app
+**App host:** [Vercel](https://vercel.com) project `rakhuno` ← GitHub `main` auto-deploy (since 2026-10-23)
 
 ## Stack
 
 - Next.js (App Router) + Tailwind
-- **Compute:** Railway (`npm run build` / `npm run start`)
-- **Domain / CDN:** Cloudflare (Worker proxy `rakhuno-proxy` on `rakhuno.com` + `www`)
-- Brevo for email leads
+- **Compute:** Vercel
+- Brevo for email leads and the welcome / day 3 / day 7 drip
 - html2canvas / jsPDF for Ukrainian PDF invoices
 
 ## Local
@@ -22,28 +19,25 @@ npm install
 npm run dev
 ```
 
-## Deploy (GitHub → Railway)
+## Deploy (GitHub → Vercel)
 
-Repo is linked in Railway. **Push / merge to `main` → Railway builds and deploys.** No GitHub Actions required for production.
+**Push / merge to `main` → Vercel builds and deploys.** Env changes need a redeploy.
 
-### Railway env vars
+### Vercel env vars (Production)
 
-- `BREVO_API_KEY`
-- `BREVO_LIST_ID` (e.g. `3`)
-- `BREVO_WELCOME_TEMPLATE_ID` (default `1`) — immediate welcome
-- `BREVO_DAY3_TEMPLATE_ID` (default `3`) — scheduled +3 days
-- `BREVO_DAY7_TEMPLATE_ID` (default `2`) — queued; production in-process cron (no extra secret)
-- `NEXT_PUBLIC_GA_MEASUREMENT_ID` (e.g. `G-XXXXXXXX`) — already live on Railway if set
+Without the first two, `/api/leads` saves nothing: the PDF still unlocks, the email goes only to the log.
+Check with `curl -s https://rakhuno.com/api/health` → `"leads": true`.
+
+- `BREVO_API_KEY` (sensitive)
+- `BREVO_LIST_ID` = `3`
+- `BREVO_WELCOME_TEMPLATE_ID` = `1` — immediate welcome
+- `BREVO_DAY3_TEMPLATE_ID` = `3` — scheduled +3 days
+- `BREVO_DAY7_TEMPLATE_ID` = `2` — sent by the daily cron
+- `CRON_SECRET` (sensitive) — Vercel sends it to `/api/cron/drip` (schedule in `vercel.json`)
+- `NEXT_PUBLIC_GA_MEASUREMENT_ID` — optional; code falls back to the Rakhuno GA4 id
 - `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` — Search Console meta (optional)
 
-### Domain architecture (already live)
-
-1. Old OpenNext Worker custom domains on `rakhuno` were removed
-2. Cloudflare Worker **`rakhuno-proxy`** is attached to `rakhuno.com` + `www.rakhuno.com`
-3. Proxy fetches Railway origin `rakhuno-production.up.railway.app` (rewrites redirects)
-4. GA4 / SEO ship from Railway; edge stays on Cloudflare
-
-Do **not** re-attach custom domains to the legacy `rakhuno` OpenNext Worker or traffic will go stale again.
+`Dockerfile` and `railway.json` are from the Railway period (until 2026-10-23) and are not used by Vercel.
 
 ### Optional: Cloudflare OpenNext Worker
 
@@ -57,4 +51,4 @@ See [docs/GROWTH-STRATEGY.md](docs/GROWTH-STRATEGY.md) for channel strategy, KPI
 
 - Not tax advice. Reminders are generic FOP schedule hints.
 - Seller invoice data stays in browser `localStorage`.
-- Leads fall back to log/CSV when Cloudflare KV is unavailable (Railway path).
+- Without Brevo env, leads are only logged (`[brevo] … lead not saved`) and GA4 gets `lead_sync_error`.

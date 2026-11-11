@@ -11,6 +11,8 @@ let started = false;
 export function startDripCron() {
   if (started) return;
   if (!process.env.BREVO_API_KEY) return;
+  // Serverless on Vercel: vercel.json cron calls /api/cron/drip instead.
+  if (process.env.VERCEL) return;
   // Skip local `next dev` unless explicitly forced.
   if (process.env.NODE_ENV !== "production" && process.env.DRIP_CRON_INLINE !== "1") {
     return;

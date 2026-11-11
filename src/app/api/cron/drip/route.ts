@@ -11,7 +11,7 @@ function authorized(req: NextRequest, secret: string | undefined) {
   return urlSecret === secret;
 }
 
-/** Optional manual trigger. Day 7 normally runs in-process on Railway. */
+/** Day 7 drip. On Vercel the daily cron in vercel.json calls this with `Bearer CRON_SECRET`. */
 async function handle(req: NextRequest) {
   const env = await getWorkerEnv();
   if (!authorized(req, env.CRON_SECRET)) {
