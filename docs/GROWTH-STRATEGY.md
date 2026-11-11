@@ -1,59 +1,88 @@
 # Rakhuno — growth & product strategy
 
-Last updated: 2026-10-16. Baseline: **3 verified Brevo leads**, GA4 property live since 2026-09-27, Search campaign **Rakhuno Search UA — Invoice** (~100 TRY/day).
+Last updated: 2026-11-11. Baseline: **15 Brevo leads** in list #3 (11 from 4–22 Oct, 4 on 11 Nov), revenue 0.
+
+## Positioning
+
+Rakhuno is the **FOP's document and tax assistant**, not "a simple invoice". The answer to bank apps that add invoicing (Monobank, Privat) and to paid suites (Checkbox, Vchasno, Dubidoc):
+
+- no sign-up for the core PDF;
+- the full chain: рахунок → акт → видаткова накладна, with the basis line filled in;
+- NBU payment QR on every invoice, scannable by any Ukrainian bank app;
+- 2026 tax calculator and email reminders 3 days before each deadline.
 
 ## North star
 
-**Verified email leads** where a FOP completes invoice PDF unlock (`SOURCE=invoice_pdf` in Brevo, `generate_lead` in GA4). Secondary: organic impressions/clicks in GSC for guide cluster → `/invoice`.
+**New Brevo contacts per week**, by `LEAD_CHANNEL`, with cost per lead per paid channel. Secondary: share of users who make a **second invoice** within 30 days (`second_invoice`).
 
-## Current state (facts)
+## State on 2026-11-11
 
-| Channel | Signal |
-|---------|--------|
-| **Product** | `/invoice` works; Brevo drip wired; 3 real contacts in list #3 |
-| **Organic** | GSC ~110 impressions / 3 clicks (Sep–Oct); guides indexing |
-| **Paid** | ~15% CTR; spend ~650+ TRY first week; Ads reports 3 conversions (align with GA4 key event) |
-| **Attribution** | Was weak (`Unassigned` in GA4); fixed in code via UTM/gclid session capture |
+| | Today | Note |
+|---|---|---|
+| Leads | 4 | 3× `invoice_pdf`, 1× `nakladna_pdf` (organic, guide form) |
+| Google Ads (Rakhuno) | 58 impr / 5 clicks / 65.6 TRY / 1 conv | Brevo confirms ≥1 `google_ads` lead; 2 earlier leads predate attribution but match click times |
+| Meta Ads | 705 impr / 21 clicks / 201.4 TRY / 0 leads | 12 link clicks → 6 landing page views; learning phase |
+| Organic | 1 lead | GSC ~200–260 impressions/day |
 
-## Phase 1 — Measure correctly (week 1–2)
+Fixed on 10–11 Nov: Brevo env vars on Vercel (leads were lost 23 Oct – 11 Nov), regional consent, mobile cookie bar, lead attribution (`LEAD_CHANNEL`, UTM, landing, referrer on each Brevo contact), daily cron for drip and tax reminders.
 
-1. GA4: mark **`generate_lead`** as primary conversion; import/link to Google Ads.
-2. Weekly KPI sheet: Brevo unique `invoice_pdf`, GA4 leads by `sessionDefaultChannelGroup`, GSC clicks, Ads cost & conv.
-3. Keep Brevo list clean (no smoke emails in list #3).
+One day of data is not a trend. Every decision below waits for its date and its number.
 
-**Exit criteria:** Paid vs organic lead count trustworthy for 14 days.
+## Phase 1 — Prove channel economics (to 2026-11-25)
 
-## Phase 2 — Paid efficiency (week 2–4)
+Target: ~2 leads/day and a CPL per channel from `LEAD_CHANNEL`.
 
-1. **Search only**, Ukraine, tool-intent keywords (exact-heavy). Template/download/utility negatives stay.
-2. Do **not** raise budget until **≥10 leads** and stable CPL (~target: explore ≤150 TRY/lead at current CPC).
-3. Review search terms every 3 days; add negatives for `бланк`, `шаблон`, `скач`, utilities, RU queries.
-4. RSA → always `https://rakhuno.com/invoice`.
+| Date | Gate | If yes | If no |
+|---|---|---|---|
+| 2026-11-14 | Meta has ≥1 lead (`LEAD_CHANNEL=meta_ads`) | Keep 150 TRY/day to 18 Nov | Pause Meta, move budget to Google |
+| 2026-11-16/17 | First automatic tax reminders sent | Check opens/clicks in Brevo | Fix cron before the next deadline |
+| 2026-11-18 | Google CPL ≤ ~100 TRY over 7 days | Google 100 → 200 TRY/day | Hold budget, prune search terms |
+| 2026-11-25 | Organic `generate_lead` ≥ 3/week | Add online fill to more guides | Rework guide CTAs |
 
-**Exit criteria:** ≥30% of new leads from paid at CPL not worse than 2× organic “cost” (organic = content time only).
+Product work in this phase:
 
-## Phase 3 — Organic compounding (parallel, month 1–3)
+- Online fill (`DocQuickFill`) or a direct `/invoice` prefill on `blank-rakhunku-faktury` and `zrazok-rahunku-faktury`, the two highest-traffic invoice guides. The nakladna form already produced the first organic lead.
+- Scan the NBU QR with at least two real bank apps (Mono, Privat).
+- Mobile wizard step tracking on `/invoice` to find the drop-off step.
 
-1. **Do not** bid on queries where a guide already ranks top 20 (avoid cannibalization); use GSC query report.
-2. Prioritize guides with impressions, low CTR: `blank-rakhunku-faktury`, `zrazok-rahunku-faktury`, `rahunok-faktura`.
-3. IndexNow + sitemap on meaningful content changes only.
-4. One new guide / month max — only if DataForSEO/GSC shows a gap (e.g. “рахунок фоп 3 група”).
+## Phase 2 — Scale what works (December)
 
-**Exit criteria:** GSC ≥500 impressions/month and ≥20 clicks/month without paid help.
+- Budget to the channel with the lower CPL; Google up to 200–300 TRY/day if CPL holds.
+- **Invoice link** (`rakhuno.com/r/…`): the client opens the invoice in the browser and pays by QR. Every sent invoice shows Rakhuno to a new FOP or business.
+- One new tool or guide per month, only where DataForSEO/GSC shows a gap.
+- Watch `second_invoice`: if users come back, the product holds.
 
-## Phase 4 — Retention & monetization (month 2+)
+## Phase 3 — Tax season and first revenue (January – February)
 
-1. **Email:** welcome + day 3 + day 7 drip — measure open/click in Brevo; subject lines UA FOP taxes.
-2. **Activation:** second invoice within 30 days (localStorage profile present = proxy).
-3. **Monetization (later):** paid tier only after **≥100 MAU** or **≥50 monthly leads** — e.g. saved history cloud, multi-user, accountant export. Stay free for core PDF until then.
+- Peak demand: group 3 Q4 declaration and tax by **9 Feb**, groups 1–2 annual declaration by **1 Mar**. Calculator, reminders and declaration guides ready by early January.
+- Revenue test once leads reach **≥50/month**:
+  1. **Bank partner referrals** (FOP account opening). Matches the audience, costs the user nothing. Try this first.
+  2. **Pro tier** ~99–149 грн/month: invoice links, cloud history, several FOPs per accountant.
+- Core PDF stays free.
+
+## Risks
+
+- Bank apps ship invoicing inside the app. Answer: the full document chain, QR for every bank, reminders, no account needed.
+- Lead quality: some contacts may be one-off. Measure `second_invoice` before pricing.
+- Brevo free plan: 300 emails/day. Reminder days with a growing list will hit it; upgrade before ~250 contacts.
 
 ## What we explicitly avoid
 
-- Broad match expansion, PMax, Display (burns budget on template seekers).
-- Competing with Checkbox/Medoc positioning — stay “light invoice + reminders”.
+- Broad match, PMax, Display (they burn budget on template seekers).
+- Raising any budget before its gate date and number.
 - Turkish/RU landing pages — UA only.
 
-## Google Ads change log (2026-10-07)
+## Change log
+
+### 2026-11-11 — Lead pipeline and attribution
+
+- Brevo `BREVO_API_KEY`, `BREVO_LIST_ID`, template ids and `CRON_SECRET` set on Vercel; `/api/health` reports `leads: true`.
+- Vercel cron `0 7 * * *` → `/api/cron/drip`: day-7 drip and tax reminders.
+- Each lead stores `LEAD_CHANNEL`, `UTM_*`, `LANDING_PAGE`, `REFERRER` in Brevo.
+- Google Ads: geo targeting set to PRESENCE; campaign re-enabled at 100 TRY/day.
+- Meta: campaign `Rakhuno | Leads | UA | Web` re-enabled at 150 TRY/day, LEAD optimization, ads A and B active.
+
+### 2026-10-07 — Google Ads
 
 Applied via API on campaign `24303377012`:
 
@@ -66,7 +95,7 @@ Manual follow-up in Google UI:
 - Confirm `generate_lead` / Ads conversion action match.
 - Optional: remove duplicate negatives if UI shows conflicts.
 
-## Google Ads change log (2026-10-16)
+### 2026-10-16 — Google Ads
 
 Applied on campaign `24303377012` after the 16 Oct review:
 
@@ -124,6 +153,7 @@ Check in 14 days: organic `generate_lead` > 0, `doc_fill_start` → `doc_pdf_unl
 
 | When | Action |
 |------|--------|
-| Weekly | Brevo count, GA4 channels, GSC performance, Ads search terms |
+| Daily (first two weeks) | Brevo new contacts by `LEAD_CHANNEL`, spend per channel |
+| Weekly | GA4 channels, GSC performance, Ads search terms, CPL per channel |
 | Bi-weekly | Guide title/meta refresh from GSC queries |
-| Monthly | Strategy phase gate — advance or hold |
+| Monthly | Phase gate: advance or hold |
