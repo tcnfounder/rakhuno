@@ -3,6 +3,7 @@
 import { ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { ActDocument } from "@/components/ActDocument";
+import { NakladnaDocument } from "@/components/DocDocuments";
 import { SiteHeader } from "@/components/SiteHeader";
 import {
   InvoiceData,
@@ -115,6 +116,7 @@ export default function InvoiceClient({
   const logoInputRef = useRef<HTMLInputElement>(null);
   const readyRef = useRef<HTMLDivElement>(null);
   const actRef = useRef<HTMLDivElement>(null);
+  const nakladnaRef = useRef<HTMLDivElement>(null);
   const [actDate, setActDate] = useState(todayIso());
   const [email, setEmail] = useState("");
   const [busy, setBusy] = useState(false);
@@ -309,20 +311,26 @@ export default function InvoiceClient({
     });
   }
 
-  /** Act of completed work from the same data — offered after the email unlock. */
-  async function downloadAct() {
-    const node = actRef.current;
+  /**
+   * Document chain: after the invoice, the act (services) or the видаткова накладна (goods)
+   * comes from the same parties, lines and sum. Offered after the email unlock.
+   */
+  async function downloadFollowUp(kind: "akt" | "nakladna") {
+    const node = kind === "akt" ? actRef.current : nakladnaRef.current;
     if (!node) return;
     setBusy(true);
     setError("");
     try {
-      const result = await buildInvoicePdf(data, node, "akt");
+      const result = await buildInvoicePdf(data, node, kind);
       downloadPdfBlob(result.blob, result.filename);
-      setOkMsg("Акт завантажено.");
-      trackEvent("act_pdf_download", { item_count: data.items.length });
+      setOkMsg(kind === "akt" ? "Акт завантажено." : "Видаткову накладну завантажено.");
+      trackEvent(kind === "akt" ? "act_pdf_download" : "nakladna_pdf_download", {
+        item_count: data.items.length,
+        source: "invoice",
+      });
     } catch {
-      setError("Не вдалося створити акт. Спробуйте ще раз.");
-      trackEvent("invoice_pdf_error", { stage: "act" });
+      setError("Не вдалося створити документ. Спробуйте ще раз.");
+      trackEvent("invoice_pdf_error", { stage: kind });
     } finally {
       setBusy(false);
     }
@@ -359,32 +367,45 @@ export default function InvoiceClient({
     );
   }
 
+  const followUpBtn =
+    "rounded-lg border border-signal px-4 py-2 text-sm font-semibold text-signal transition hover:bg-signal hover:text-ink disabled:opacity-60";
   const actPanel = (
     <div className="mt-4 rounded-lg border border-white/10 bg-ink/60 p-3">
-      <p className="font-semibold text-paper">Потрібен акт виконаних робіт?</p>
+      <p className="font-semibold text-paper">Наступний документ — з тих самих даних</p>
       <p className="mt-1 text-sm text-mist">
-        Ті самі сторони, позиції й сума — акт до рахунку № {data.number || "—"} одним PDF.
+        Сторони, позиції й сума з рахунку № {data.number || "—"}. Послуги закриває акт, товар —
+        видаткова накладна.
       </p>
-      <div className="mt-3 flex flex-wrap items-center gap-3">
-        <label className="flex items-center gap-2 text-sm text-mist">
-          Дата акту
-          <input
-            type="date"
-            value={actDate}
-            onChange={(e) => setActDate(e.target.value || todayIso())}
-            className="rounded-lg border border-white/15 bg-ink px-2 py-1.5 text-paper outline-none focus:border-signal"
-          />
-        </label>
+      <label className="mt-3 flex items-center gap-2 text-sm text-mist">
+        Дата документа
+        <input
+          type="date"
+          value={actDate}
+          onChange={(e) => setActDate(e.target.value || todayIso())}
+          className="rounded-lg border border-white/15 bg-ink px-2 py-1.5 text-paper outline-none focus:border-signal"
+        />
+      </label>
+      <div className="mt-3 flex flex-wrap gap-3">
         <button
           type="button"
-          onClick={() => void downloadAct()}
+          onClick={() => void downloadFollowUp("akt")}
           disabled={busy}
-          className="rounded-lg border border-signal px-4 py-2 text-sm font-semibold text-signal transition hover:bg-signal hover:text-ink disabled:opacity-60"
+          className={followUpBtn}
         >
-          {busy ? "…" : "Скачати акт PDF"}
+          {busy ? "…" : "Акт виконаних робіт PDF"}
+        </button>
+        <button
+          type="button"
+          onClick={() => void downloadFollowUp("nakladna")}
+          disabled={busy}
+          className={followUpBtn}
+        >
+          {busy ? "…" : "Видаткова накладна PDF"}
         </button>
       </div>
-      <p className="mt-2 text-xs text-muted">Акт від {formatDateUk(actDate)} · підпишіть з обох сторін.</p>
+      <p className="mt-2 text-xs text-muted">
+        Від {formatDateUk(actDate)} · підпишіть з обох сторін.
+      </p>
     </div>
   );
 
@@ -864,6 +885,11 @@ export default function InvoiceClient({
                 >
                   {busy ? "…" : unlocked ? "Завантажити знову" : "Отримати PDF безкоштовно"}
                 </button>
+                {!unlocked ? (
+                  <p className="text-center text-xs text-mist">
+                    Після рахунку — акт або накладна з тих самих даних в один клік.
+                  </p>
+                ) : null}
                 {error ? <p className="text-sm text-red-300">{error}</p> : null}
                 {okMsg ? <p className="text-sm text-signal">{okMsg}</p> : null}
               </div>
@@ -1296,7 +1322,7 @@ export default function InvoiceClient({
               </p>
               <p className="mt-1 text-sm text-mist">
                 Email потрібен для податкових нагадувань. PDF завантажиться одразу — у листі вкладення
-                немає.
+                немає. Після рахунку — акт або видаткова накладна з тих самих даних в один клік.
               </p>
               <div className="mt-3 flex flex-col gap-3 sm:flex-row">
                 <input
@@ -1469,6 +1495,19 @@ export default function InvoiceClient({
           className="pointer-events-none fixed left-[-10000px] top-0 -z-10 print:hidden"
         >
           <ActDocument ref={actRef} data={data} actDate={actDate} />
+          <NakladnaDocument
+            ref={nakladnaRef}
+            data={{
+              number: data.number,
+              date: actDate,
+              sellerName: data.sellerName,
+              sellerTaxId: data.sellerTaxId,
+              buyerName: data.buyerName,
+              buyerTaxId: data.buyerTaxId,
+              basis: `Рахунок-фактура № ${data.number || "—"} від ${formatDateUk(data.date)}`,
+              items: data.items,
+            }}
+          />
         </div>
       ) : null}
     </main>
