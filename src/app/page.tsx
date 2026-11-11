@@ -7,7 +7,10 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
 
 export const metadata: Metadata = {
-  alternates: { canonical: "https://rakhuno.com/" },
+  alternates: {
+    canonical: "https://rakhuno.com/",
+    languages: { uk: "https://rakhuno.com/", en: "https://rakhuno.com/en" },
+  },
   openGraph: {
     url: "https://rakhuno.com/",
     title: "Rakhuno — простий рахунок для ФОП",

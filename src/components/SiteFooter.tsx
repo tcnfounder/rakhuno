@@ -50,6 +50,9 @@ export function SiteFooter() {
             <Link href="/terms" className="hover:text-signal">
               Умови
             </Link>
+            <Link href="/en" hrefLang="en" className="hover:text-signal">
+              English
+            </Link>
             <a href="mailto:info@rakhuno.com" className="hover:text-signal">
               info@rakhuno.com
             </a>
