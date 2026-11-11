@@ -1,3 +1,5 @@
+import { trackEvent } from "@/lib/analytics";
+
 const PENDING_LEAD_KEY = "rakhuno.pendingLeadEmail";
 
 function normalizeEmail(email: string) {
@@ -43,7 +45,15 @@ export async function submitInvoiceLead(
       ...(fopGroup ? { fopGroup } : {}),
     }),
   });
-  if (!res.ok) return false;
-  const body = (await res.json()) as { created?: boolean };
+  if (!res.ok) {
+    trackEvent("lead_sync_error", { status: `http_${res.status}`, source });
+    return false;
+  }
+  const body = (await res.json()) as { created?: boolean; brevo?: string };
+  // The PDF still unlocks when Brevo fails, so the visitor never sees it. Report it to GA4
+  // so a missing key or a rejected request shows up within a day, not weeks later.
+  if (body.brevo !== "brevo" && body.brevo !== "brevo_exists") {
+    trackEvent("lead_sync_error", { status: body.brevo || "unknown", source });
+  }
   return body.created === true;
 }

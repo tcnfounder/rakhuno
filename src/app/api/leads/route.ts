@@ -54,7 +54,11 @@ async function pushToBrevo(
   env: WorkerEnv,
   extra: { fopGroup?: string } = {},
 ) {
-  if (!env.BREVO_API_KEY || !env.BREVO_LIST_ID) return "skipped";
+  if (!env.BREVO_API_KEY || !env.BREVO_LIST_ID) {
+    // Leads are lost while this is true (Railway has no KV and the disk is ephemeral).
+    console.error("[brevo] BREVO_API_KEY or BREVO_LIST_ID missing; lead not saved:", email);
+    return "skipped";
+  }
   const listId = Number(env.BREVO_LIST_ID);
   if (!Number.isFinite(listId)) return "bad_list";
 
