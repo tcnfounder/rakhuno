@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Analytics as VercelAnalytics } from "@vercel/analytics/next";
 import { Analytics } from "@/components/Analytics";
 import { JsonLd, organizationLd, softwareLd, websiteLd } from "@/components/JsonLd";
 import WebMcpRegister from "@/components/WebMcpRegister";
@@ -76,6 +77,7 @@ export default function RootLayout({
         <Analytics />
         <WebMcpRegister />
         {children}
+        <VercelAnalytics />
       </body>
     </html>
   );
