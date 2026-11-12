@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { BrandLockup } from "@/components/BrandLockup";
 import { JsonLd } from "@/components/JsonLd";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -44,6 +43,45 @@ const steps = [
   },
 ];
 
+const guides = [
+  {
+    href: "/guides/rahunok-faktura",
+    tag: "Основи",
+    title: "Рахунок-фактура для ФОП",
+    text: "Обовʼязкові реквізити, різниця з актом і як скласти PDF за кілька хвилин.",
+  },
+  {
+    href: "/guides/zrazok-rahunku-faktury",
+    tag: "Зразок",
+    title: "Зразок рахунку-фактури",
+    text: "Приклад заповнених полів і готовий документ — без бланка Word.",
+  },
+  {
+    href: "/guides/vystavyty-rakhunok",
+    tag: "Покроково",
+    title: "Як виставити рахунок на оплату",
+    text: "Коли надсилати клієнту, які поля обовʼязкові і що робити після оплати.",
+  },
+  {
+    href: "/guides/akt-vykonanykh-robit",
+    tag: "Документи",
+    title: "Акт виконаних робіт",
+    text: "Реквізити акта для послуг і як не розійтися з рахунком у сумі та назві.",
+  },
+  {
+    href: "/guides/blank-rakhunku-faktury",
+    tag: "Шаблони",
+    title: "Бланк рахунку Word і Excel",
+    text: "Безкоштовні шаблони для завантаження і швидша альтернатива онлайн.",
+  },
+  {
+    href: "/guides/yedynyy-podatok",
+    tag: "Податки",
+    title: "Єдиний податок: коли платити",
+    text: "Строки для 2 і 3 групи, календар і нагадування на email.",
+  },
+];
+
 const faqs = [
   {
     q: "Як створити рахунок-фактуру онлайн?",
@@ -62,6 +100,18 @@ const faqs = [
     a: "Ні. Rakhuno — легкий онлайн-рахунок для ФОП без важкої бухгалтерії.",
     href: "/guides/rahunok-onlayn",
     linkLabel: "Рахунок онлайн за 2 хвилини",
+  },
+  {
+    q: "Чи можна зробити акт виконаних робіт або видаткову накладну?",
+    a: "Так. Після рахунку акт (для послуг) або видаткова накладна (для товару) формуються в один клік з тими самими сторонами, позиціями й сумою.",
+    href: "/guides/akt-vykonanykh-robit",
+    linkLabel: "Що має бути в акті",
+  },
+  {
+    q: "Де зберігаються мої реквізити?",
+    a: "Реквізити ФОП, клієнти й останні рахунки зберігаються лише у вашому браузері, на сервер вони не передаються. Ми отримуємо тільки email (і групу ФОП, якщо ви її вказали) — для податкових нагадувань.",
+    href: "/privacy",
+    linkLabel: "Політика конфіденційності",
   },
   {
     q: "Що з податками?",
@@ -109,17 +159,20 @@ export default function HomePage() {
 
         <div className="relative z-10 flex min-h-[100svh] flex-col">
           <SiteHeader />
-          <div className="flex flex-1 flex-col justify-end px-5 pb-16 pt-10 md:px-10 md:pb-24">
-            <div className="mx-auto w-full max-w-content">
-              <div className="rise">
-                <BrandLockup size="hero" href="" />
-              </div>
-              <h1 className="rise rise-delay-1 mt-6 max-w-3xl font-display text-2xl font-medium leading-tight sm:text-4xl md:text-5xl">
-                Простий рахунок-фактура для ФОП
+          <div className="flex flex-1 flex-col justify-end pb-16 pt-10 md:pb-24">
+            <div className="mx-auto w-full max-w-content px-5 md:px-10">
+              <p className="rise inline-flex items-center gap-2 rounded-full border border-white/15 bg-ink/40 px-3.5 py-1.5 text-sm text-mist backdrop-blur">
+                <span className="h-1.5 w-1.5 rounded-full bg-signal" aria-hidden />
+                Для ФОП · безкоштовно · без реєстрації
+              </p>
+              <h1 className="rise rise-delay-1 mt-6 max-w-4xl font-display text-4xl font-semibold leading-[1.05] tracking-tight sm:text-6xl md:text-7xl">
+                Рахунок-фактура за 2 хвилини.
+                <span className="block text-signal">Без Word.</span>
               </h1>
-              <p className="rise rise-delay-2 mt-5 max-w-xl text-base leading-relaxed text-paper/85 sm:text-lg">
-                Онлайн рахунок за 2 хвилини. PDF клієнту одразу. Email-нагадування про єдиний податок
-                і ЄСВ — без важкої бухгалтерії.
+              <p className="rise rise-delay-2 mt-6 max-w-2xl text-base leading-relaxed text-paper/85 sm:text-lg">
+                Вписуєте реквізити й позиції — Rakhuno сам пише суму прописом, додає QR-код для оплати
+                і віддає PDF, який можна одразу надіслати клієнту. Акт і видаткова накладна — з того
+                самого рахунку.
               </p>
               <div className="rise rise-delay-3 mt-8 flex flex-wrap items-center gap-3">
                 <Link
@@ -135,13 +188,24 @@ export default function HomePage() {
                   Як це працює
                 </a>
               </div>
+              <ul className="rise rise-delay-3 mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-mist">
+                <li className="flex items-center gap-2">
+                  <span className="text-signal" aria-hidden>✓</span> Сума прописом українською
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="text-signal" aria-hidden>✓</span> QR-код НБУ для оплати
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="text-signal" aria-hidden>✓</span> PDF без логотипу сервісу
+                </li>
+              </ul>
             </div>
           </div>
         </div>
       </section>
 
-      <section id="yak-pratsyuye" className="border-t border-line px-5 py-16 md:px-10 md:py-24">
-        <div className="mx-auto max-w-content">
+      <section id="yak-pratsyuye" className="border-t border-line py-16 md:py-24">
+        <div className="mx-auto max-w-content px-5 md:px-10">
           <p className="font-display text-sm uppercase tracking-[0.18em] text-signal">Як це працює</p>
           <h2 className="mt-3 max-w-2xl font-display text-3xl font-semibold md:text-5xl">
             Три кроки до рахунку
@@ -246,176 +310,137 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section id="dlya-kogo" className="border-t border-line px-5 py-16 md:px-10 md:py-24">
-        <div className="mx-auto w-full max-w-3xl">
-          <p className="font-display text-sm uppercase tracking-[0.18em] text-signal">Для кого</p>
-          <h2 className="mt-3 font-display text-3xl font-semibold md:text-5xl">
-            Рахунок-фактура онлайн без важкої бухгалтерії
-          </h2>
-          <div className="mt-6 space-y-4 text-mist">
-            <p>
-              Rakhuno допомагає ФОП і фрілансерам{" "}
-              <strong className="text-paper/90">виставити рахунок на оплату</strong> і скачати PDF за
-              кілька хвилин: ПІБ, ІПН, IBAN, позиції, сума. Без Word-шаблону, без Checkbox і без Медок
-              — якщо вам потрібен саме зрозумілий документ клієнту, а не повний ЕДО.
-            </p>
-            <p>
-              Типовий сценарій: 5–30 рахунків на місяць, клієнти просять PDF на email або в Telegram,
-              бухгалтерія замовника не приймає «скрін картки». Ви заповнюєте живий A4 на екрані —
-              PDF виглядає так само, з вашим ПІБ ФОП, не з логотипом сервісу як заголовком.
-            </p>
-            <p>
-              Після першого рахунку профіль продавця можна зберегти в браузері: наступні PDF — ближче
-              до двох хвилин. Окремо підписуєтесь на email-нагадування про типові строки єдиного
-              податку й ЄСВ (це нагадування, не податкова консультація). Детальніше — у гідах{" "}
-              <a href="/guides/rahunok-faktura" className="text-signal underline-offset-2 hover:underline">
-                рахунок-фактура для ФОП
-              </a>{" "}
-              і{" "}
-              <a href="/guides/rahunok-onlayn" className="text-signal underline-offset-2 hover:underline">
-                рахунок онлайн
-              </a>
-              .
-            </p>
-            <p>
-              Якщо потрібні акти, податкові накладні, складський облік або інтеграція з банком —
-              оберіть бухгалтерський контур. Якщо задача «швидко PDF клієнту + не забути податки» —
-              почніть із{" "}
-              <a href="/invoice" className="text-signal underline-offset-2 hover:underline">
-                безкоштовного рахунку
-              </a>
-              .
-            </p>
+      <section id="dlya-kogo" className="border-t border-line py-16 md:py-24">
+        <div className="mx-auto w-full max-w-content px-5 md:px-10">
+          <div className="max-w-3xl">
+            <p className="font-display text-sm uppercase tracking-[0.18em] text-signal">Для кого</p>
+            <h2 className="mt-3 font-display text-3xl font-semibold md:text-5xl">
+              Рахунок-фактура онлайн без важкої бухгалтерії
+            </h2>
+            <div className="mt-6 space-y-4 text-mist">
+              <p>
+                Rakhuno допомагає ФОП і фрілансерам{" "}
+                <strong className="text-paper/90">виставити рахунок на оплату</strong> і скачати PDF за
+                кілька хвилин: ПІБ, ІПН, IBAN, позиції, сума. Без Word-шаблону, без Checkbox і без Медок
+                — якщо вам потрібен саме зрозумілий документ клієнту, а не повний ЕДО.
+              </p>
+              <p>
+                Типовий сценарій: 5–30 рахунків на місяць, клієнти просять PDF на email або в Telegram,
+                бухгалтерія замовника не приймає «скрін картки». Ви заповнюєте живий A4 на екрані —
+                PDF виглядає так само, з вашим ПІБ ФОП, не з логотипом сервісу як заголовком.
+              </p>
+              <p>
+                Після першого рахунку профіль продавця можна зберегти в браузері: наступні PDF — ближче
+                до двох хвилин. Окремо підписуєтесь на email-нагадування про типові строки єдиного
+                податку й ЄСВ (це нагадування, не податкова консультація). Детальніше — у гідах{" "}
+                <a href="/guides/rahunok-faktura" className="text-signal underline-offset-2 hover:underline">
+                  рахунок-фактура для ФОП
+                </a>{" "}
+                і{" "}
+                <a href="/guides/rahunok-onlayn" className="text-signal underline-offset-2 hover:underline">
+                  рахунок онлайн
+                </a>
+                .
+              </p>
+              <p>
+                Якщо потрібні акти, податкові накладні, складський облік або інтеграція з банком —
+                оберіть бухгалтерський контур. Якщо задача «швидко PDF клієнту + не забути податки» —
+                почніть із{" "}
+                <a href="/invoice" className="text-signal underline-offset-2 hover:underline">
+                  безкоштовного рахунку
+                </a>
+                .
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
-      <section id="gidy" className="border-t border-line px-5 py-16 md:px-10 md:py-24">
-        <div className="mx-auto max-w-content">
-          <p className="font-display text-sm uppercase tracking-[0.18em] text-signal">Гіди</p>
-          <h2 className="mt-3 max-w-2xl font-display text-3xl font-semibold md:text-5xl">
-            Коротко про рахунок і ФОП
-          </h2>
-          <p className="mt-4 max-w-xl text-mist">
-            Практичні сторінки під типові запити — потім одразу до рахунку в Rakhuno.
-          </p>
-          <ul className="mt-10 max-w-3xl space-y-5">
-            <li className="border-t border-line pt-5">
-              <Link
-                href="/guides/rahunok-faktura"
-                className="font-display text-xl text-paper transition hover:text-signal md:text-2xl"
-              >
-                Рахунок-фактура для ФОП
-              </Link>
-              <p className="mt-2 text-mist">Реквізити, різниця з актом, PDF онлайн за кілька хвилин.</p>
-            </li>
-            <li className="border-t border-line pt-5">
-              <Link
-                href="/guides/zrazok-rahunku-faktury"
-                className="font-display text-xl text-paper transition hover:text-signal md:text-2xl"
-              >
-                Зразок рахунку-фактури
-              </Link>
-              <p className="mt-2 text-mist">Приклад полів і готовий PDF — без бланка Word.</p>
-            </li>
-            <li className="border-t border-line pt-5">
-              <Link
-                href="/guides/vystavyty-rakhunok"
-                className="font-display text-xl text-paper transition hover:text-signal md:text-2xl"
-              >
-                Як виставити рахунок на оплату
-              </Link>
-              <p className="mt-2 text-mist">Коли надсилати клієнту, які поля й PDF за 2 хвилини.</p>
-            </li>
-            <li className="border-t border-line pt-5">
-              <Link
-                href="/guides/rakhunok-na-oplatu"
-                className="font-display text-xl text-paper transition hover:text-signal md:text-2xl"
-              >
-                Рахунок на оплату для ФОП
-              </Link>
-              <p className="mt-2 text-mist">Зразок полів і PDF онлайн — без Excel.</p>
-            </li>
-            <li className="border-t border-line pt-5">
-              <Link
-                href="/guides/blank-rakhunku-faktury"
-                className="font-display text-xl text-paper transition hover:text-signal md:text-2xl"
-              >
-                Бланк рахунку-фактури
-              </Link>
-              <p className="mt-2 text-mist">Замість Word: заповніть онлайн і скачайте PDF.</p>
-            </li>
-            <li className="border-t border-line pt-5">
-              <Link
-                href="/guides/rahunok-onlayn"
-                className="font-display text-xl text-paper transition hover:text-signal md:text-2xl"
-              >
-                Рахунок онлайн за 2 хвилини
-              </Link>
-              <p className="mt-2 text-mist">Алгоритм без Word і Checkbox — одразу PDF клієнту.</p>
-            </li>
-            <li className="border-t border-line pt-5">
-              <Link
-                href="/guides/fop-3-grupa"
-                className="font-display text-xl text-paper transition hover:text-signal md:text-2xl"
-              >
-                ФОП 3 група — коротко
-              </Link>
-              <p className="mt-2 text-mist">Кому підходить, рахунки клієнтам, що не забути про податки.</p>
-            </li>
-            <li className="border-t border-line pt-5">
-              <Link
-                href="/guides/yedynyy-podatok"
-                className="font-display text-xl text-paper transition hover:text-signal md:text-2xl"
-              >
-                Єдиний податок: коли платити
-              </Link>
-              <p className="mt-2 text-mist">Типові вікна, календар і email-нагадування — без зайвої теорії.</p>
-            </li>
-            <li className="border-t border-line pt-5">
-              <Link
-                href="/guides/podatky-fop"
-                className="font-display text-xl text-paper transition hover:text-signal md:text-2xl"
-              >
-                Податки ФОП: чекліст
-              </Link>
-              <p className="mt-2 text-mist">Щомісяця й щокварталу: рахунки, строки, архів документів.</p>
-            </li>
-            <li className="border-t border-line pt-5">
-              <Link
-                href="/guides"
-                className="text-signal underline-offset-2 transition hover:underline"
-              >
-                Усі гіди →
-              </Link>
-            </li>
+      <section id="gidy" className="border-t border-line py-16 md:py-24">
+        <div className="mx-auto max-w-content px-5 md:px-10">
+          <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+            <div>
+              <p className="font-display text-sm uppercase tracking-[0.18em] text-signal">Гіди</p>
+              <h2 className="mt-3 max-w-2xl font-display text-3xl font-semibold md:text-5xl">
+                Коротко про рахунок і ФОП
+              </h2>
+              <p className="mt-4 max-w-xl text-mist">
+                Практичні сторінки під типові запити: що вказати, як оформити, коли платити.
+              </p>
+            </div>
+            <Link
+              href="/guides"
+              className="inline-flex w-fit shrink-0 items-center gap-2 rounded-full border border-white/20 px-5 py-2.5 text-sm text-paper transition hover:border-signal hover:text-signal"
+            >
+              Усі гіди <span aria-hidden>→</span>
+            </Link>
+          </div>
+          <ul className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {guides.map((g) => (
+              <li key={g.href}>
+                <Link
+                  href={g.href}
+                  className="group flex h-full flex-col rounded-2xl border border-white/10 bg-ink-2/60 p-6 transition hover:border-signal/50 hover:bg-ink-2"
+                >
+                  <span className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">
+                    {g.tag}
+                  </span>
+                  <span className="mt-3 font-display text-lg font-semibold leading-snug text-paper transition group-hover:text-signal">
+                    {g.title}
+                  </span>
+                  <span className="mt-2 flex-1 text-sm leading-relaxed text-mist">{g.text}</span>
+                  <span className="mt-5 text-sm font-medium text-signal" aria-hidden>
+                    Читати →
+                  </span>
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
       </section>
 
-      <section id="faq" className="border-t border-line px-5 py-16 md:px-10 md:py-24">
-        <div className="mx-auto max-w-content">
-          <p className="font-display text-sm uppercase tracking-[0.18em] text-signal">FAQ</p>
-          <h2 className="mt-3 font-display text-3xl font-semibold md:text-5xl">Часті питання</h2>
-          <div className="mt-12 max-w-3xl divide-y divide-line">
-            {faqs.map((f) => (
-              <div key={f.q} className="py-6">
-                <h3 className="font-display text-xl text-paper">{f.q}</h3>
-                <p className="mt-2 text-mist">{f.a}</p>
-                <Link
-                  href={f.href}
-                  className="mt-3 inline-block text-sm text-signal underline-offset-2 hover:underline"
-                >
-                  {f.linkLabel} →
-                </Link>
-              </div>
+      <section id="faq" className="border-t border-line py-16 md:py-24">
+        <div className="mx-auto grid max-w-content gap-10 px-5 md:px-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)] lg:gap-16">
+          <div className="lg:sticky lg:top-10 lg:self-start">
+            <p className="font-display text-sm uppercase tracking-[0.18em] text-signal">FAQ</p>
+            <h2 className="mt-3 font-display text-3xl font-semibold md:text-5xl">Часті питання</h2>
+            <p className="mt-4 max-w-sm text-mist">
+              Не знайшли відповідь? Напишіть на{" "}
+              <a href="mailto:info@rakhuno.com" className="text-signal underline-offset-2 hover:underline">
+                info@rakhuno.com
+              </a>
+              .
+            </p>
+          </div>
+          <div className="divide-y divide-line border-y border-line">
+            {faqs.map((f, i) => (
+              <details key={f.q} className="group py-1" open={i === 0}>
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-5 font-display text-lg text-paper transition hover:text-signal [&::-webkit-details-marker]:hidden">
+                  {f.q}
+                  <span
+                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-white/15 text-signal transition group-open:rotate-45"
+                    aria-hidden
+                  >
+                    +
+                  </span>
+                </summary>
+                <div className="pb-6 pr-14">
+                  <p className="leading-relaxed text-mist">{f.a}</p>
+                  <Link
+                    href={f.href}
+                    className="mt-3 inline-block text-sm text-signal underline-offset-2 hover:underline"
+                  >
+                    {f.linkLabel} →
+                  </Link>
+                </div>
+              </details>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="border-t border-line px-5 py-16 md:px-10">
-        <div className="mx-auto flex max-w-content flex-col items-start justify-between gap-6 md:flex-row md:items-center">
+      <section className="border-t border-line py-16">
+        <div className="mx-auto flex max-w-content flex-col items-start justify-between gap-6 px-5 md:flex-row md:items-center md:px-10">
           <div>
             <h2 className="font-display text-2xl font-semibold md:text-3xl">
               Готові виставити рахунок?

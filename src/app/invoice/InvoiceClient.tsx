@@ -90,6 +90,9 @@ function SoftField({
 const lineInput =
   "w-full appearance-none border-0 border-b border-neutral-300 bg-transparent px-0 py-1 text-[13px] leading-[1.35] text-neutral-900 outline-none placeholder:text-neutral-400 focus:border-neutral-900 min-h-[1.75rem]";
 
+/** Same look as lineInput, for fields that set their own width on one line. */
+const lineInputInline = lineInput.replace("w-full ", "");
+
 const cellInput =
   "w-full appearance-none border-0 bg-transparent px-1.5 py-1.5 text-[12px] leading-[1.3] text-neutral-900 outline-none placeholder:text-neutral-400 focus:bg-neutral-50 min-h-[2rem]";
 
@@ -389,7 +392,7 @@ export default function InvoiceClient({
     return (
       <main lang={en ? "en" : undefined} className="min-h-screen bg-ink">
         <div className="grid-atmosphere min-h-screen">
-          <SiteHeader lang={lang} />
+          <SiteHeader lang={lang} ukHref="/invoice" enHref="/en/invoice" />
           {/* Server-rendered HTML is this state — keep the page H1 here for crawlers and Ads QS. */}
           <div className="mx-auto max-w-content px-5 py-8 md:px-10 md:py-10">
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-signal">
@@ -619,7 +622,7 @@ export default function InvoiceClient({
     <main lang={en ? "en" : undefined} className="min-h-screen bg-ink print:bg-white">
       <div className="grid-atmosphere min-h-screen pb-28 print:bg-white print:pb-0 print:[background-image:none] md:pb-10">
         <div className="print:hidden">
-          <SiteHeader lang={lang} />
+          <SiteHeader lang={lang} ukHref="/invoice" enHref="/en/invoice" />
         </div>
 
         <div className="mx-auto w-full max-w-content px-5 py-8 md:px-10 md:py-10">
@@ -1072,14 +1075,14 @@ export default function InvoiceClient({
                 <div className="mt-2 flex flex-wrap items-end gap-x-3 gap-y-1 text-[14px]">
                   <span className="font-semibold text-neutral-800">№</span>
                   <input
-                    className={`${lineInput} w-20 font-semibold`}
+                    className={`${lineInputInline} w-20 font-semibold`}
                     value={data.number}
                     onChange={(e) => update("number", e.target.value.slice(0, 20))}
                     aria-label={L("Номер рахунку", "Invoice number")}
                   />
                   <span className="font-semibold text-neutral-800">від</span>
                   <input
-                    className={`${lineInput} w-[9.5rem]`}
+                    className={`${lineInputInline} w-[9.5rem]`}
                     type="date"
                     value={data.date}
                     onChange={(e) => update("date", e.target.value)}

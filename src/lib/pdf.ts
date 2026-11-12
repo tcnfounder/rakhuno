@@ -19,11 +19,15 @@ function flattenFormControls(root: HTMLElement) {
 
     replacement.textContent = text || "—";
     const isCell = control.hasAttribute("data-pdf-cell");
+    // Fields that sit side by side on one line (invoice № and date) keep their own width.
+    const width = control.getBoundingClientRect().width;
+    const parentWidth = control.parentElement?.getBoundingClientRect().width ?? width;
+    const inline = width > 0 && width < parentWidth * 0.9;
     replacement.setAttribute(
       "style",
       [
-        "display:block",
-        "width:100%",
+        inline ? "display:inline-block" : "display:block",
+        inline ? `width:${Math.ceil(width)}px` : "width:100%",
         "margin:0",
         isCell ? "padding:4px 6px" : "padding:4px 0",
         "border:0",

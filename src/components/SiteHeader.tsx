@@ -1,7 +1,18 @@
 import Link from "next/link";
 import { BrandLockup } from "@/components/BrandLockup";
+import { LangSwitch } from "@/components/LangSwitch";
 
-export function SiteHeader({ lang = "uk" }: { lang?: "uk" | "en" }) {
+export function SiteHeader({
+  lang = "uk",
+  ukHref = "/",
+  enHref = "/en",
+}: {
+  lang?: "uk" | "en";
+  /** Ukrainian version of the current page. */
+  ukHref?: string;
+  /** English version of the current page; /en when the page has none. */
+  enHref?: string;
+}) {
   if (lang === "en") {
     return (
       <header className="relative z-20 mx-auto flex w-full max-w-content items-center justify-between px-5 py-5 md:px-10">
@@ -10,13 +21,7 @@ export function SiteHeader({ lang = "uk" }: { lang?: "uk" | "en" }) {
           <Link href="/en" className="hidden text-mist transition hover:text-paper sm:inline">
             About
           </Link>
-          <Link
-            href="/invoice"
-            hrefLang="uk"
-            className="rounded-full border border-white/20 px-4 py-2 text-mist transition hover:border-signal hover:text-signal"
-          >
-            Українською
-          </Link>
+          <LangSwitch current="en" ukHref={ukHref} enHref={enHref} />
         </nav>
       </header>
     );
@@ -31,11 +36,13 @@ export function SiteHeader({ lang = "uk" }: { lang?: "uk" | "en" }) {
         <Link href="/#yak-pratsyuye" className="hidden text-mist transition hover:text-paper md:inline">
           Як працює
         </Link>
+        <LangSwitch current="uk" ukHref={ukHref} enHref={enHref} />
         <Link
           href="/invoice"
           className="rounded-full bg-signal px-4 py-2 font-medium text-ink transition hover:bg-white"
         >
-          Безкоштовний рахунок
+          <span className="sm:hidden">Створити</span>
+          <span className="hidden sm:inline">Безкоштовний рахунок</span>
         </Link>
       </nav>
     </header>

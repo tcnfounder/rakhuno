@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { BrandLockup } from "@/components/BrandLockup";
+import { LangSwitch } from "@/components/LangSwitch";
 import { DEFAULT_OG_IMAGE } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -82,9 +83,7 @@ export default function EnglishPage() {
       <header className="relative z-20 mx-auto flex w-full max-w-content items-center justify-between px-5 py-5 md:px-10">
         <BrandLockup size="md" />
         <nav className="flex items-center gap-3 text-sm md:gap-5">
-          <Link href="/" hrefLang="uk" className="text-mist transition hover:text-paper">
-            Українською
-          </Link>
+          <LangSwitch current="en" ukHref="/" enHref="/en" />
           <Link
             href="/en/invoice"
             className="rounded-full bg-signal px-4 py-2 font-medium text-ink transition hover:bg-white"
@@ -94,8 +93,8 @@ export default function EnglishPage() {
         </nav>
       </header>
 
-      <section className="px-5 pb-16 pt-10 md:px-10 md:pb-24">
-        <div className="mx-auto grid max-w-content items-center gap-10 lg:grid-cols-2">
+      <section className="pb-16 pt-10 md:pb-24">
+        <div className="mx-auto grid max-w-content items-center gap-10 px-5 md:px-10 lg:grid-cols-2">
           <div>
             <h1 className="font-display text-3xl font-medium leading-tight sm:text-4xl md:text-5xl">
               Free invoice PDFs for Ukrainian sole traders
@@ -137,8 +136,8 @@ export default function EnglishPage() {
         </div>
       </section>
 
-      <section id="features" className="border-t border-line px-5 py-16 md:px-10 md:py-24">
-        <div className="mx-auto max-w-content">
+      <section id="features" className="border-t border-line py-16 md:py-24">
+        <div className="mx-auto max-w-content px-5 md:px-10">
           <h2 className="max-w-2xl font-display text-3xl font-semibold md:text-4xl">What it does</h2>
           <div className="mt-12 grid gap-10 md:grid-cols-2 lg:grid-cols-3">
             {features.map((f) => (
@@ -151,26 +150,28 @@ export default function EnglishPage() {
         </div>
       </section>
 
-      <section className="border-t border-line bg-ink-2 px-5 py-16 md:px-10 md:py-24">
-        <div className="mx-auto max-w-3xl">
-          <h2 className="font-display text-3xl font-semibold md:text-4xl">Why it exists</h2>
-          <div className="mt-6 space-y-4 text-mist">
-            <p>
-              About two million Ukrainians work as FOP (fizychna osoba-pidpryiemets, a registered sole
-              proprietor). Clients&apos; accounting departments ask them for an invoice before paying,
-              and often for an act of completed work afterwards.
-            </p>
-            <p>
-              Most FOPs still copy an old Word file, retype the IBAN and write the total in words by
-              hand. Full accounting systems are too heavy for this one job. Rakhuno does just that job
-              and keeps the document looking like the FOP&apos;s own, not like an ad for the service.
-            </p>
+      <section className="border-t border-line bg-ink-2 py-16 md:py-24">
+        <div className="mx-auto max-w-content px-5 md:px-10">
+          <div className="max-w-3xl">
+            <h2 className="font-display text-3xl font-semibold md:text-4xl">Why it exists</h2>
+            <div className="mt-6 space-y-4 text-mist">
+              <p>
+                About two million Ukrainians work as FOP (fizychna osoba-pidpryiemets, a registered sole
+                proprietor). Clients&apos; accounting departments ask them for an invoice before paying,
+                and often for an act of completed work afterwards.
+              </p>
+              <p>
+                Most FOPs still copy an old Word file, retype the IBAN and write the total in words by
+                hand. Full accounting systems are too heavy for this one job. Rakhuno does just that job
+                and keeps the document looking like the FOP&apos;s own, not like an ad for the service.
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="border-t border-line px-5 py-16 md:px-10 md:py-24">
-        <div className="mx-auto max-w-content">
+      <section className="border-t border-line py-16 md:py-24">
+        <div className="mx-auto max-w-content px-5 md:px-10">
           <h2 className="font-display text-3xl font-semibold md:text-4xl">Tools</h2>
           <ul className="mt-10 max-w-3xl space-y-5">
             {tools.map((t) => (
@@ -188,8 +189,8 @@ export default function EnglishPage() {
         </div>
       </section>
 
-      <section className="border-t border-line px-5 py-16 md:px-10 md:py-24">
-        <div className="mx-auto max-w-content">
+      <section className="border-t border-line py-16 md:py-24">
+        <div className="mx-auto max-w-content px-5 md:px-10">
           <h2 className="font-display text-3xl font-semibold md:text-4xl">FAQ</h2>
           <div className="mt-10 max-w-3xl divide-y divide-line">
             {faqs.map((f) => (
@@ -202,8 +203,8 @@ export default function EnglishPage() {
         </div>
       </section>
 
-      <footer className="border-t border-line px-5 py-10 text-sm text-muted md:px-10">
-        <div className="mx-auto flex max-w-content flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <footer className="border-t border-line py-10 text-sm text-muted">
+        <div className="mx-auto flex max-w-content flex-col gap-3 px-5 sm:flex-row sm:items-center sm:justify-between md:px-10">
           <div className="flex items-center gap-3">
             <BrandLockup size="sm" href="/" />
             <span>© {new Date().getFullYear()}</span>
