@@ -57,11 +57,14 @@ const LAST_PDF_META_KEY = "rakhuno.lastPdfMeta.v1";
 
 function SoftField({
   label,
+  en,
   hint,
   children,
   className = "",
 }: {
   label: string;
+  /** English helper shown next to the Ukrainian label in the English UI; never printed. */
+  en?: string;
   hint?: string;
   children: ReactNode;
   className?: string;
@@ -69,7 +72,14 @@ function SoftField({
   return (
     <label className={`block ${className}`}>
       <span className="mb-0.5 flex items-baseline justify-between gap-2 text-[10px] font-semibold uppercase tracking-[0.06em] text-neutral-500">
-        <span>{label}</span>
+        <span>
+          {label}
+          {en ? (
+            <span data-pdf-hide className="ml-1.5 normal-case tracking-normal text-sky-700">
+              {en}
+            </span>
+          ) : null}
+        </span>
         {hint ? <span className="normal-case tracking-normal text-neutral-400">{hint}</span> : null}
       </span>
       {children}
@@ -107,11 +117,34 @@ function MobileField({
   );
 }
 
+/** English versions of validateInvoice() messages for the English UI. */
+const VALIDATION_EN: Record<string, string> = {
+  "Вкажіть ПІБ ФОП (виконавець).": "Enter the seller's full name (FOP).",
+  "Вкажіть IBAN для оплати.": "Enter the IBAN for payment.",
+  "Вкажіть замовника.": "Enter the client.",
+  "Додайте хоча б одну позицію з описом.": "Add at least one line item with a description.",
+  "Кількість має бути більше 0.": "Quantity must be greater than 0.",
+  "Вкажіть ціну для кожної позиції.": "Enter a price for every line item.",
+};
+
+export type UiLang = "uk" | "en";
+
 export default function InvoiceClient({
   heading = DEFAULT_INVOICE_HEADING,
+  lang = "uk",
 }: {
   heading?: InvoiceHeading;
+  lang?: UiLang;
 }) {
+  const en = lang === "en";
+  /** Pick the UI string for the current language. */
+  const L = (uk: string, english: string) => (en ? english : uk);
+  /** English helper label for the A4 sheet (hidden from the PDF). */
+  const E = (english: string) => (en ? english : undefined);
+  const validate = (d: InvoiceData) => {
+    const msg = validateInvoice(d);
+    return msg && en ? VALIDATION_EN[msg] || msg : msg;
+  };
   const previewRef = useRef<HTMLDivElement>(null);
   const logoInputRef = useRef<HTMLInputElement>(null);
   const readyRef = useRef<HTMLDivElement>(null);
@@ -166,12 +199,17 @@ export default function InvoiceClient({
       const meta = window.sessionStorage.getItem(LAST_PDF_META_KEY);
       if (meta) {
         setUnlocked(true);
-        setOkMsg("PDF уже створювався в цій сесії — натисніть «Завантажити PDF» нижче.");
+        setOkMsg(
+          en
+            ? "A PDF was already made in this session. Use “Download PDF” below."
+            : "PDF уже створювався в цій сесії — натисніть «Завантажити PDF» нижче.",
+        );
       }
     } catch {
       /* ignore */
     }
     setMounted(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -210,27 +248,29 @@ export default function InvoiceClient({
     };
   }, [qrLink]);
 
-  const MOBILE_STEPS = ["ФОП", "Клієнт", "Позиції", "PDF"] as const;
+  const MOBILE_STEPS = en
+    ? ["Seller", "Client", "Items", "PDF"]
+    : ["ФОП", "Клієнт", "Позиції", "PDF"];
 
   function validateMobileStep(step: number): string | null {
     if (step === 0) {
-      if (!data.sellerName.trim()) return "Вкажіть ПІБ ФОП.";
+      if (!data.sellerName.trim()) return L("Вкажіть ПІБ ФОП.", "Enter your full name.");
       if (!data.sellerIban.trim() || data.sellerIban.replace(/\s/g, "").length < 15) {
-        return "Вкажіть IBAN.";
+        return L("Вкажіть IBAN.", "Enter your IBAN.");
       }
       return null;
     }
     if (step === 1) {
-      if (!data.buyerName.trim()) return "Вкажіть замовника.";
+      if (!data.buyerName.trim()) return L("Вкажіть замовника.", "Enter the client.");
       return null;
     }
     if (step === 2) {
       const lines = data.items.filter((i) => i.description.trim());
-      if (!lines.length) return "Додайте позицію з описом.";
+      if (!lines.length) return L("Додайте позицію з описом.", "Add a line item with a description.");
       for (const line of lines) {
-        if (!(parseAmount(line.qty) > 0)) return "Кількість > 0.";
+        if (!(parseAmount(line.qty) > 0)) return L("Кількість > 0.", "Quantity must be > 0.");
         if (line.price.trim() === "" || parseAmount(line.price) < 0) {
-          return "Вкажіть ціну.";
+          return L("Вкажіть ціну.", "Enter a price.");
         }
       }
       return null;
@@ -302,7 +342,12 @@ export default function InvoiceClient({
     }));
     resetForNewInvoice();
     setError("");
-    setOkMsg(`Копія рахунку № ${invoice.number || "—"} з новим номером. Перевірте суму й дату.`);
+    setOkMsg(
+      L(
+        `Копія рахунку № ${invoice.number || "—"} з новим номером. Перевірте суму й дату.`,
+        `Copy of invoice No. ${invoice.number || "—"} with a new number. Check the amount and date.`,
+      ),
+    );
     setMobileStep(2);
     window.scrollTo({ top: 0, behavior: "smooth" });
     trackEvent("invoice_repeated", {
@@ -323,13 +368,17 @@ export default function InvoiceClient({
     try {
       const result = await buildInvoicePdf(data, node, kind);
       downloadPdfBlob(result.blob, result.filename);
-      setOkMsg(kind === "akt" ? "Акт завантажено." : "Видаткову накладну завантажено.");
+      setOkMsg(
+        kind === "akt"
+          ? L("Акт завантажено.", "Act of completed work downloaded.")
+          : L("Видаткову накладну завантажено.", "Delivery note downloaded."),
+      );
       trackEvent(kind === "akt" ? "act_pdf_download" : "nakladna_pdf_download", {
         item_count: data.items.length,
         source: "invoice",
       });
     } catch {
-      setError("Не вдалося створити документ. Спробуйте ще раз.");
+      setError(L("Не вдалося створити документ. Спробуйте ще раз.", "Could not create the document. Try again."));
       trackEvent("invoice_pdf_error", { stage: kind });
     } finally {
       setBusy(false);
@@ -338,28 +387,30 @@ export default function InvoiceClient({
 
   if (!mounted) {
     return (
-      <main className="min-h-screen bg-ink">
+      <main lang={en ? "en" : undefined} className="min-h-screen bg-ink">
         <div className="grid-atmosphere min-h-screen">
-          <SiteHeader />
+          <SiteHeader lang={lang} />
           {/* Server-rendered HTML is this state — keep the page H1 here for crawlers and Ads QS. */}
           <div className="mx-auto max-w-content px-5 py-8 md:px-10 md:py-10">
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-signal">
-              Безкоштовно · ~2 хвилини
+              {L("Безкоштовно · ~2 хвилини", "Free · ~2 minutes")}
             </p>
             <h1 className="mt-2 font-display text-2xl font-semibold text-paper md:text-4xl">
               {heading.h1}
             </h1>
             <p className="mt-3 max-w-xl text-mist">
-              Заповніть реквізити → вкажіть email → скачайте PDF. Без Word, без Checkbox, без
-              реєстрації.
+              {L(
+                "Заповніть реквізити → вкажіть email → скачайте PDF. Без Word, без Checkbox, без реєстрації.",
+                "Fill in the details → enter your email → download the PDF. No Word, no sign-up. The invoice itself is in Ukrainian.",
+              )}
             </p>
             <ol className="mt-4 space-y-1 text-sm text-paper/80">
-              <li>1. Ваш ФОП: ПІБ та IBAN</li>
-              <li>2. Клієнт і позиції</li>
-              <li>3. Email → PDF у браузері</li>
+              <li>{L("1. Ваш ФОП: ПІБ та IBAN", "1. You: full name and IBAN")}</li>
+              <li>{L("2. Клієнт і позиції", "2. Client and line items")}</li>
+              <li>{L("3. Email → PDF у браузері", "3. Email → PDF in the browser")}</li>
             </ol>
             <p className="mt-6 text-sm text-mist" aria-live="polite">
-              Форма відкривається…
+              {L("Форма відкривається…", "Loading the form…")}
             </p>
           </div>
         </div>
@@ -371,13 +422,17 @@ export default function InvoiceClient({
     "rounded-lg border border-signal px-4 py-2 text-sm font-semibold text-signal transition hover:bg-signal hover:text-ink disabled:opacity-60";
   const actPanel = (
     <div className="mt-4 rounded-lg border border-white/10 bg-ink/60 p-3">
-      <p className="font-semibold text-paper">Наступний документ — з тих самих даних</p>
+      <p className="font-semibold text-paper">
+        {L("Наступний документ — з тих самих даних", "Next document, from the same data")}
+      </p>
       <p className="mt-1 text-sm text-mist">
-        Сторони, позиції й сума з рахунку № {data.number || "—"}. Послуги закриває акт, товар —
-        видаткова накладна.
+        {L(
+          `Сторони, позиції й сума з рахунку № ${data.number || "—"}. Послуги закриває акт, товар — видаткова накладна.`,
+          `Parties, items and total from invoice No. ${data.number || "—"}. Services are closed with an act of completed work, goods with a delivery note. Both are in Ukrainian.`,
+        )}
       </p>
       <label className="mt-3 flex items-center gap-2 text-sm text-mist">
-        Дата документа
+        {L("Дата документа", "Document date")}
         <input
           type="date"
           value={actDate}
@@ -392,7 +447,7 @@ export default function InvoiceClient({
           disabled={busy}
           className={followUpBtn}
         >
-          {busy ? "…" : "Акт виконаних робіт PDF"}
+          {busy ? "…" : L("Акт виконаних робіт PDF", "Act of completed work PDF")}
         </button>
         <button
           type="button"
@@ -400,11 +455,12 @@ export default function InvoiceClient({
           disabled={busy}
           className={followUpBtn}
         >
-          {busy ? "…" : "Видаткова накладна PDF"}
+          {busy ? "…" : L("Видаткова накладна PDF", "Delivery note PDF")}
         </button>
       </div>
       <p className="mt-2 text-xs text-muted">
-        Від {formatDateUk(actDate)} · підпишіть з обох сторін.
+        {L("Від", "Dated")} {formatDateUk(actDate)} ·{" "}
+        {L("підпишіть з обох сторін.", "both sides sign it.")}
       </p>
     </div>
   );
@@ -447,9 +503,9 @@ export default function InvoiceClient({
     try {
       const dataUrl = await prepareLogo(file);
       update("sellerLogo", dataUrl);
-      setOkMsg("Логотип додано.");
+      setOkMsg(L("Логотип додано.", "Logo added."));
     } catch {
-      setError("Не вдалося обробити зображення. JPG/PNG до 8 МБ.");
+      setError(L("Не вдалося обробити зображення. JPG/PNG до 8 МБ.", "Could not read the image. Use JPG/PNG up to 8 MB."));
     }
   }
 
@@ -482,13 +538,13 @@ export default function InvoiceClient({
   async function unlockAndDownload() {
     setError("");
     setOkMsg("");
-    const invalid = validateInvoice(data);
+    const invalid = validate(data);
     if (invalid) {
       setError(invalid);
       return;
     }
     if (!email.trim()) {
-      setError("Вкажіть email — для податкових нагадувань.");
+      setError(L("Вкажіть email — для податкових нагадувань.", "Enter your email to get the PDF."));
       return;
     }
     setBusy(true);
@@ -505,15 +561,21 @@ export default function InvoiceClient({
       bumpInvoiceCounter(data.number);
       setUnlocked(true);
       setPdfReady(true);
-      setOkMsg("PDF сформовано. Якщо файл не зʼявився — кнопка нижче.");
+      setOkMsg(
+        L(
+          "PDF сформовано. Якщо файл не зʼявився — кнопка нижче.",
+          "PDF created. If the file did not appear, use the button below.",
+        ),
+      );
       trackEvent("invoice_pdf_unlock", {
         fop_group: data.fopGroup || "none",
         item_count: data.items.length,
         payment_qr: Boolean(qrSrc),
+        ui_lang: lang,
       });
       await recordVerifiedLead();
     } catch {
-      setError("Не вдалося створити PDF. Спробуйте ще раз кнопкою нижче.");
+      setError(L("Не вдалося створити PDF. Спробуйте ще раз кнопкою нижче.", "Could not create the PDF. Try again with the button below."));
       setUnlocked(true);
       setPdfReady(true);
       trackEvent("invoice_pdf_error", { stage: "unlock" });
@@ -523,7 +585,7 @@ export default function InvoiceClient({
   }
 
   async function downloadAgain() {
-    const invalid = validateInvoice(data);
+    const invalid = validate(data);
     if (invalid) {
       setError(invalid);
       return;
@@ -539,13 +601,13 @@ export default function InvoiceClient({
         rememberCurrent();
       }
       setPdfReady(true);
-      setOkMsg("PDF завантажено.");
+      setOkMsg(L("PDF завантажено.", "PDF downloaded."));
       trackEvent("invoice_pdf_redownload", {
         from_cache: Boolean(lastPdf),
       });
       await recordVerifiedLead();
     } catch {
-      setError("Не вдалося створити PDF.");
+      setError(L("Не вдалося створити PDF.", "Could not create the PDF."));
       setPdfReady(true);
       trackEvent("invoice_pdf_error", { stage: "redownload" });
     } finally {
@@ -554,17 +616,17 @@ export default function InvoiceClient({
   }
 
   return (
-    <main className="min-h-screen bg-ink print:bg-white">
+    <main lang={en ? "en" : undefined} className="min-h-screen bg-ink print:bg-white">
       <div className="grid-atmosphere min-h-screen pb-28 print:bg-white print:pb-0 print:[background-image:none] md:pb-10">
         <div className="print:hidden">
-          <SiteHeader />
+          <SiteHeader lang={lang} />
         </div>
 
         <div className="mx-auto w-full max-w-content px-5 py-8 md:px-10 md:py-10">
           {/* Compact mobile header */}
           <div className="print:hidden mb-4 md:hidden">
             <h1 className="font-display text-2xl font-semibold text-paper">{heading.mobileH1}</h1>
-            <div className="mt-3 flex gap-1.5" aria-label="Кроки">
+            <div className="mt-3 flex gap-1.5" aria-label={L("Кроки", "Steps")}>
               {MOBILE_STEPS.map((label, i) => (
                 <button
                   key={label}
@@ -583,7 +645,7 @@ export default function InvoiceClient({
               ))}
             </div>
             <p className="mt-2 text-sm text-mist">
-              Крок {mobileStep + 1}/4 · {MOBILE_STEPS[mobileStep]}
+              {L("Крок", "Step")} {mobileStep + 1}/4 · {MOBILE_STEPS[mobileStep]}
             </p>
           </div>
 
@@ -591,17 +653,22 @@ export default function InvoiceClient({
           <div className="print:hidden mb-6 hidden flex-col gap-4 sm:flex-row sm:items-end sm:justify-between md:flex">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-signal">
-                Безкоштовно · ~2 хвилини
+                {L("Безкоштовно · ~2 хвилини", "Free · ~2 minutes")}
               </p>
               <h1 className="mt-2 font-display text-3xl font-semibold text-paper md:text-4xl">
                 {heading.h1}
               </h1>
               <p className="mt-2 max-w-xl text-mist">
-                Заповніть реквізити → вкажіть email → скачайте PDF. Без Word, без Checkbox, без
-                реєстрації. Лист — лише податкові нагадування (PDF у браузері).
+                {L(
+                  "Заповніть реквізити → вкажіть email → скачайте PDF. Без Word, без Checkbox, без реєстрації. Лист — лише податкові нагадування (PDF у браузері).",
+                  "Fill in the sheet below → enter your email → download the PDF. No Word, no sign-up. The invoice is in Ukrainian, as Ukrainian clients and banks expect; the blue labels explain each field.",
+                )}
               </p>
               <p className="mt-3 text-sm text-paper/80">
-                1) ФОП і покупець · 2) позиції · 3) email + «Отримати PDF»
+                {L(
+                  "1) ФОП і покупець · 2) позиції · 3) email + «Отримати PDF»",
+                  "1) You and the client · 2) line items · 3) email + “Get PDF”",
+                )}
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -609,18 +676,18 @@ export default function InvoiceClient({
                 className="rounded-lg border border-white/15 bg-ink-2 px-3 py-2 text-sm text-paper"
                 value={data.fopGroup}
                 onChange={(e) => update("fopGroup", e.target.value as InvoiceData["fopGroup"])}
-                aria-label="Група ФОП"
+                aria-label={L("Група ФОП", "FOP tax group")}
               >
-                <option value="">Група ФОП</option>
-                <option value="2">2 група</option>
-                <option value="3">3 група</option>
+                <option value="">{L("Група ФОП", "FOP tax group")}</option>
+                <option value="2">{L("2 група", "Group 2")}</option>
+                <option value="3">{L("3 група", "Group 3")}</option>
               </select>
               <button
                 type="button"
                 onClick={persistProfile}
                 className="rounded-lg border border-white/15 px-3 py-2 text-sm text-mist transition hover:border-signal hover:text-signal"
               >
-                Зберегти ФОП
+                {L("Зберегти ФОП", "Save my details")}
               </button>
             </div>
           </div>
@@ -639,33 +706,39 @@ export default function InvoiceClient({
           {/* —— Mobile wizard: one step per screen —— */}
           <div className="print:hidden mb-4 md:hidden">
             {mobileStep === 0 ? (
-              <RecentInvoices history={history} onRepeat={repeatInvoice} limit={3} className="mb-4" />
+              <RecentInvoices
+                history={history}
+                onRepeat={repeatInvoice}
+                limit={3}
+                lang={lang}
+                className="mb-4"
+              />
             ) : null}
             {mobileStep === 0 ? (
               <div className="space-y-3 rounded-2xl border border-white/10 bg-ink-2/80 p-4">
                 <div className="flex items-center justify-between gap-2">
-                  <p className="font-display text-lg font-semibold text-paper">Ваш ФОП</p>
+                  <p className="font-display text-lg font-semibold text-paper">{L("Ваш ФОП", "You (seller)")}</p>
                   <select
                     className="min-h-10 rounded-lg border border-white/15 bg-ink px-2 text-sm text-paper"
                     value={data.fopGroup}
                     onChange={(e) => update("fopGroup", e.target.value as InvoiceData["fopGroup"])}
-                    aria-label="Група ФОП"
+                    aria-label={L("Група ФОП", "FOP tax group")}
                   >
-                    <option value="">Група</option>
+                    <option value="">{L("Група", "Group")}</option>
                     <option value="2">2</option>
                     <option value="3">3</option>
                   </select>
                 </div>
-                <MobileField label="ПІБ ФОП">
+                <MobileField label={L("ПІБ ФОП", "Full name (FOP)")}>
                   <input
                     className={mobileInput}
                     autoComplete="name"
-                    placeholder="ПІБ ФОП"
+                    placeholder={L("ПІБ ФОП", "Full name, in Ukrainian")}
                     value={data.sellerName}
                     onChange={(e) => update("sellerName", e.target.value)}
                   />
                 </MobileField>
-                <MobileField label="IBAN" hint="обовʼязково">
+                <MobileField label="IBAN" hint={L("обовʼязково", "required")}>
                   <input
                     className={`${mobileInput} font-mono tracking-wide`}
                     placeholder="UA00…"
@@ -674,7 +747,7 @@ export default function InvoiceClient({
                     onChange={(e) => update("sellerIban", formatIban(e.target.value))}
                   />
                 </MobileField>
-                <MobileField label="ІПН" hint="опційно">
+                <MobileField label={L("ІПН", "Tax ID (IPN)")} hint={L("опційно", "optional")}>
                   <input
                     className={mobileInput}
                     inputMode="numeric"
@@ -688,19 +761,21 @@ export default function InvoiceClient({
                   onClick={() => setShowSellerExtra((v) => !v)}
                   className="text-sm text-signal"
                 >
-                  {showSellerExtra ? "Сховати додаткові" : "+ Банк, адреса, лого, №"}
+                  {showSellerExtra
+                    ? L("Сховати додаткові", "Hide extra fields")
+                    : L("+ Банк, адреса, лого, №", "+ Bank, address, logo, No.")}
                 </button>
                 {showSellerExtra ? (
                   <div className="space-y-3 border-t border-white/10 pt-3">
                     <div className="grid grid-cols-2 gap-2">
-                      <MobileField label="№">
+                      <MobileField label={L("№", "No.")}>
                         <input
                           className={mobileInput}
                           value={data.number}
                           onChange={(e) => update("number", e.target.value.slice(0, 20))}
                         />
                       </MobileField>
-                      <MobileField label="Дата">
+                      <MobileField label={L("Дата", "Date")}>
                         <input
                           className={mobileInput}
                           type="date"
@@ -709,7 +784,7 @@ export default function InvoiceClient({
                         />
                       </MobileField>
                     </div>
-                    <MobileField label="Банк">
+                    <MobileField label={L("Банк", "Bank")}>
                       <input
                         className={mobileInput}
                         placeholder="ПриватБанк"
@@ -717,7 +792,7 @@ export default function InvoiceClient({
                         onChange={(e) => update("sellerBank", e.target.value)}
                       />
                     </MobileField>
-                    <MobileField label="Адреса">
+                    <MobileField label={L("Адреса", "Address")}>
                       <input
                         className={mobileInput}
                         value={data.sellerAddress}
@@ -729,7 +804,7 @@ export default function InvoiceClient({
                       onClick={() => logoInputRef.current?.click()}
                       className="w-full rounded-xl border border-dashed border-white/25 py-3 text-sm text-mist"
                     >
-                      {hasLogo ? "Змінити логотип" : "+ Логотип"}
+                      {hasLogo ? L("Змінити логотип", "Change logo") : L("+ Логотип", "+ Logo")}
                     </button>
                   </div>
                 ) : null}
@@ -738,17 +813,17 @@ export default function InvoiceClient({
 
             {mobileStep === 1 ? (
               <div className="space-y-3 rounded-2xl border border-white/10 bg-ink-2/80 p-4">
-                <p className="font-display text-lg font-semibold text-paper">Замовник</p>
-                <ClientChips clients={clients} activeName={data.buyerName} onPick={pickClient} />
-                <MobileField label="Назва / ПІБ">
+                <p className="font-display text-lg font-semibold text-paper">{L("Замовник", "Client")}</p>
+                <ClientChips clients={clients} activeName={data.buyerName} onPick={pickClient} lang={lang} />
+                <MobileField label={L("Назва / ПІБ", "Company or full name")}>
                   <input
                     className={mobileInput}
-                    placeholder="ТОВ «Клієнт»"
+                    placeholder={L("ТОВ «Клієнт»", "ТОВ «Клієнт» (in Ukrainian)")}
                     value={data.buyerName}
                     onChange={(e) => update("buyerName", e.target.value)}
                   />
                 </MobileField>
-                <MobileField label="ЄДРПОУ / ІПН" hint="опційно">
+                <MobileField label={L("ЄДРПОУ / ІПН", "Company code / tax ID")} hint={L("опційно", "optional")}>
                   <input
                     className={mobileInput}
                     inputMode="numeric"
@@ -756,7 +831,7 @@ export default function InvoiceClient({
                     onChange={(e) => update("buyerTaxId", formatTaxId(e.target.value))}
                   />
                 </MobileField>
-                <MobileField label="Адреса" hint="опційно">
+                <MobileField label={L("Адреса", "Address")} hint={L("опційно", "optional")}>
                   <input
                     className={mobileInput}
                     value={data.buyerAddress}
@@ -775,29 +850,29 @@ export default function InvoiceClient({
                   >
                     <div className="flex items-center justify-between">
                       <p className="font-display text-lg font-semibold text-paper">
-                        Позиція {index + 1}
+                        {L("Позиція", "Item")} {index + 1}
                       </p>
                       {data.items.length > 1 ? (
                         <button
                           type="button"
                           onClick={() => removeItem(item.id)}
                           className="text-mist"
-                          aria-label="Видалити"
+                          aria-label={L("Видалити", "Remove")}
                         >
                           ×
                         </button>
                       ) : null}
                     </div>
-                    <MobileField label="Опис">
+                    <MobileField label={L("Опис", "Description")}>
                       <input
                         className={mobileInput}
-                        placeholder="Послуга / товар"
+                        placeholder={L("Послуга / товар", "Service or product, in Ukrainian")}
                         value={item.description}
                         onChange={(e) => updateItem(item.id, { description: e.target.value })}
                       />
                     </MobileField>
                     <div className="grid grid-cols-2 gap-2">
-                      <MobileField label="К-сть">
+                      <MobileField label={L("К-сть", "Qty")}>
                         <input
                           className={mobileInput}
                           inputMode="decimal"
@@ -809,7 +884,7 @@ export default function InvoiceClient({
                           }
                         />
                       </MobileField>
-                      <MobileField label="Ціна, грн">
+                      <MobileField label={L("Ціна, грн", "Price, UAH")}>
                         <input
                           className={mobileInput}
                           inputMode="decimal"
@@ -832,9 +907,9 @@ export default function InvoiceClient({
                   onClick={() => update("items", [...data.items, emptyItem()])}
                   className="w-full rounded-xl border border-white/15 py-3 text-sm text-signal"
                 >
-                  + Ще позиція
+                  {L("+ Ще позиція", "+ Add item")}
                 </button>
-                <MobileField label="Призначення платежу">
+                <MobileField label={L("Призначення платежу", "Payment terms / purpose")}>
                   <textarea
                     className={`${mobileInput} min-h-[4rem] resize-y`}
                     value={data.note}
@@ -849,25 +924,26 @@ export default function InvoiceClient({
 
             {mobileStep === 3 ? (
               <div className="space-y-4 rounded-2xl border border-white/10 bg-ink-2/80 p-4">
-                <p className="font-display text-lg font-semibold text-paper">Отримати PDF</p>
+                <p className="font-display text-lg font-semibold text-paper">{L("Отримати PDF", "Get the PDF")}</p>
                 <p className="text-sm text-mist">
-                  {data.sellerName || "ФОП"} → {data.buyerName || "клієнт"} · {formatUah(total)}
+                  {data.sellerName || L("ФОП", "You")} → {data.buyerName || L("клієнт", "client")} ·{" "}
+                  {formatUah(total)}
                 </p>
                 {pdfReady ? (
                   <div className="rounded-xl border border-signal/40 bg-signal/10 p-4">
-                    <p className="font-semibold text-paper">PDF готовий</p>
+                    <p className="font-semibold text-paper">{L("PDF готовий", "PDF ready")}</p>
                     <button
                       type="button"
                       onClick={() => void downloadAgain()}
                       disabled={busy}
                       className="mt-3 w-full rounded-xl bg-signal py-3.5 font-semibold text-ink disabled:opacity-60"
                     >
-                      {busy ? "…" : "Завантажити PDF"}
+                      {busy ? "…" : L("Завантажити PDF", "Download PDF")}
                     </button>
                     {unlocked ? actPanel : null}
                   </div>
                 ) : null}
-                <MobileField label="Email" hint="податкові нагадування">
+                <MobileField label="Email" hint={L("податкові нагадування", "tax reminders, in Ukrainian")}>
                   <input
                     className={mobileInput}
                     type="email"
@@ -883,11 +959,18 @@ export default function InvoiceClient({
                   onClick={() => void unlockAndDownload()}
                   className="w-full rounded-xl bg-signal py-4 text-base font-semibold text-ink disabled:opacity-60"
                 >
-                  {busy ? "…" : unlocked ? "Завантажити знову" : "Отримати PDF безкоштовно"}
+                  {busy
+                    ? "…"
+                    : unlocked
+                      ? L("Завантажити знову", "Download again")
+                      : L("Отримати PDF безкоштовно", "Get the PDF for free")}
                 </button>
                 {!unlocked ? (
                   <p className="text-center text-xs text-mist">
-                    Після рахунку — акт або накладна з тих самих даних в один клік.
+                    {L(
+                      "Після рахунку — акт або накладна з тих самих даних в один клік.",
+                      "After the invoice: an act or delivery note from the same data in one click.",
+                    )}
                   </p>
                 ) : null}
                 {error ? <p className="text-sm text-red-300">{error}</p> : null}
@@ -904,12 +987,14 @@ export default function InvoiceClient({
             clients={clients}
             activeName={data.buyerName}
             onPick={pickClient}
+            lang={lang}
             className="print:hidden mx-auto mb-4 hidden w-full max-w-[210mm] md:block"
           />
           <RecentInvoices
             history={history}
             onRepeat={repeatInvoice}
             limit={3}
+            lang={lang}
             className="print:hidden mx-auto mb-6 hidden w-full max-w-[210mm] md:block"
           />
 
@@ -922,14 +1007,14 @@ export default function InvoiceClient({
                   onClick={() => logoInputRef.current?.click()}
                   className="rounded-full border border-white/15 px-3 py-1.5 text-sm text-mist hover:border-signal hover:text-signal"
                 >
-                  Змінити логотип
+                  {L("Змінити логотип", "Change logo")}
                 </button>
                 <button
                   type="button"
                   onClick={() => update("sellerLogo", "")}
                   className="rounded-full border border-white/15 px-3 py-1.5 text-sm text-mist hover:border-signal hover:text-signal"
                 >
-                  Прибрати логотип
+                  {L("Прибрати логотип", "Remove logo")}
                 </button>
               </>
             ) : (
@@ -938,7 +1023,7 @@ export default function InvoiceClient({
                 onClick={() => logoInputRef.current?.click()}
                 className="rounded-full border border-dashed border-white/25 px-3 py-1.5 text-sm text-mist hover:border-signal hover:text-signal"
               >
-                + Логотип (опційно)
+                {L("+ Логотип (опційно)", "+ Logo (optional)")}
               </button>
             )}
           </div>
@@ -968,6 +1053,14 @@ export default function InvoiceClient({
                     ) : null}
                     <p className="text-[17px] font-bold uppercase tracking-[0.03em]">
                       Рахунок-проформа
+                      {en ? (
+                        <span
+                          data-pdf-hide
+                          className="ml-2 text-[11px] font-normal normal-case tracking-normal text-sky-700"
+                        >
+                          Proforma invoice
+                        </span>
+                      ) : null}
                     </p>
                   </div>
                   <p className="shrink-0 pt-0.5 text-right text-[11px] leading-snug text-neutral-500">
@@ -982,7 +1075,7 @@ export default function InvoiceClient({
                     className={`${lineInput} w-20 font-semibold`}
                     value={data.number}
                     onChange={(e) => update("number", e.target.value.slice(0, 20))}
-                    aria-label="Номер рахунку"
+                    aria-label={L("Номер рахунку", "Invoice number")}
                   />
                   <span className="font-semibold text-neutral-800">від</span>
                   <input
@@ -990,7 +1083,7 @@ export default function InvoiceClient({
                     type="date"
                     value={data.date}
                     onChange={(e) => update("date", e.target.value)}
-                    aria-label="Дата рахунку"
+                    aria-label={L("Дата рахунку", "Invoice date")}
                   />
                 </div>
               </div>
@@ -1000,16 +1093,21 @@ export default function InvoiceClient({
                 <div className="border-r border-neutral-800 p-3">
                   <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-neutral-600">
                     Виконавець (постачальник)
+                    {en ? (
+                      <span data-pdf-hide className="ml-1.5 normal-case tracking-normal text-sky-700">
+                        Seller (you)
+                      </span>
+                    ) : null}
                   </p>
-                  <SoftField label="ФОП / назва" className="mt-2">
+                  <SoftField label="ФОП / назва" en={E("Full name")} className="mt-2">
                     <input
                       className={`${lineInput} text-[15px] font-bold`}
-                      placeholder="ПІБ ФОП"
+                      placeholder={L("ПІБ ФОП", "ПІБ ФОП (in Ukrainian)")}
                       value={data.sellerName}
                       onChange={(e) => update("sellerName", e.target.value)}
                     />
                   </SoftField>
-                  <SoftField label="ІПН / ЄДРПОУ" className="mt-2">
+                  <SoftField label="ІПН / ЄДРПОУ" en={E("Tax ID")} className="mt-2">
                     <input
                       className={lineInput}
                       inputMode="numeric"
@@ -1018,7 +1116,7 @@ export default function InvoiceClient({
                       onChange={(e) => update("sellerTaxId", formatTaxId(e.target.value))}
                     />
                   </SoftField>
-                  <SoftField label="Адреса" className="mt-2">
+                  <SoftField label="Адреса" en={E("Address")} className="mt-2">
                     <input
                       className={lineInput}
                       placeholder="м. Київ…"
@@ -1026,7 +1124,7 @@ export default function InvoiceClient({
                       onChange={(e) => update("sellerAddress", e.target.value)}
                     />
                   </SoftField>
-                  <SoftField label="Банк" className="mt-2">
+                  <SoftField label="Банк" en={E("Bank")} className="mt-2">
                     <input
                       className={lineInput}
                       placeholder="ПриватБанк"
@@ -1034,7 +1132,7 @@ export default function InvoiceClient({
                       onChange={(e) => update("sellerBank", e.target.value)}
                     />
                   </SoftField>
-                  <SoftField label="IBAN" hint="обовʼязково" className="mt-2">
+                  <SoftField label="IBAN" en={E("required")} hint="обовʼязково" className="mt-2">
                     <input
                       className={`${lineInput} font-mono text-[12px] tracking-wide`}
                       placeholder="UA00 0000 …"
@@ -1053,8 +1151,13 @@ export default function InvoiceClient({
                 <div className="p-3">
                   <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-neutral-600">
                     Замовник (платник)
+                    {en ? (
+                      <span data-pdf-hide className="ml-1.5 normal-case tracking-normal text-sky-700">
+                        Client (payer)
+                      </span>
+                    ) : null}
                   </p>
-                  <SoftField label="Назва / ПІБ" className="mt-2">
+                  <SoftField label="Назва / ПІБ" en={E("Company or name")} className="mt-2">
                     <input
                       className={`${lineInput} text-[15px] font-bold`}
                       placeholder="ТОВ «Клієнт»"
@@ -1062,7 +1165,7 @@ export default function InvoiceClient({
                       onChange={(e) => update("buyerName", e.target.value)}
                     />
                   </SoftField>
-                  <SoftField label="ІПН / ЄДРПОУ" hint="опційно" className="mt-2">
+                  <SoftField label="ІПН / ЄДРПОУ" en={E("Company code")} hint="опційно" className="mt-2">
                     <input
                       className={lineInput}
                       inputMode="numeric"
@@ -1070,7 +1173,7 @@ export default function InvoiceClient({
                       onChange={(e) => update("buyerTaxId", formatTaxId(e.target.value))}
                     />
                   </SoftField>
-                  <SoftField label="Адреса" hint="опційно" className="mt-2">
+                  <SoftField label="Адреса" en={E("Address")} hint="опційно" className="mt-2">
                     <input
                       className={lineInput}
                       value={data.buyerAddress}
@@ -1094,6 +1197,14 @@ export default function InvoiceClient({
                           : "позицій"}
                       )
                     </span>
+                    {en ? (
+                      <span
+                        data-pdf-hide
+                        className="ml-2 font-normal normal-case tracking-normal text-sky-700"
+                      >
+                        Items: description · unit · qty · price · amount (UAH)
+                      </span>
+                    ) : null}
                   </p>
                   <button
                     type="button"
@@ -1101,7 +1212,7 @@ export default function InvoiceClient({
                     onClick={() => update("items", [...data.items, emptyItem()])}
                     className="text-[12px] text-neutral-600 underline-offset-2 hover:text-neutral-900 hover:underline"
                   >
-                    + рядок
+                    {L("+ рядок", "+ row")}
                   </button>
                 </div>
 
@@ -1142,7 +1253,7 @@ export default function InvoiceClient({
                           <input
                             data-pdf-cell
                             className={cellInput}
-                            placeholder="Опис послуги / товару"
+                            placeholder={L("Опис послуги / товару", "Service or product, in Ukrainian")}
                             value={item.description}
                             onChange={(e) => updateItem(item.id, { description: e.target.value })}
                           />
@@ -1152,7 +1263,7 @@ export default function InvoiceClient({
                             data-pdf-cell
                             className={`${cellInput} text-center`}
                             placeholder="шт."
-                            aria-label="Одиниця"
+                            aria-label={L("Одиниця", "Unit")}
                             value={item.unit || "послуга"}
                             onChange={(e) =>
                               updateItem(item.id, { unit: e.target.value.slice(0, 16) })
@@ -1165,7 +1276,7 @@ export default function InvoiceClient({
                             className={`${cellInput} text-center`}
                             inputMode="decimal"
                             placeholder="1"
-                            aria-label="Кількість"
+                            aria-label={L("Кількість", "Quantity")}
                             value={item.qty}
                             onChange={(e) =>
                               updateItem(item.id, {
@@ -1180,7 +1291,7 @@ export default function InvoiceClient({
                             className={`${cellInput} text-right`}
                             inputMode="decimal"
                             placeholder="0"
-                            aria-label="Ціна"
+                            aria-label={L("Ціна", "Price")}
                             value={item.price}
                             onChange={(e) =>
                               updateItem(item.id, {
@@ -1195,7 +1306,7 @@ export default function InvoiceClient({
                         <td data-pdf-hide className="border border-neutral-800 p-0 text-center">
                           <button
                             type="button"
-                            aria-label="Видалити"
+                            aria-label={L("Видалити", "Remove")}
                             onClick={() => removeItem(item.id)}
                             className="px-1 text-neutral-400 hover:text-neutral-900"
                           >
@@ -1211,18 +1322,35 @@ export default function InvoiceClient({
                   <div className="flex items-baseline justify-between gap-4 px-3 py-2">
                     <span className="text-[12px] font-semibold uppercase tracking-wide">
                       Всього до сплати
+                      {en ? (
+                        <span
+                          data-pdf-hide
+                          className="ml-1.5 font-normal normal-case tracking-normal text-sky-700"
+                        >
+                          Total due
+                        </span>
+                      ) : null}
                     </span>
                     <span className="text-[20px] font-bold tabular-nums">{formatUah(total)}</span>
                   </div>
                   <div className="border-t border-neutral-300 px-3 py-2 text-[12px] leading-snug text-neutral-800">
                     <span className="font-semibold">Сума прописом: </span>
+                    {en ? (
+                      <span data-pdf-hide className="text-sky-700">
+                        (amount in words, filled in for you){" "}
+                      </span>
+                    ) : null}
                     {words}
                   </div>
                 </div>
               </div>
 
               <div className="mt-4 flex items-start gap-5">
-                <SoftField label="Призначення платежу / умови оплати" className="min-w-0 flex-1">
+                <SoftField
+                  label="Призначення платежу / умови оплати"
+                  en={E("Payment purpose / terms")}
+                  className="min-w-0 flex-1"
+                >
                   <textarea
                     className={`${lineInput} min-h-[3rem] resize-y`}
                     value={data.note}
@@ -1246,7 +1374,10 @@ export default function InvoiceClient({
                     data-pdf-hide
                     className="w-[34mm] shrink-0 rounded border border-dashed border-neutral-300 p-2 text-center text-[9px] leading-tight text-neutral-400"
                   >
-                    QR для оплати зʼявиться, коли заповните ПІБ, ІПН (10 цифр), IBAN і суму
+                    {L(
+                      "QR для оплати зʼявиться, коли заповните ПІБ, ІПН (10 цифр), IBAN і суму",
+                      "A payment QR appears once name, tax ID (10 digits), IBAN and amount are filled in",
+                    )}
                   </p>
                 )}
               </div>
@@ -1280,10 +1411,14 @@ export default function InvoiceClient({
             >
               {pdfReady ? (
                 <div className="mb-4 rounded-lg border border-signal/40 bg-signal/10 p-4">
-                  <p className="font-display text-lg font-semibold text-paper">PDF готовий</p>
+                  <p className="font-display text-lg font-semibold text-paper">
+                    {L("PDF готовий", "PDF ready")}
+                  </p>
                   <p className="mt-1 text-sm text-mist">
-                    Файл у «Завантаженнях». Надішліть його клієнту (Telegram / email) і за бажанням
-                    додайте реквізити текстом. У листі від Rakhuno PDF немає.
+                    {L(
+                      "Файл у «Завантаженнях». Надішліть його клієнту (Telegram / email) і за бажанням додайте реквізити текстом. У листі від Rakhuno PDF немає.",
+                      "The file is in your Downloads. Send it to the client by Telegram or email. Rakhuno's email does not contain the PDF.",
+                    )}
                   </p>
                   <button
                     type="button"
@@ -1291,7 +1426,7 @@ export default function InvoiceClient({
                     disabled={busy}
                     className="mt-3 w-full rounded-lg bg-signal px-4 py-3 font-semibold text-ink hover:bg-white disabled:opacity-60 sm:w-auto"
                   >
-                    {busy ? "…" : "Завантажити PDF"}
+                    {busy ? "…" : L("Завантажити PDF", "Download PDF")}
                   </button>
                   {unlocked ? (
                     <div className="mt-3 flex flex-wrap gap-2">
@@ -1302,14 +1437,14 @@ export default function InvoiceClient({
                         onClick={() => trackEvent("invoice_share_telegram")}
                         className="rounded-full border border-white/15 px-3 py-1.5 text-sm text-mist hover:border-signal hover:text-signal"
                       >
-                        Реквізити в Telegram
+                        {L("Реквізити в Telegram", "Payment details to Telegram")}
                       </a>
                       <a
                         href={`mailto:?subject=${encodeURIComponent(`Рахунок № ${data.number}`)}&body=${encodeURIComponent(`${paymentText(data)}\n\nPDF у вкладенні (завантажте з браузера й додайте файл).`)}`}
                         onClick={() => trackEvent("invoice_share_email")}
                         className="rounded-full border border-white/15 px-3 py-1.5 text-sm text-mist hover:border-signal hover:text-signal"
                       >
-                        Реквізити в email
+                        {L("Реквізити в email", "Payment details by email")}
                       </a>
                     </div>
                   ) : null}
@@ -1318,11 +1453,13 @@ export default function InvoiceClient({
               ) : null}
 
               <p className="font-display text-lg font-semibold text-paper">
-                Отримати PDF безкоштовно
+                {L("Отримати PDF безкоштовно", "Get the PDF for free")}
               </p>
               <p className="mt-1 text-sm text-mist">
-                Email потрібен для податкових нагадувань. PDF завантажиться одразу — у листі вкладення
-                немає. Після рахунку — акт або видаткова накладна з тих самих даних в один клік.
+                {L(
+                  "Email потрібен для податкових нагадувань. PDF завантажиться одразу — у листі вкладення немає. Після рахунку — акт або видаткова накладна з тих самих даних в один клік.",
+                  "Your email is used for FOP tax deadline reminders (in Ukrainian). The PDF downloads right away. After the invoice you can get an act or delivery note from the same data in one click.",
+                )}
               </p>
               <div className="mt-3 flex flex-col gap-3 sm:flex-row">
                 <input
@@ -1349,7 +1486,11 @@ export default function InvoiceClient({
                   disabled={busy}
                   className="min-h-12 rounded-lg bg-signal px-5 py-3.5 text-base font-semibold text-ink transition hover:bg-white disabled:opacity-60 sm:min-h-0 sm:text-sm"
                 >
-                  {busy ? "…" : unlocked ? "Завантажити знову" : "Отримати PDF"}
+                  {busy
+                    ? "…"
+                    : unlocked
+                      ? L("Завантажити знову", "Download again")
+                      : L("Отримати PDF", "Get PDF")}
                 </button>
               </div>
 
@@ -1364,19 +1505,21 @@ export default function InvoiceClient({
                         trackEvent("invoice_copy_payment");
                         window.setTimeout(() => setCopied(false), 2000);
                       } catch {
-                        setError("Не вдалося скопіювати.");
+                        setError(L("Не вдалося скопіювати.", "Could not copy."));
                       }
                     }}
                     className="rounded-full border border-white/15 px-3 py-1.5 text-sm text-mist hover:border-signal hover:text-signal"
                   >
-                    {copied ? "Скопійовано ✓" : "Копіювати реквізити"}
+                    {copied
+                      ? L("Скопійовано ✓", "Copied ✓")
+                      : L("Копіювати реквізити", "Copy payment details")}
                   </button>
                   <button
                     type="button"
                     onClick={() => window.print()}
                     className="rounded-full border border-white/15 px-3 py-1.5 text-sm text-mist hover:border-signal hover:text-signal"
                   >
-                    Друк
+                    {L("Друк", "Print")}
                   </button>
                   <button
                     type="button"
@@ -1391,11 +1534,11 @@ export default function InvoiceClient({
                         items: [emptyItem()],
                       }));
                       resetForNewInvoice();
-                      setOkMsg("Новий рахунок-проформа.");
+                      setOkMsg(L("Новий рахунок-проформа.", "New invoice started."));
                     }}
                     className="rounded-full border border-white/15 px-3 py-1.5 text-sm text-mist hover:border-signal hover:text-signal"
                   >
-                    Новий рахунок
+                    {L("Новий рахунок", "New invoice")}
                   </button>
                 </div>
               ) : null}
@@ -1406,7 +1549,7 @@ export default function InvoiceClient({
 
           <aside className="print:hidden mx-auto mt-14 hidden w-full max-w-[210mm] border-t border-line pt-8 md:block">
             <p className="font-display text-sm uppercase tracking-[0.18em] text-signal">
-              Гіди для ФОП
+              {L("Гіди для ФОП", "Guides for FOPs (in Ukrainian)")}
             </p>
             <ul className="mt-4 space-y-3 text-mist">
               <li>
@@ -1453,7 +1596,7 @@ export default function InvoiceClient({
                 onClick={goMobileBack}
                 className="min-h-12 w-28 rounded-xl border border-white/20 px-3 text-base font-medium text-paper"
               >
-                Назад
+                {L("Назад", "Back")}
               </button>
             ) : null}
             <button
@@ -1461,7 +1604,7 @@ export default function InvoiceClient({
               onClick={goMobileNext}
               className="min-h-12 flex-1 rounded-xl bg-signal text-base font-semibold text-ink"
             >
-              Далі · {MOBILE_STEPS[mobileStep + 1]}
+              {L("Далі", "Next")} · {MOBILE_STEPS[mobileStep + 1]}
             </button>
           </div>
         ) : (
@@ -1471,7 +1614,7 @@ export default function InvoiceClient({
               onClick={goMobileBack}
               className="min-h-12 w-28 rounded-xl border border-white/20 px-3 text-base font-medium text-paper"
             >
-              Назад
+              {L("Назад", "Back")}
             </button>
             <button
               type="button"
@@ -1482,7 +1625,11 @@ export default function InvoiceClient({
               }}
               className="min-h-12 flex-1 rounded-xl bg-signal text-base font-semibold text-ink disabled:opacity-60"
             >
-              {busy ? "…" : unlocked ? "Завантажити PDF" : `PDF · ${formatUah(total)}`}
+              {busy
+                ? "…"
+                : unlocked
+                  ? L("Завантажити PDF", "Download PDF")
+                  : `PDF · ${formatUah(total)}`}
             </button>
           </div>
         )}

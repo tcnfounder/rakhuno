@@ -1,7 +1,26 @@
 import Link from "next/link";
 import { BrandLockup } from "@/components/BrandLockup";
 
-export function SiteHeader() {
+export function SiteHeader({ lang = "uk" }: { lang?: "uk" | "en" }) {
+  if (lang === "en") {
+    return (
+      <header className="relative z-20 mx-auto flex w-full max-w-content items-center justify-between px-5 py-5 md:px-10">
+        <BrandLockup size="md" href="/en" />
+        <nav className="flex items-center gap-3 text-sm md:gap-5">
+          <Link href="/en" className="hidden text-mist transition hover:text-paper sm:inline">
+            About
+          </Link>
+          <Link
+            href="/invoice"
+            hrefLang="uk"
+            className="rounded-full border border-white/20 px-4 py-2 text-mist transition hover:border-signal hover:text-signal"
+          >
+            Українською
+          </Link>
+        </nav>
+      </header>
+    );
+  }
   return (
     <header className="relative z-20 mx-auto flex w-full max-w-content items-center justify-between px-5 py-5 md:px-10">
       <BrandLockup size="md" />

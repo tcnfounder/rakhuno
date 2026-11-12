@@ -47,7 +47,7 @@ const features = [
 ];
 
 const tools = [
-  { href: "/invoice", label: "Invoice generator", note: "The main tool: invoice PDF" },
+  { href: "/en/invoice", label: "Invoice generator", note: "The main tool, in English: invoice PDF" },
   { href: "/suma-propysom", label: "Amount in words", note: "Any sum written out in Ukrainian" },
   { href: "/kalkulyator-podatkiv-fop", label: "FOP tax calculator 2026", note: "Single tax and YeSV" },
   { href: "/guides", label: "Guides", note: "Templates and how-tos, in Ukrainian" },
@@ -64,7 +64,7 @@ const faqs = [
   },
   {
     q: "Is the app in English?",
-    a: "The invoice editor and the documents are in Ukrainian, because Ukrainian clients and banks expect Ukrainian documents. This page explains what it does.",
+    a: "Yes. The invoice editor has an English interface at rakhuno.com/en/invoice. The documents it produces are in Ukrainian, because Ukrainian clients and banks expect Ukrainian documents. The other tools and guides are in Ukrainian.",
   },
   {
     q: "Is this tax advice?",
@@ -84,7 +84,7 @@ export default function EnglishPage() {
             Українською
           </Link>
           <Link
-            href="/invoice"
+            href="/en/invoice"
             className="rounded-full bg-signal px-4 py-2 font-medium text-ink transition hover:bg-white"
           >
             Open the app
@@ -105,7 +105,7 @@ export default function EnglishPage() {
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <Link
-                href="/invoice"
+                href="/en/invoice"
                 className="inline-flex items-center rounded-full bg-signal px-6 py-3 text-base font-semibold text-ink transition hover:bg-white"
               >
                 Create an invoice
@@ -117,7 +117,10 @@ export default function EnglishPage() {
                 What it does
               </a>
             </div>
-            <p className="mt-4 text-sm text-muted">The app and the documents are in Ukrainian.</p>
+            <p className="mt-4 text-sm text-muted">
+              English interface. The invoice itself is in Ukrainian, as Ukrainian clients and banks
+              expect.
+            </p>
           </div>
           <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-ink-2 ring-1 ring-white/5">
             <Image

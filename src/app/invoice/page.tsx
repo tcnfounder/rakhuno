@@ -8,7 +8,10 @@ export const metadata: Metadata = {
   title: "Рахунок-фактура PDF для ФОП за 2 хвилини — безкоштовно",
   description:
     "Виставити рахунок на оплату для ФОП: реквізити → PDF у браузері за ~2 хвилини. Без Word і Checkbox. Email лише для податкових нагадувань.",
-  alternates: { canonical: "https://rakhuno.com/invoice" },
+  alternates: {
+    canonical: "https://rakhuno.com/invoice",
+    languages: { uk: "https://rakhuno.com/invoice", en: "https://rakhuno.com/en/invoice" },
+  },
   openGraph: {
     title: "Рахунок-фактура PDF для ФОП · Rakhuno",
     description:

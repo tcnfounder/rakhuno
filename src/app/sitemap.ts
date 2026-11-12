@@ -12,6 +12,7 @@ type Entry = {
 const entries: Entry[] = [
   { path: "", priority: 1, changeFrequency: "weekly", lastModified: "2026-09-30" },
   { path: "/en", priority: 0.5, changeFrequency: "monthly", lastModified: "2026-11-11" },
+  { path: "/en/invoice", priority: 0.5, changeFrequency: "monthly", lastModified: "2026-11-12" },
   { path: "/invoice", priority: 0.95, changeFrequency: "weekly", lastModified: "2026-09-30" },
   { path: "/guides", priority: 0.9, changeFrequency: "weekly", lastModified: "2026-10-21" },
   { path: "/suma-propysom", priority: 0.9, changeFrequency: "monthly", lastModified: "2026-10-22" },

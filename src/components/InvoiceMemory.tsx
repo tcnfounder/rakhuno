@@ -11,18 +11,22 @@ export function ClientChips({
   clients,
   activeName,
   onPick,
+  lang = "uk",
   className = "",
 }: {
   clients: SavedClient[];
   activeName: string;
   onPick: (client: SavedClient) => void;
+  lang?: "uk" | "en";
   className?: string;
 }) {
   if (!clients.length) return null;
   const active = activeName.trim().toLowerCase();
   return (
     <div className={className}>
-      <p className="text-xs font-semibold uppercase tracking-[0.12em] text-mist">Ваші клієнти</p>
+      <p className="text-xs font-semibold uppercase tracking-[0.12em] text-mist">
+        {lang === "en" ? "Your clients" : "Ваші клієнти"}
+      </p>
       <div className="mt-2 flex flex-wrap gap-2">
         {clients.slice(0, 8).map((client) => {
           const isActive = client.name.trim().toLowerCase() === active;
@@ -49,28 +53,33 @@ export function RecentInvoices({
   history,
   onRepeat,
   limit = 6,
+  lang = "uk",
   className = "",
 }: {
   history: SavedInvoice[];
   onRepeat: (invoice: SavedInvoice) => void;
   limit?: number;
+  lang?: "uk" | "en";
   className?: string;
 }) {
   if (!history.length) return null;
+  const en = lang === "en";
   return (
     <section className={className}>
       <p className="font-display text-sm uppercase tracking-[0.18em] text-signal">
-        Останні рахунки
+        {en ? "Recent invoices" : "Останні рахунки"}
       </p>
       <p className="mt-1 text-sm text-mist">
-        Зберігаються лише у вашому браузері. «Повторити» — той самий клієнт і позиції з новим номером.
+        {en
+          ? "Stored only in your browser. “Repeat” copies the client and items under a new number."
+          : "Зберігаються лише у вашому браузері. «Повторити» — той самий клієнт і позиції з новим номером."}
       </p>
       <ul className="mt-3 divide-y divide-white/10 rounded-xl border border-white/10 bg-ink-2/60">
         {history.slice(0, limit).map((invoice) => (
           <li key={invoice.id} className="flex items-center gap-3 px-3 py-2.5">
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-semibold text-paper">
-                № {invoice.number || "—"} · {invoice.buyerName || "Без клієнта"}
+                № {invoice.number || "—"} · {invoice.buyerName || (en ? "No client" : "Без клієнта")}
               </p>
               <p className="text-xs text-mist">
                 {formatDateUk(invoice.date)} · {formatUah(invoice.total)}
@@ -81,7 +90,7 @@ export function RecentInvoices({
               onClick={() => onRepeat(invoice)}
               className="shrink-0 rounded-full border border-signal/60 px-3 py-1.5 text-sm font-semibold text-signal transition hover:bg-signal hover:text-ink"
             >
-              Повторити
+              {en ? "Repeat" : "Повторити"}
             </button>
           </li>
         ))}
