@@ -13,7 +13,7 @@ owner has to create. Contact email everywhere: info@rakhuno.com.
 | Freelancehunt | UA | Company profile with a link to rakhuno.com |
 | DOU forum | UA | Topic 63309 in moderation |
 | Minfin blog | UA | Live: minfin.com.ua/blogs/snu30755564/267602 (invoice checklist, nofollow) |
-| Buhgalter 911 blog | UA | Blogger profile "Rakhuno" with site link; post 1100140 (act of completed work) in moderation |
+| Buhgalter 911 blog | UA | Blogger profile "Rakhuno" with site link. Post 1100140 was rejected for hidden advertising (last paragraph named Rakhuno); resubmitted 2026-11-12 with no product mention or links. Their rules forbid any promotion in the text |
 | Weblancer | UA | Account only; profile needs the owner's personal data and phone |
 | Indie Hackers | EN | Live: indiehackers.com/product/rakhuno |
 | PeerPush | EN | Free queue (~4 months); paid launch declined |
@@ -37,23 +37,44 @@ Maker/launch sites: Indie Hackers, PeerPush, SideProjectors, Uneed, OpenHunts,
 Startup Fame, MicroLaunch, Launching Next, Alternative.me, LaunchBoard,
 Awesome Indie, StartupRanking.
 
-## Email to Checkbox (wiki.checkbox.ua lists FOP tools)
+## Competitor gap check (2026-11-12)
 
-To: the contact address on checkbox.ua. Send only after the owner approves.
+Checked the referring domains of everyone ranking for our main queries:
+bitfaktura.ua, dokky.com.ua, prodavai24.com, zistemo.me, vpravno.com.ua,
+oneb.app, easyact.online, pravohub.com.ua, clerk.tax, gosta.ua, calcilo.com
+(plus vchasno.ua and invoice-template.com earlier). Almost everything is one of:
 
-> Тема: Пропозиція для wiki.checkbox.ua — безкоштовний генератор рахунків для ФОП
+- Paid Telegram link spam (seo-anomaly-*.xyz, bhs_links, links_dealer, PBNs).
+  Do not copy.
+- Their own sister sites (Fakturownia/InvoiceOcean network for bitfaktura,
+  zistemo's country domains). Not available to us.
+- wiki.checkbox.ua/integration: bitfaktura is there because it has a real
+  Checkbox (PRRO) integration. An email pitch will not get us on that list, so
+  the Checkbox email was dropped.
+- "Alternatives to 1C" articles (unitalk, monokarta, wiki.erp.kyiv.ua): ERP
+  category, not ours.
+- Old web directories (123-directory, 99webdirectory, bookmarkspy). Low value.
+
+Real and open to us: two Ukrainian software catalogs that take products by
+email. Both links are nofollow, but they reach Ukrainian business buyers.
+
+| Catalog | Contact | Status |
+|---|---|---|
+| Shelfy (shelfy.com.ua), Finance category | info@shelfy.com.ua | Sent 2026-11-12 from info@rakhuno.com |
+| MIISOFT (miisoft.com.ua), Accounting and finance | hello@miisoft.com.ua | Sent 2026-11-12 from info@rakhuno.com |
+
+> Тема: Додати Rakhuno до каталогу — безкоштовні рахунки для ФОП
 >
 > Добрий день!
 >
-> У вашій вікі є корисні матеріали для ФОП про первинні документи. Пропоную
-> розглянути як додатковий інструмент Rakhuno (https://rakhuno.com) —
-> безкоштовний сервіс, що формує рахунок на оплату в PDF: сума прописом, IBAN,
-> QR-код НБУ, а з того самого рахунку — акт виконаних робіт або видаткова
-> накладна. Реєстрація не потрібна.
+> Пропоную додати до вашого каталогу Rakhuno (https://rakhuno.com) —
+> безкоштовний онлайн-сервіс для ФОП. Він формує рахунок на оплату в PDF за
+> дві хвилини: сума прописом, IBAN, QR-код НБУ для оплати, а з того самого
+> рахунку — акт виконаних робіт або видаткова накладна. Реєстрація не
+> потрібна, є англійський інтерфейс.
 >
-> Він не конкурує з касами Checkbox: це лише рахунки й акти для ФОП, які
-> працюють без РРО або виставляють рахунки юрособам. Якщо доречно — буду
-> вдячний за згадку чи посилання. Готовий підготувати короткий текст.
+> Категорія: облік і фінанси / рахунки. Ціна: безкоштовно.
+> Логотип, скриншоти й опис надішлю у потрібному форматі.
 >
 > З повагою,
 > команда Rakhuno, info@rakhuno.com
