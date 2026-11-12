@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import { SiteShell, PageFooterNote } from "@/components/SiteShell";
 import { SiteFooter } from "@/components/SiteFooter";
+import { DEFAULT_OG_IMAGE } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Політика конфіденційності",
   description: "Як Rakhuno обробляє email та дані ФОП для рахунків і нагадувань.",
   alternates: { canonical: "https://rakhuno.com/privacy" },
   openGraph: {
+    images: [DEFAULT_OG_IMAGE],
     title: "Політика конфіденційності · Rakhuno",
     url: "https://rakhuno.com/privacy",
   },

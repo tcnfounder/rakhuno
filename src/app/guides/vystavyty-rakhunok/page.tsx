@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArticleLayout } from "@/components/ArticleLayout";
 import { JsonLd } from "@/components/JsonLd";
 import { MidInvoiceCta } from "@/components/SiteShell";
+import { DEFAULT_OG_IMAGE } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Як виставити рахунок на оплату ФОП: крок за кроком",
@@ -10,6 +11,7 @@ export const metadata: Metadata = {
     "Як виставити рахунок на оплату для ФОП: коли надсилати клієнту, які реквізити вказати й як за 2 хвилини скачати PDF онлайн у Rakhuno — без Word і Checkbox.",
   alternates: { canonical: "https://rakhuno.com/guides/vystavyty-rakhunok" },
   openGraph: {
+    images: [DEFAULT_OG_IMAGE],
     title: "Як виставити рахунок на оплату ФОП · Rakhuno",
     description: "Кроки: реквізити → позиції → PDF → клієнту. Без бланка Word.",
     url: "https://rakhuno.com/guides/vystavyty-rakhunok",

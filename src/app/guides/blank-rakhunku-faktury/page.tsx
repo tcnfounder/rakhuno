@@ -5,6 +5,7 @@ import { ArticleLayout } from "@/components/ArticleLayout";
 import { JsonLd } from "@/components/JsonLd";
 import { MidInvoiceCta } from "@/components/SiteShell";
 import { TemplateDownload } from "@/components/TemplateDownload";
+import { DEFAULT_OG_IMAGE } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Бланк рахунку-фактури ФОП: Word і Excel безкоштовно",
@@ -12,6 +13,7 @@ export const metadata: Metadata = {
     "Бланк рахунку-фактури (рахунку на оплату) для ФОП без ПДВ: Word .docx або Excel .xlsx з формулами, безкоштовно. Або заповніть онлайн і скачайте PDF.",
   alternates: { canonical: "https://rakhuno.com/guides/blank-rakhunku-faktury" },
   openGraph: {
+    images: [DEFAULT_OG_IMAGE],
     title: "Бланк рахунку-фактури: Word і Excel · Rakhuno",
     description: "Безкоштовний бланк рахунку на оплату ФОП у Word та Excel — або PDF онлайн за 2 хвилини.",
     url: "https://rakhuno.com/guides/blank-rakhunku-faktury",

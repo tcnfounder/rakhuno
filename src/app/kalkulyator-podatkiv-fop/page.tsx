@@ -12,6 +12,7 @@ import {
   formatMoney,
 } from "@/lib/fop-tax";
 import { TaxCalculator } from "./TaxCalculator";
+import { DEFAULT_OG_IMAGE } from "@/lib/site";
 
 const URL = "https://rakhuno.com/kalkulyator-podatkiv-fop";
 
@@ -21,6 +22,7 @@ export const metadata: Metadata = {
     "Скільки платить ФОП 1, 2 і 3 групи у 2026 році: єдиний податок, ЄСВ 1 902,34 грн і військовий збір. Сума за місяць, ліміт доходу і найближчі терміни сплати.",
   alternates: { canonical: URL },
   openGraph: {
+    images: [DEFAULT_OG_IMAGE],
     title: "Калькулятор податків ФОП 2026 · Rakhuno",
     description: "Єдиний податок, ЄСВ і військовий збір для 1, 2 і 3 групи — сума і терміни.",
     url: URL,

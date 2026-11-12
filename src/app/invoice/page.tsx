@@ -3,6 +3,7 @@ import Link from "next/link";
 import { JsonLd } from "@/components/JsonLd";
 import { resolveInvoiceHeading } from "@/lib/invoice-headings";
 import InvoiceClient from "./InvoiceClient";
+import { DEFAULT_OG_IMAGE } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Рахунок-фактура PDF для ФОП за 2 хвилини — безкоштовно",
@@ -13,6 +14,7 @@ export const metadata: Metadata = {
     languages: { uk: "https://rakhuno.com/invoice", en: "https://rakhuno.com/en/invoice" },
   },
   openGraph: {
+    images: [DEFAULT_OG_IMAGE],
     title: "Рахунок-фактура PDF для ФОП · Rakhuno",
     description:
       "Безкоштовний рахунок на оплату за 2 хвилини: PDF у браузері + податкові нагадування.",

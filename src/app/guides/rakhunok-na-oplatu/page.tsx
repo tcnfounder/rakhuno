@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArticleLayout } from "@/components/ArticleLayout";
 import { JsonLd } from "@/components/JsonLd";
 import { MidInvoiceCta } from "@/components/SiteShell";
+import { DEFAULT_OG_IMAGE } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Рахунок на оплату ФОП: зразок, реквізити, PDF",
@@ -11,6 +12,7 @@ export const metadata: Metadata = {
     "Рахунок на оплату для ФОП: які поля потрібні, зразок структури, бланк без Word і як одразу виставити PDF онлайн у Rakhuno.",
   alternates: { canonical: "https://rakhuno.com/guides/rakhunok-na-oplatu" },
   openGraph: {
+    images: [DEFAULT_OG_IMAGE],
     title: "Рахунок на оплату для ФОП · Rakhuno",
     description: "Зразок полів + онлайн PDF за 2 хвилини — без Excel і Checkbox.",
     url: "https://rakhuno.com/guides/rakhunok-na-oplatu",

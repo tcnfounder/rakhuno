@@ -5,6 +5,7 @@ import { JsonLd } from "@/components/JsonLd";
 import { MidInvoiceCta } from "@/components/SiteShell";
 import { DocQuickFill } from "@/components/DocQuickFill";
 import { TemplateDownload } from "@/components/TemplateDownload";
+import { DEFAULT_OG_IMAGE } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Акт виконаних робіт і наданих послуг ФОП: зразок, бланк",
@@ -12,6 +13,7 @@ export const metadata: Metadata = {
     "Акт виконаних робіт (наданих послуг) для ФОП: реквізити, зразок заповнення без ПДВ і безкоштовний бланк Word. Чим акт відрізняється від рахунку.",
   alternates: { canonical: "https://rakhuno.com/guides/akt-vykonanykh-robit" },
   openGraph: {
+    images: [DEFAULT_OG_IMAGE],
     title: "Акт виконаних робіт ФОП: зразок і бланк · Rakhuno",
     description: "Реквізити акту, приклад заповнення й бланк Word безкоштовно.",
     url: "https://rakhuno.com/guides/akt-vykonanykh-robit",

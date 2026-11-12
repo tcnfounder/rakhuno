@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArticleLayout } from "@/components/ArticleLayout";
 import { JsonLd } from "@/components/JsonLd";
+import { DEFAULT_OG_IMAGE } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Єдиний податок ФОП: коли платити і строки сплати",
@@ -9,6 +10,7 @@ export const metadata: Metadata = {
     "Єдиний податок для ФОП: як не пропустити строк, що тримати в календарі, різниця з ЄСВ і як налаштувати email-нагадування в Rakhuno. Не податкова консультація.",
   alternates: { canonical: "https://rakhuno.com/guides/yedynyy-podatok" },
   openGraph: {
+    images: [DEFAULT_OG_IMAGE],
     title: "Єдиний податок: коли платити · Rakhuno",
     description: "Типові вікна сплати, календарна дисципліна й email-нагадування — без зайвої теорії.",
     url: "https://rakhuno.com/guides/yedynyy-podatok",

@@ -4,6 +4,7 @@ import { ArticleLayout } from "@/components/ArticleLayout";
 import { JsonLd } from "@/components/JsonLd";
 import { MidInvoiceCta } from "@/components/SiteShell";
 import { TemplateDownload } from "@/components/TemplateDownload";
+import { DEFAULT_OG_IMAGE } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Інвойс і проформа для ФОП: зразок UA/EN, бланк",
@@ -11,6 +12,7 @@ export const metadata: Metadata = {
     "Що таке інвойс і проформа-інвойс для ФОП, чим відрізняються від рахунку-фактури, які поля потрібні іноземному клієнту. Двомовний бланк Word безкоштовно.",
   alternates: { canonical: "https://rakhuno.com/guides/invoys-proforma" },
   openGraph: {
+    images: [DEFAULT_OG_IMAGE],
     title: "Інвойс і проформа: зразок UA/EN · Rakhuno",
     description: "Двомовний інвойс для ФОП: поля, приклад і бланк Word безкоштовно.",
     url: "https://rakhuno.com/guides/invoys-proforma",

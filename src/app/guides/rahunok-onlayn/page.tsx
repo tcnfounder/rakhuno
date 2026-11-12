@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArticleLayout } from "@/components/ArticleLayout";
 import { JsonLd } from "@/components/JsonLd";
 import { MidInvoiceCta } from "@/components/SiteShell";
+import { DEFAULT_OG_IMAGE } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Рахунок онлайн для ФОП за 2 хвилини: PDF без Word",
@@ -10,6 +11,7 @@ export const metadata: Metadata = {
     "Як виставити рахунок онлайн для ФОП: реквізити, позиції, PDF за 2 хвилини, email-нагадування. Без шаблону Word і без важкої бухгалтерії.",
   alternates: { canonical: "https://rakhuno.com/guides/rahunok-onlayn" },
   openGraph: {
+    images: [DEFAULT_OG_IMAGE],
     title: "Рахунок онлайн для ФОП · Rakhuno",
     description: "Алгоритм на 2 хвилини: ФОП → клієнт → позиції → PDF → клієнту.",
     url: "https://rakhuno.com/guides/rahunok-onlayn",

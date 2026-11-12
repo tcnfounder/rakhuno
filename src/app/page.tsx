@@ -5,6 +5,7 @@ import { BrandLockup } from "@/components/BrandLockup";
 import { JsonLd } from "@/components/JsonLd";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
+import { DEFAULT_OG_IMAGE } from "@/lib/site";
 
 export const metadata: Metadata = {
   alternates: {
@@ -12,6 +13,7 @@ export const metadata: Metadata = {
     languages: { uk: "https://rakhuno.com/", en: "https://rakhuno.com/en" },
   },
   openGraph: {
+    images: [DEFAULT_OG_IMAGE],
     url: "https://rakhuno.com/",
     title: "Rakhuno — простий рахунок для ФОП",
     description: "Створіть рахунок-фактуру за 2 хвилини. Email-нагадування про податки.",

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArticleLayout } from "@/components/ArticleLayout";
 import { JsonLd } from "@/components/JsonLd";
+import { DEFAULT_OG_IMAGE } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Податки ФОП: чекліст на місяць і квартал",
@@ -9,6 +10,7 @@ export const metadata: Metadata = {
     "Чекліст податків для ФОП: рахунки, оплати, єдиний податок, ЄСВ, декларація, архів документів. Мінімальний порядок без зайвої теорії.",
   alternates: { canonical: "https://rakhuno.com/guides/podatky-fop" },
   openGraph: {
+    images: [DEFAULT_OG_IMAGE],
     title: "Податки ФОП: чекліст · Rakhuno",
     description: "Що перевірити щомісяця й щокварталу — рахунок, строки, документи.",
     url: "https://rakhuno.com/guides/podatky-fop",

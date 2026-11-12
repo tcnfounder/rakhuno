@@ -5,6 +5,7 @@ import { JsonLd } from "@/components/JsonLd";
 import { MidInvoiceCta } from "@/components/SiteShell";
 import { DocQuickFill } from "@/components/DocQuickFill";
 import { TemplateDownload } from "@/components/TemplateDownload";
+import { DEFAULT_OG_IMAGE } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Видаткова накладна ФОП: зразок і бланк Word",
@@ -12,6 +13,7 @@ export const metadata: Metadata = {
     "Видаткова накладна для ФОП: обов’язкові реквізити, зразок заповнення без ПДВ і безкоштовний бланк Word. Чим вона відрізняється від рахунку й акту.",
   alternates: { canonical: "https://rakhuno.com/guides/vydatkova-nakladna" },
   openGraph: {
+    images: [DEFAULT_OG_IMAGE],
     title: "Видаткова накладна: зразок і бланк · Rakhuno",
     description: "Реквізити, приклад заповнення й бланк Word безкоштовно.",
     url: "https://rakhuno.com/guides/vydatkova-nakladna",

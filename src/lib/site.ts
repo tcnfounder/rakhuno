@@ -26,3 +26,11 @@ export function siteUrl(path = "/"): string {
   if (path === "/" || path === "") return origin;
   return `${origin}${path.startsWith("/") ? path : `/${path}`}`;
 }
+
+/** Link preview image for pages that do not set their own `openGraph.images`. */
+export const DEFAULT_OG_IMAGE = {
+  url: "/brand/og-default.png",
+  width: 1200,
+  height: 630,
+  alt: "Rakhuno — рахунок-фактура для ФОП у PDF за 2 хвилини",
+};

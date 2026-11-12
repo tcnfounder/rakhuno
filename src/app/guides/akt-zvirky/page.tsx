@@ -5,6 +5,7 @@ import { JsonLd } from "@/components/JsonLd";
 import { MidInvoiceCta } from "@/components/SiteShell";
 import { DocQuickFill } from "@/components/DocQuickFill";
 import { TemplateDownload } from "@/components/TemplateDownload";
+import { DEFAULT_OG_IMAGE } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Акт звірки взаєморозрахунків: зразок і бланк Word",
@@ -12,6 +13,7 @@ export const metadata: Metadata = {
     "Акт звірки для ФОП: що це, як заповнити дебет, кредит і сальдо, приклад заповнення та безкоштовний бланк Word. Коли акт звірки просять клієнти.",
   alternates: { canonical: "https://rakhuno.com/guides/akt-zvirky" },
   openGraph: {
+    images: [DEFAULT_OG_IMAGE],
     title: "Акт звірки: зразок і бланк · Rakhuno",
     description: "Дебет, кредит, сальдо — приклад заповнення й бланк Word безкоштовно.",
     url: "https://rakhuno.com/guides/akt-zvirky",

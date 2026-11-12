@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { BrandLockup } from "@/components/BrandLockup";
+import { DEFAULT_OG_IMAGE } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: { absolute: "Rakhuno — free invoice PDF generator for Ukrainian sole traders" },
@@ -12,6 +13,7 @@ export const metadata: Metadata = {
     languages: { uk: "https://rakhuno.com/", en: "https://rakhuno.com/en" },
   },
   openGraph: {
+    images: [DEFAULT_OG_IMAGE],
     url: "https://rakhuno.com/en",
     locale: "en_US",
     title: "Rakhuno — invoices for Ukrainian sole traders",

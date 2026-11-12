@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteShell } from "@/components/SiteShell";
+import { DEFAULT_OG_IMAGE } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Гіди для ФОП: рахунок, податки, 3 група",
@@ -9,6 +10,7 @@ export const metadata: Metadata = {
     "Практичні гіди Rakhuno: що таке рахунок-фактура, зразок і бланк Word/Excel, акт виконаних робіт, рахунок на оплату, ФОП 3 група.",
   alternates: { canonical: "https://rakhuno.com/guides" },
   openGraph: {
+    images: [DEFAULT_OG_IMAGE],
     title: "Гіди для ФОП · Rakhuno",
     description: "Рахунок-фактура, податки й ФОП 3 група — коротко, потім одразу до PDF.",
     url: "https://rakhuno.com/guides",

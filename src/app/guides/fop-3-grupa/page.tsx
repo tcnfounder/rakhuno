@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArticleLayout } from "@/components/ArticleLayout";
 import { JsonLd } from "@/components/JsonLd";
+import { DEFAULT_OG_IMAGE } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "ФОП 3 група: кому підходить, податки, рахунки клієнтам",
@@ -9,6 +10,7 @@ export const metadata: Metadata = {
     "ФОП 3 група коротко: кому зручно, що пам’ятати про єдиний податок і ЄСВ, як виставляти рахунок клієнту. Без зайвої теорії.",
   alternates: { canonical: "https://rakhuno.com/guides/fop-3-grupa" },
   openGraph: {
+    images: [DEFAULT_OG_IMAGE],
     title: "ФОП 3 група — коротко · Rakhuno",
     description: "Формат для послуг і невеликого бізнесу: рахунки, строки, нагадування.",
     url: "https://rakhuno.com/guides/fop-3-grupa",

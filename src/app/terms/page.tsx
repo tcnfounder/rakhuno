@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import { SiteShell, PageFooterNote } from "@/components/SiteShell";
 import { SiteFooter } from "@/components/SiteFooter";
+import { DEFAULT_OG_IMAGE } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Умови використання",
   description: "Умови користування сервісом Rakhuno: рахунок-фактура та нагадування для ФОП.",
   alternates: { canonical: "https://rakhuno.com/terms" },
   openGraph: {
+    images: [DEFAULT_OG_IMAGE],
     title: "Умови використання · Rakhuno",
     url: "https://rakhuno.com/terms",
   },

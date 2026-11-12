@@ -5,6 +5,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { InvoiceCta, PageFooterNote, SiteShell } from "@/components/SiteShell";
 import { amountInWordsUk } from "@/lib/invoice";
 import { AmountWordsTool } from "./AmountWordsTool";
+import { DEFAULT_OG_IMAGE } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Сума прописом українською: число гривень словами",
@@ -12,6 +13,7 @@ export const metadata: Metadata = {
     "500 → «Пʼятсот гривень 00 копійок», 12 000 → «Дванадцять тисяч гривень 00 копійок». Впишіть суму — готовий рядок для рахунку чи акту.",
   alternates: { canonical: "https://rakhuno.com/suma-propysom" },
   openGraph: {
+    images: [DEFAULT_OG_IMAGE],
     title: "Сума прописом онлайн · Rakhuno",
     description: "Сума цифрами → прописом українською для рахунку, акту чи договору.",
     url: "https://rakhuno.com/suma-propysom",
