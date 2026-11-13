@@ -182,6 +182,8 @@ export async function POST(req: NextRequest) {
 
   const email = (body.email || "").trim().toLowerCase();
   if (!isValidEmail(email)) {
+    // Masked: enough to see the typo pattern in Vercel logs without storing the address.
+    console.warn("[lead-rejected] invalid_email", `${email.slice(0, 2)}…@${email.split("@")[1] ?? "(no @)"}`, body.source);
     return NextResponse.json({ error: "invalid_email" }, { status: 400 });
   }
 

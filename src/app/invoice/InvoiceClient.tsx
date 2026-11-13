@@ -32,7 +32,7 @@ import {
   trackEvent,
 } from "@/lib/analytics";
 import { trackMetaLead } from "@/components/MetaPixel";
-import { markPendingLead, submitInvoiceLead, takePendingLead } from "@/lib/invoice-lead";
+import { isValidLeadEmail, markPendingLead, submitInvoiceLead, takePendingLead } from "@/lib/invoice-lead";
 import { prepareLogo } from "@/lib/logo";
 import { buildNbuLink, renderNbuQr, toNbuPayment } from "@/lib/nbu-qr";
 import {
@@ -548,6 +548,11 @@ export default function InvoiceClient({
     }
     if (!email.trim()) {
       setError(L("Вкажіть email — для податкових нагадувань.", "Enter your email to get the PDF."));
+      return;
+    }
+    if (!isValidLeadEmail(email)) {
+      setError(L("Перевірте email: схоже, в адресі помилка (наприклад, name@gmail.com).", "Check your email: the address looks incomplete (e.g. name@gmail.com)."));
+      trackEvent("lead_email_invalid", { source: "invoice_pdf" });
       return;
     }
     setBusy(true);

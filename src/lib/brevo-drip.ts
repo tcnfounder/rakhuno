@@ -105,14 +105,14 @@ async function ensureDripAttributes(env: WorkerEnv) {
   if (!env.BREVO_API_KEY) return;
   for (const name of ["DRIP_DAY7", "DRIP_DAY7_DUE"] as const) {
     try {
-      const res = await fetch("https://api.brevo.com/v3/contacts/attributes", {
+      const res = await fetch(`https://api.brevo.com/v3/contacts/attributes/normal/${name}`, {
         method: "POST",
         headers: {
           accept: "application/json",
           "content-type": "application/json",
           "api-key": env.BREVO_API_KEY,
         },
-        body: JSON.stringify({ name, type: "text" }),
+        body: JSON.stringify({ type: "text" }),
       });
       if (!res.ok && res.status !== 400) {
         console.error("[brevo-attr-create]", name, res.status, await res.text());

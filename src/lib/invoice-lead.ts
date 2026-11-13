@@ -6,6 +6,11 @@ function normalizeEmail(email: string) {
   return email.trim().toLowerCase();
 }
 
+/** Same rule as /api/leads: an address the server would reject must not unlock the PDF. */
+export function isValidLeadEmail(email: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+}
+
 /** Remember a Brevo create so the conversion can wait until the PDF succeeds. */
 export function markPendingLead(email: string) {
   if (typeof window === "undefined") return;
