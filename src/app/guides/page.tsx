@@ -27,7 +27,7 @@ const guides = [
   {
     href: "/guides/rakhunok-na-oplatu",
     title: "Рахунок на оплату для ФОП",
-    blurb: "Зразок полів, реквізити й онлайн PDF — без Excel.",
+    blurb: "Бланк Word і Excel, реквізити й онлайн PDF за 2 хвилини.",
   },
   {
     href: "/guides/vystavyty-rakhunok",
@@ -57,7 +57,7 @@ const guides = [
   {
     href: "/guides/akt-vykonanykh-robit",
     title: "Акт виконаних робіт для ФОП",
-    blurb: "Реквізити, зразок заповнення без ПДВ і бланк Word.",
+    blurb: "Реквізити, зразок заповнення без ПДВ, бланк Word і Excel.",
   },
   {
     href: "/guides/invoys-proforma",
@@ -67,12 +67,12 @@ const guides = [
   {
     href: "/guides/vydatkova-nakladna",
     title: "Видаткова накладна",
-    blurb: "Коли потрібна, реквізити, зразок і бланк Word.",
+    blurb: "Коли потрібна, реквізити, зразок, бланк Word і Excel.",
   },
   {
     href: "/guides/akt-zvirky",
     title: "Акт звірки взаєморозрахунків",
-    blurb: "Дебет, кредит, сальдо — приклад і бланк Word.",
+    blurb: "Дебет, кредит, сальдо — приклад, бланк Word і Excel.",
   },
   {
     href: "/guides/fop-3-grupa",
@@ -105,7 +105,11 @@ export default function GuidesIndexPage() {
           <Link href="/invoice" className="text-signal underline-offset-2 hover:underline">
             створіть PDF у Rakhuno
           </Link>{" "}
-          і підпишіться на нагадування про податки.
+          і підпишіться на нагадування про податки. Усі бланки Word і Excel зібрані на сторінці{" "}
+          <Link href="/blanky" className="text-signal underline-offset-2 hover:underline">
+            бланків документів
+          </Link>
+          .
         </p>
         <div className="mt-12 max-w-3xl space-y-6">
           {guides.map((g) => (

@@ -15,6 +15,7 @@ const entries: Entry[] = [
   { path: "/en/invoice", priority: 0.5, changeFrequency: "monthly", lastModified: "2026-11-12" },
   { path: "/invoice", priority: 0.95, changeFrequency: "weekly", lastModified: "2026-09-30" },
   { path: "/guides", priority: 0.9, changeFrequency: "weekly", lastModified: "2026-10-21" },
+  { path: "/blanky", priority: 0.92, changeFrequency: "monthly", lastModified: "2026-11-13" },
   { path: "/suma-propysom", priority: 0.9, changeFrequency: "monthly", lastModified: "2026-10-22" },
   {
     path: "/kalkulyator-podatkiv-fop",
@@ -59,7 +60,7 @@ const entries: Entry[] = [
     path: "/guides/rakhunok-na-oplatu",
     priority: 0.95,
     changeFrequency: "weekly",
-    lastModified: "2026-09-30",
+    lastModified: "2026-11-13",
     images: ["https://rakhuno.com/brand/sample-rakhunok-na-oplatu.webp"],
   },
   {
@@ -72,13 +73,13 @@ const entries: Entry[] = [
     path: "/guides/akt-vykonanykh-robit",
     priority: 0.93,
     changeFrequency: "monthly",
-    lastModified: "2026-10-22",
+    lastModified: "2026-11-13",
   },
   {
     path: "/guides/akt-zvirky",
     priority: 0.88,
     changeFrequency: "monthly",
-    lastModified: "2026-10-22",
+    lastModified: "2026-11-13",
   },
   {
     path: "/guides/invoys-proforma",
@@ -90,7 +91,7 @@ const entries: Entry[] = [
     path: "/guides/vydatkova-nakladna",
     priority: 0.88,
     changeFrequency: "monthly",
-    lastModified: "2026-10-22",
+    lastModified: "2026-11-13",
   },
   {
     path: "/guides/fop-3-grupa",

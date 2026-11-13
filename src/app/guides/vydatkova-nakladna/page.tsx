@@ -8,9 +8,9 @@ import { TemplateDownload } from "@/components/TemplateDownload";
 import { DEFAULT_OG_IMAGE } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Видаткова накладна ФОП: зразок і бланк Word",
+  title: "Видаткова накладна ФОП: бланк Word і Excel, зразок",
   description:
-    "Видаткова накладна для ФОП: обов’язкові реквізити, зразок заповнення без ПДВ і безкоштовний бланк Word. Чим вона відрізняється від рахунку й акту.",
+    "Видаткова накладна для ФОП: обов’язкові реквізити, зразок заповнення без ПДВ і безкоштовний бланк Word та Excel. Чим вона відрізняється від рахунку й акту.",
   alternates: { canonical: "https://rakhuno.com/guides/vydatkova-nakladna" },
   openGraph: {
     images: [DEFAULT_OG_IMAGE],
@@ -102,9 +102,10 @@ export default function Page() {
 
         <TemplateDownload
           title="Скачати бланк видаткової накладної"
-          text="Word (.docx), без реєстрації. Постачальник, покупець, підстава, таблиця товарів, сума прописом, підписи."
+          text="Word (.docx) або Excel (.xlsx), без реєстрації. Постачальник, покупець, підстава, таблиця товарів, сума прописом, підписи. В Excel суми рахуються самі."
           files={[
             { href: "/templates/vydatkova-nakladna.docx", label: "Бланк накладної (.docx)", format: "docx" },
+            { href: "/templates/vydatkova-nakladna.xlsx", label: "Бланк накладної (.xlsx)", format: "xlsx" },
           ]}
         />
 

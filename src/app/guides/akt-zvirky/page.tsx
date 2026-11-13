@@ -95,8 +95,11 @@ export default function Page() {
 
         <TemplateDownload
           title="Скачати бланк акту звірки"
-          text="Word (.docx), без реєстрації. Період, договір, таблиця «дебет / кредит», сальдо, підписи."
-          files={[{ href: "/templates/akt-zvirky.docx", label: "Бланк акту звірки (.docx)", format: "docx" }]}
+          text="Word (.docx) або Excel (.xlsx), без реєстрації. Період, таблиця «дебет / кредит», сальдо, підписи. В Excel обороти й сальдо рахуються самі."
+          files={[
+            { href: "/templates/akt-zvirky.docx", label: "Бланк акту звірки (.docx)", format: "docx" },
+            { href: "/templates/akt-zvirky.xlsx", label: "Бланк акту звірки (.xlsx)", format: "xlsx" },
+          ]}
         />
 
         <h2 className="!mt-10 font-display text-2xl text-paper">Що має бути в акті звірки</h2>

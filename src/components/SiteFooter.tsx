@@ -19,6 +19,7 @@ const columns: { title: string; links: { href: string; label: string; hrefLang?:
       { href: "/guides/rakhunok-na-oplatu", label: "Рахунок на оплату" },
       { href: "/guides/akt-vykonanykh-robit", label: "Акт виконаних робіт" },
       { href: "/guides/vydatkova-nakladna", label: "Видаткова накладна" },
+      { href: "/blanky", label: "Бланки Word і Excel" },
     ],
   },
   {

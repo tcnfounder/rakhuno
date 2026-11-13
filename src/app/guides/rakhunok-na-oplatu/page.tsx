@@ -4,12 +4,13 @@ import Link from "next/link";
 import { ArticleLayout } from "@/components/ArticleLayout";
 import { JsonLd } from "@/components/JsonLd";
 import { MidInvoiceCta } from "@/components/SiteShell";
+import { TemplateDownload } from "@/components/TemplateDownload";
 import { DEFAULT_OG_IMAGE } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Рахунок на оплату ФОП: зразок, реквізити, PDF",
+  title: "Рахунок на оплату ФОП: бланк Word і Excel, зразок",
   description:
-    "Рахунок на оплату для ФОП: які поля потрібні, зразок структури, бланк без Word і як одразу виставити PDF онлайн у Rakhuno.",
+    "Рахунок на оплату для ФОП: безкоштовний бланк Word і Excel, обов’язкові реквізити, зразок заповнення і PDF онлайн за 2 хвилини.",
   alternates: { canonical: "https://rakhuno.com/guides/rakhunok-na-oplatu" },
   openGraph: {
     images: [DEFAULT_OG_IMAGE],
@@ -150,6 +151,15 @@ export default function Page() {
             Приклад вигляду рахунку на оплату: сторони, таблиця, сума.
           </figcaption>
         </figure>
+
+        <TemplateDownload
+          title="Скачати бланк рахунку на оплату"
+          text="Word (.docx) або Excel (.xlsx), без реєстрації. В Excel сума рядків і «Разом» рахуються самі."
+          files={[
+            { href: "/templates/rakhunok-na-oplatu.docx", label: "Бланк у Word (.docx)", format: "docx" },
+            { href: "/templates/rakhunok-na-oplatu.xlsx", label: "Бланк в Excel (.xlsx)", format: "xlsx" },
+          ]}
+        />
 
         <MidInvoiceCta
           title="Зробити рахунок на оплату онлайн"

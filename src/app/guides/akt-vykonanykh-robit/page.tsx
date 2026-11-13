@@ -128,9 +128,10 @@ export default function Page() {
 
         <TemplateDownload
           title="Скачати бланк акту виконаних робіт"
-          text="Word (.docx), без реєстрації. Поля для ФОП без ПДВ: договір, перелік послуг, суми, підписи сторін."
+          text="Word (.docx) або Excel (.xlsx), без реєстрації. Поля для ФОП без ПДВ: договір, перелік послуг, суми, підписи сторін."
           files={[
             { href: "/templates/akt-vykonanykh-robit.docx", label: "Бланк акту у Word (.docx)", format: "docx" },
+            { href: "/templates/akt-vykonanykh-robit.xlsx", label: "Бланк акту в Excel (.xlsx)", format: "xlsx" },
           ]}
         />
 
