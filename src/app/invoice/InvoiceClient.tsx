@@ -22,6 +22,7 @@ import {
   parseAmount,
   paymentText,
   saveSellerProfile,
+  takeInvoiceDraft,
   todayIso,
   validateInvoice,
 } from "@/lib/invoice";
@@ -188,13 +189,25 @@ export default function InvoiceClient({
 
   useEffect(() => {
     const profile = loadSellerProfile();
+    // Started on a guide page (InvoiceQuickStart): client and items are already filled.
+    const draft = en ? null : takeInvoiceDraft();
     setData((prev) => ({
       ...prev,
       number: nextInvoiceNumber(),
       date: todayIso(),
       ...(profile || {}),
       sellerLogo: profile?.sellerLogo || prev.sellerLogo || "",
+      ...(draft ? { buyerName: draft.buyerName, buyerTaxId: draft.buyerTaxId, items: draft.items } : {}),
     }));
+    if (draft) {
+      trackEvent("invoice_draft_loaded", { from: draft.from });
+      setMobileStep(3);
+      window.setTimeout(() => {
+        if (!window.matchMedia("(min-width: 768px)").matches) return;
+        readyRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+        readyRef.current?.querySelector<HTMLInputElement>('input[type="email"]')?.focus({ preventScroll: true });
+      }, 300);
+    }
     recordReturnVisit(Boolean(profile?.sellerName?.trim()));
     setClients(loadClients());
     setHistory(loadHistory());

@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArticleLayout } from "@/components/ArticleLayout";
 import { JsonLd } from "@/components/JsonLd";
+import { InvoiceQuickStart } from "@/components/InvoiceQuickStart";
 import { MidInvoiceCta } from "@/components/SiteShell";
 import { TemplateDownload } from "@/components/TemplateDownload";
 import { DEFAULT_OG_IMAGE } from "@/lib/site";
@@ -161,9 +162,10 @@ export default function Page() {
           ]}
         />
 
-        <MidInvoiceCta
+        <InvoiceQuickStart
+          from="/guides/rakhunok-na-oplatu"
           title="Зробити рахунок на оплату онлайн"
-          text="Ті самі поля, що в зразку нижче — у живому документі. PDF клієнту за ~2 хвилини."
+          text="Впишіть свої реквізити, клієнта й суму — наступним кроком отримаєте PDF з QR, який клієнт відсканує в застосунку банку."
         />
 
         <h2 className="!mt-10 font-display text-2xl text-paper">Зразок полів рахунку на оплату</h2>

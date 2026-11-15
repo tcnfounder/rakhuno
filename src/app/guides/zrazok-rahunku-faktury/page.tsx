@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArticleLayout } from "@/components/ArticleLayout";
 import { JsonLd } from "@/components/JsonLd";
+import { InvoiceQuickStart } from "@/components/InvoiceQuickStart";
 import { MidInvoiceCta } from "@/components/SiteShell";
 import { TemplateDownload } from "@/components/TemplateDownload";
 
@@ -118,10 +119,10 @@ export default function Page() {
           ПДВ». Люди шукають приклад полів: що поставити в шапці, які рядки в таблиці, як написати
           «без ПДВ» і призначення платежу — щоб не вигадувати бланк у Word з нуля.
         </p>
-        <MidInvoiceCta
-          title="Зразок уже в конструкторі"
-          text="Ті самі поля, що нижче на сторінці. Відкрийте рахунок і скачайте свій PDF з ІПН та IBAN."
-          ctaLabel="Створити рахунок за зразком"
+        <InvoiceQuickStart
+          from="/guides/zrazok-rahunku-faktury"
+          title="Заповнити зразок онлайн"
+          text="Ті самі поля, що в зразку нижче. Впишіть свої реквізити, клієнта й суму — наступним кроком отримаєте PDF з QR для оплати."
         />
         <p>
           Нижче — робочий приклад структури для ФОП і шлях до готового PDF у{" "}

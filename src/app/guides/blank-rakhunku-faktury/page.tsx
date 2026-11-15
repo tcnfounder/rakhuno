@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArticleLayout } from "@/components/ArticleLayout";
 import { JsonLd } from "@/components/JsonLd";
-import { MidInvoiceCta } from "@/components/SiteShell";
+import { InvoiceQuickStart } from "@/components/InvoiceQuickStart";
 import { TemplateDownload } from "@/components/TemplateDownload";
 import { DEFAULT_OG_IMAGE } from "@/lib/site";
 
@@ -133,10 +133,10 @@ export default function Page() {
           </Link>
           : реквізити ФОП зберігаються в браузері, а клієнт одразу отримує PDF, а не .docx.
         </p>
-        <MidInvoiceCta
+        <InvoiceQuickStart
+          from="/guides/blank-rakhunku-faktury"
           title="Або заповніть бланк онлайн"
-          text="Без Word: внесіть IBAN і позиції, скачайте готовий PDF за 2 хвилини."
-          ctaLabel="Заповнити бланк рахунку"
+          text="Без Word: впишіть свої реквізити, клієнта й суму — наступним кроком отримаєте готовий PDF з QR для оплати."
         />
 
         <figure className="not-prose my-8">

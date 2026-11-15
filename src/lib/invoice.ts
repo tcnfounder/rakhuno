@@ -63,6 +63,57 @@ export function emptyItem(stableId?: string): InvoiceItem {
   };
 }
 
+/** Client part of an invoice started on a guide page and finished on /invoice. */
+export type InvoiceDraft = {
+  buyerName: string;
+  buyerTaxId: string;
+  items: InvoiceItem[];
+  /** Guide path the draft came from, for analytics. */
+  from: string;
+};
+
+const DRAFT_KEY = "rakhuno.invoiceDraft.v1";
+
+export function saveInvoiceDraft(draft: InvoiceDraft) {
+  if (typeof window === "undefined") return;
+  try {
+    window.sessionStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+  } catch {
+    /* ignore */
+  }
+}
+
+/** Read and clear the draft so a reload of /invoice starts clean. */
+export function takeInvoiceDraft(): InvoiceDraft | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.sessionStorage.getItem(DRAFT_KEY);
+    if (!raw) return null;
+    window.sessionStorage.removeItem(DRAFT_KEY);
+    const parsed = JSON.parse(raw) as Partial<InvoiceDraft>;
+    const items = Array.isArray(parsed.items)
+      ? parsed.items
+          .filter((i) => i && typeof i.description === "string" && i.description.trim())
+          .map((i) => ({
+            id: newId(),
+            description: String(i.description),
+            unit: String(i.unit || "послуга"),
+            qty: String(i.qty || "1"),
+            price: String(i.price || ""),
+          }))
+      : [];
+    if (!items.length) return null;
+    return {
+      buyerName: String(parsed.buyerName || ""),
+      buyerTaxId: String(parsed.buyerTaxId || ""),
+      items,
+      from: String(parsed.from || ""),
+    };
+  } catch {
+    return null;
+  }
+}
+
 export function todayIso() {
   return new Date().toISOString().slice(0, 10);
 }

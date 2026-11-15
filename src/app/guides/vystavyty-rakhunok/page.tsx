@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArticleLayout } from "@/components/ArticleLayout";
 import { JsonLd } from "@/components/JsonLd";
+import { InvoiceQuickStart } from "@/components/InvoiceQuickStart";
 import { MidInvoiceCta } from "@/components/SiteShell";
 import { DEFAULT_OG_IMAGE } from "@/lib/site";
 
@@ -141,9 +142,10 @@ export default function Page() {
           .
         </p>
 
-        <MidInvoiceCta
+        <InvoiceQuickStart
+          from="/guides/vystavyty-rakhunok"
           title="Виставити рахунок зараз"
-          text="Кроки нижче — у конструкторі Rakhuno: реквізити → позиції → PDF клієнту."
+          text="Впишіть свої реквізити, клієнта й суму — наступним кроком отримаєте PDF, який можна одразу надіслати клієнту."
         />
 
         <h2 className="!mt-10 font-display text-2xl text-paper">Коли виставляти рахунок</h2>
