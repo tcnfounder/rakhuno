@@ -17,7 +17,7 @@ import { DEFAULT_OG_IMAGE } from "@/lib/site";
 const URL = "https://rakhuno.com/kalkulyator-podatkiv-fop";
 
 export const metadata: Metadata = {
-  title: "Податки ФОП 2026: ЄП, ЄСВ і військовий збір",
+  title: "Податки ФОП 1, 2, 3 група 2026: калькулятор ЄП, ЄСВ, військового збору",
   description:
     "Скільки платить ФОП 1, 2 і 3 групи у 2026 році: єдиний податок, ЄСВ 1 902,34 грн і військовий збір. Сума за місяць, ліміт доходу і найближчі терміни сплати.",
   alternates: { canonical: URL },
@@ -82,11 +82,11 @@ export default function TaxCalculatorPage() {
       <JsonLd data={[appLd, faqLd]} />
       <SiteShell>
         <h1 className="max-w-3xl font-display text-3xl font-semibold leading-tight text-paper md:text-5xl">
-          Калькулятор податків ФОП 2026
+          Скільки платить ФОП 1, 2 і 3 групи: калькулятор податків 2026
         </h1>
         <p className="mt-4 max-w-3xl text-lg text-mist">
           Оберіть групу і впишіть дохід — побачите єдиний податок, ЄСВ і військовий збір за місяць,
-          перевірку ліміту і найближчі дати сплати.
+          перевірку ліміту і найближчі дати сплати. Залиште email — нагадаємо за 3 дні до кожного строку.
         </p>
 
         <div className="mt-8 max-w-3xl">

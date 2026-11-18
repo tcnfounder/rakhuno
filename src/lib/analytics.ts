@@ -10,17 +10,26 @@ export function isLiveHost(): boolean {
   return new RegExp(LIVE_HOST_PATTERN).test(window.location.hostname);
 }
 
-/** Google Ads conversion: Rakhuno — Invoice oluşturma / kayıt */
 const ADS_CONVERSION_ID = "18117109986";
-const ADS_CONVERSION_LABEL = "pc0jCMTom40dEOLR9L5D";
+/**
+ * Google Ads conversion actions:
+ * - invoice: «Rakhuno — Invoice oluşturma / kayıt» (primary; invoice and document PDF leads)
+ * - tax: «Rakhuno — Tax reminder signup (tax_calc)» (secondary, 7907605403; calculator reminder
+ *   signups, kept apart so it does not train the invoice campaign's bidding)
+ */
+const ADS_CONVERSION_LABELS = {
+  invoice: "pc0jCMTom40dEOLR9L5D",
+  tax: "563pCJv30bodEOLR9L5D",
+} as const;
+export type AdsConversionKind = keyof typeof ADS_CONVERSION_LABELS;
 
 /**
  * Image pixel, not gtag send_to. Loading AW-18117109986 also configures the
  * Jettfy GA4 destination and copies Rakhuno sessions into that property.
  */
-function adsConversionPixelUrl(transactionId: string): string {
+function adsConversionPixelUrl(transactionId: string, kind: AdsConversionKind): string {
   const params = new URLSearchParams({
-    label: ADS_CONVERSION_LABEL,
+    label: ADS_CONVERSION_LABELS[kind],
     guid: "ON",
     script: "0",
     value: "1.0",
@@ -167,10 +176,13 @@ export async function leadTransactionId(email: string): Promise<string> {
 }
 
 /** Fire the Ads conversion without initializing the AW gtag destination. */
-export async function trackAdsConversion(email: string) {
-  if (!isLiveHost()) return;
+export async function trackAdsConversion(email: string, kind: AdsConversionKind = "invoice") {
+  if (!isLiveHost()) {
+    trackEvent("ads_conversion_debug", { kind });
+    return;
+  }
   const transactionId = await leadTransactionId(email);
-  const url = adsConversionPixelUrl(transactionId);
+  const url = adsConversionPixelUrl(transactionId, kind);
   const img = new Image(1, 1);
   img.alt = "";
   img.src = url;

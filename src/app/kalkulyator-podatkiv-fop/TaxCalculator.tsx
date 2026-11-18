@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { leadTransactionId, trackEvent } from "@/lib/analytics";
+import { leadTransactionId, trackAdsConversion, trackEvent } from "@/lib/analytics";
 import {
   calcMonthly,
   formatMoney,
@@ -51,6 +51,7 @@ export function TaxCalculator() {
       trackEvent("tax_reminder_signup", { group, new_contact: created });
       if (created) {
         trackEvent("generate_lead", { method: "tax_calc" });
+        await trackAdsConversion(email, "tax");
         trackMetaLead(await leadTransactionId(email));
       }
     } catch {
