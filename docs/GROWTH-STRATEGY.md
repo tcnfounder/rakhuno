@@ -74,6 +74,13 @@ Product work in this phase:
 
 ## Change log
 
+### 2026-11-18 — Tax campaign set up (paused)
+
+- New Search campaign `24482666807` «Rakhuno | Tax | UA», **PAUSED**, 100 TRY/day, Maximize clicks with a 15 TRY CPC cap, Google Search only, Ukraine (presence), Ukrainian + Russian.
+- One ad group «Tax calculator»: 15 EXACT + 6 PHRASE tax keywords (фоп 2/3 група податки, військовий збір фоп, єсв фоп, калькулятор податків фоп…), 15 phrase negatives (декларація, бухгалтер, консультації, скачати, бланк…). Lands on `/kalkulyator-podatkiv-fop` with `utm_campaign=rakhuno_tax`.
+- Conversion: «Rakhuno — Tax reminder signup (tax_calc)» `7907605403`, **secondary**, fired by the calculator's reminder signup (commit 2d1f27e).
+- Gate: 7 days after enabling — cost per new reminder signup vs ~109 TRY invoice CPL. Cheaper → keep and consider Maximize conversions on this action; dearer → pause.
+
 ### 2026-11-18 — Google gate: CPL over target, prune instead of scale
 
 7 days 11–17 Nov on campaign `24303377012`: 33 clicks, 765.8 TRY, 7 Brevo `google_ads` leads → **~109 TRY CPL** (gate ≤ ~100). Google Ads itself counted 5 conversions. Budget stays 100 TRY/day.
