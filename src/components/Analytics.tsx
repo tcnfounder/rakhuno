@@ -2,6 +2,7 @@ import Script from "next/script";
 import { CookieBar } from "@/components/CookieBar";
 import { MetaPixel } from "@/components/MetaPixel";
 import { CONSENT_KEY, OPT_IN_REGIONS } from "@/lib/consent";
+import { LIVE_HOST_PATTERN } from "@/lib/analytics";
 
 /**
  * GA4 «Rakhuno» web stream. Pages are prerendered, so the ID is baked in at build time;
@@ -27,6 +28,8 @@ export function Analytics() {
       />
       <Script id="gtag-init" strategy="afterInteractive">
         {`
+          // Local builds and previews: GA's own opt-out flag, so nothing reaches the live property.
+          if (!new RegExp(${JSON.stringify(LIVE_HOST_PATTERN)}).test(location.hostname)) { window['ga-disable-${gaId}'] = true; }
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           gtag('consent','default',{${DENIED},region:${JSON.stringify(OPT_IN_REGIONS).replace(/"/g, "'")},wait_for_update:500});

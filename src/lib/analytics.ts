@@ -1,3 +1,15 @@
+/**
+ * Only the live site sends analytics. Local builds and Vercel previews fall back to the
+ * live GA4 id, so without this guard their test events land in the real reports.
+ * The inline GA4 and Meta Pixel scripts use the same pattern.
+ */
+export const LIVE_HOST_PATTERN = "^(www\\.)?rakhuno\\.com$";
+
+export function isLiveHost(): boolean {
+  if (typeof window === "undefined") return false;
+  return new RegExp(LIVE_HOST_PATTERN).test(window.location.hostname);
+}
+
 /** Google Ads conversion: Rakhuno — Invoice oluşturma / kayıt */
 const ADS_CONVERSION_ID = "18117109986";
 const ADS_CONVERSION_LABEL = "pc0jCMTom40dEOLR9L5D";
@@ -119,11 +131,24 @@ function getGtag(): ((...args: unknown[]) => void) | undefined {
   ).gtag;
 }
 
-/** GA4 event helper — no-ops when gtag is unavailable. */
+/**
+ * GA4 event helper — no-ops when gtag is unavailable. Off the live host it sends nothing;
+ * set localStorage `rakhuno_debug_analytics` = "1" to see the events in the console instead.
+ */
 export function trackEvent(
   name: string,
   params?: Record<string, string | number | boolean | undefined>,
 ) {
+  if (!isLiveHost()) {
+    try {
+      if (window.localStorage.getItem("rakhuno_debug_analytics") === "1") {
+        console.info("[analytics]", name, params || {});
+      }
+    } catch {
+      /* storage blocked */
+    }
+    return;
+  }
   const gtag = getGtag();
   if (typeof gtag !== "function") return;
   gtag("event", name, params || {});
@@ -143,7 +168,7 @@ export async function leadTransactionId(email: string): Promise<string> {
 
 /** Fire the Ads conversion without initializing the AW gtag destination. */
 export async function trackAdsConversion(email: string) {
-  if (typeof window === "undefined") return;
+  if (!isLiveHost()) return;
   const transactionId = await leadTransactionId(email);
   const url = adsConversionPixelUrl(transactionId);
   const img = new Image(1, 1);

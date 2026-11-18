@@ -234,6 +234,42 @@ export default function InvoiceClient({
     readyRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
   }, [pdfReady]);
 
+  // Funnel: each step fires `invoice_step` once per page load, so GA4 shows where people stop.
+  // `prefilled` marks steps already complete on arrival (saved profile, guide draft).
+  const stepsSent = useRef<Set<string> | null>(null);
+  useEffect(() => {
+    if (!mounted) return;
+    const firstPass = stepsSent.current === null;
+    if (firstPass) stepsSent.current = new Set();
+    const sent = stepsSent.current!;
+    const itemsOk = data.items.some(
+      (i) => i.description.trim() && parseAmount(i.qty) > 0 && i.price.trim() !== "",
+    );
+    const reached: [string, boolean][] = [
+      ["seller", Boolean(data.sellerName.trim()) && data.sellerIban.replace(/\s/g, "").length >= 15],
+      ["client", Boolean(data.buyerName.trim())],
+      ["items", itemsOk],
+      ["email", Boolean(email.trim())],
+    ];
+    reached.forEach(([step, ok], index) => {
+      if (!ok || sent.has(step)) return;
+      sent.add(step);
+      trackEvent("invoice_step", { step, step_index: index + 1, prefilled: firstPass, lang });
+    });
+  }, [mounted, data.sellerName, data.sellerIban, data.buyerName, data.items, email, lang]);
+
+  // Mobile wizard screens the visitor actually opened (0 ФОП → 3 PDF).
+  const mobileWizardRef = useRef<HTMLDivElement>(null);
+  const mobileStepsSeen = useRef<Set<number>>(new Set());
+  useEffect(() => {
+    if (!mounted || mobileStepsSeen.current.has(mobileStep)) return;
+    // Count only when the wizard is on screen (md:hidden hides it on desktop).
+    const wizard = mobileWizardRef.current;
+    if (!wizard || wizard.getClientRects().length === 0) return;
+    mobileStepsSeen.current.add(mobileStep);
+    trackEvent("invoice_mobile_step", { step_index: mobileStep + 1, lang });
+  }, [mounted, mobileStep, lang]);
+
   const total = useMemo(() => calcTotal(data.items), [data.items]);
   const hasLogo = Boolean(data.sellerLogo);
   const words = useMemo(() => amountInWordsUk(total), [total]);
@@ -555,6 +591,7 @@ export default function InvoiceClient({
     setError("");
     setOkMsg("");
     const invalid = validate(data);
+    trackEvent("invoice_pdf_click", { valid: !invalid, lang });
     if (invalid) {
       setError(invalid);
       return;
@@ -725,7 +762,7 @@ export default function InvoiceClient({
           />
 
           {/* —— Mobile wizard: one step per screen —— */}
-          <div className="print:hidden mb-4 md:hidden">
+          <div ref={mobileWizardRef} className="print:hidden mb-4 md:hidden">
             {mobileStep === 0 ? (
               <RecentInvoices
                 history={history}

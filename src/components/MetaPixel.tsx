@@ -7,6 +7,7 @@ import { useEffect, useRef } from "react";
 /** Meta Pixel «Rakhuno»: owned by the Atakan Dindar portfolio and linked to ad account 810047513628155. */
 export const META_PIXEL_ID = "873287603818661";
 import { CONSENT_KEY, COUNTRY_COOKIE, OPT_IN_REGIONS } from "@/lib/consent";
+import { LIVE_HOST_PATTERN } from "@/lib/analytics";
 
 type Fbq = (...args: unknown[]) => void;
 
@@ -38,6 +39,7 @@ export function MetaPixel() {
   return (
     <Script id="meta-pixel" strategy="afterInteractive">
       {`
+        if (new RegExp(${JSON.stringify(LIVE_HOST_PATTERN)}).test(location.hostname)) {
         !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
         n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
         n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
@@ -46,6 +48,7 @@ export function MetaPixel() {
         try{var c=localStorage.getItem('${CONSENT_KEY}');var m=document.cookie.match(/(?:^|; )${COUNTRY_COOKIE}=([A-Z]{2})/);var cc=m?m[1]:'';var optIn=!cc||${JSON.stringify(OPT_IN_REGIONS).replace(/"/g, "'")}.indexOf(cc)!==-1;if(c==='rejected'||(c!=='accepted'&&optIn)){fbq('consent','revoke');}}catch(e){fbq('consent','revoke');}
         fbq('init','${META_PIXEL_ID}');
         if((location.pathname||'').indexOf('/api/')!==0){fbq('track','PageView');}
+        }
       `}
     </Script>
   );
