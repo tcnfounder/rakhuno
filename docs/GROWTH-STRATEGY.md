@@ -74,7 +74,9 @@ Product work in this phase:
 
 ## Change log
 
-### 2026-11-18 — Tax campaign set up (paused)
+### 2026-11-18 — Tax campaign live
+
+- Enabled on 2026-11-18 at the user's request; ad still in Google review at that time. Gate date: **2026-11-25**.
 
 - New Search campaign `24482666807` «Rakhuno | Tax | UA», **PAUSED**, 100 TRY/day, Maximize clicks with a 15 TRY CPC cap, Google Search only, Ukraine (presence), Ukrainian + Russian.
 - One ad group «Tax calculator»: 15 EXACT + 6 PHRASE tax keywords (фоп 2/3 група податки, військовий збір фоп, єсв фоп, калькулятор податків фоп…), 15 phrase negatives (декларація, бухгалтер, консультації, скачати, бланк…). Lands on `/kalkulyator-podatkiv-fop` with `utm_campaign=rakhuno_tax`.
