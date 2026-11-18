@@ -74,6 +74,15 @@ Product work in this phase:
 
 ## Change log
 
+### 2026-11-18 — Google gate: CPL over target, prune instead of scale
+
+7 days 11–17 Nov on campaign `24303377012`: 33 clicks, 765.8 TRY, 7 Brevo `google_ads` leads → **~109 TRY CPL** (gate ≤ ~100). Google Ads itself counted 5 conversions. Budget stays 100 TRY/day.
+
+- Paused EXACT `рахунок на оплату` (7 clicks, 124.9 TRY, 0 conv) and EXACT `рахунок фактура онлайн` (4 clicks, 96.2 TRY, 0 conv).
+- Kept `рахунок фактура` (12 clicks, 273.6 TRY, 1 conv).
+- Next check 2026-11-25: CPL over 11-18..11-24 and whether the budget moved to converting keywords.
+- Guide invoice form (`InvoiceQuickStart`, live 11-15): 2 real `doc_fill_start`, 0 submits so far. The 2 submits in GA4 on 11-15 were localhost tests (filter `hostName = rakhuno.com`).
+
 ### 2026-11-11 — Lead pipeline and attribution
 
 - Brevo `BREVO_API_KEY`, `BREVO_LIST_ID`, template ids and `CRON_SECRET` set on Vercel; `/api/health` reports `leads: true`.
