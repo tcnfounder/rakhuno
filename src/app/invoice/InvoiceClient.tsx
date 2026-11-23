@@ -169,6 +169,8 @@ export default function InvoiceClient({
   const [unlocked, setUnlocked] = useState(false);
   const [copied, setCopied] = useState(false);
   const [lastPdf, setLastPdf] = useState<PdfResult | null>(null);
+  /** The data the cached PDF was built from; an edit since then means «download again» must rebuild. */
+  const lastPdfData = useRef<InvoiceData | null>(null);
   const [pdfReady, setPdfReady] = useState(false);
   const [mounted, setMounted] = useState(false);
   /** Mobile wizard: 0 ФОП → 1 клієнт → 2 позиції → 3 PDF */
@@ -598,8 +600,9 @@ export default function InvoiceClient({
   async function makePdf(): Promise<PdfResult> {
     const node = previewRef.current;
     if (!node) throw new Error("preview_missing");
-    const result = await downloadInvoicePdf(data, node);
+    const result = await downloadInvoicePdf(data, node, qrSrc);
     setLastPdf(result);
+    lastPdfData.current = data;
     try {
       window.sessionStorage.setItem(
         LAST_PDF_META_KEY,
@@ -684,8 +687,9 @@ export default function InvoiceClient({
     }
     setBusy(true);
     setError("");
+    const cached = Boolean(lastPdf && lastPdfData.current === data);
     try {
-      if (lastPdf) {
+      if (lastPdf && cached) {
         downloadPdfBlob(lastPdf.blob, lastPdf.filename);
       } else {
         await makePdf();
@@ -695,7 +699,7 @@ export default function InvoiceClient({
       setPdfReady(true);
       setOkMsg(L("PDF завантажено.", "PDF downloaded."));
       trackEvent("invoice_pdf_redownload", {
-        from_cache: Boolean(lastPdf),
+        from_cache: cached,
       });
       await recordVerifiedLead();
     } catch {

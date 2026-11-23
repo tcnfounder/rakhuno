@@ -226,8 +226,23 @@ export async function buildInvoicePdf(
   }
 }
 
-export async function downloadInvoicePdf(data: InvoiceData, node: HTMLElement): Promise<PdfResult> {
-  const result = await buildInvoicePdf(data, node);
+/**
+ * Invoice PDF with real, selectable text (pdf-vector.ts). If that fails (font did not load,
+ * old browser), fall back to the image capture of the on-screen sheet.
+ */
+export async function downloadInvoicePdf(
+  data: InvoiceData,
+  node: HTMLElement,
+  qrDataUrl: string | null = null,
+): Promise<PdfResult> {
+  let result: PdfResult;
+  try {
+    const { buildInvoiceVectorPdf } = await import("./pdf-vector");
+    result = await buildInvoiceVectorPdf(data, qrDataUrl);
+  } catch (e) {
+    console.warn("[pdf] vector PDF failed, using image capture", e);
+    result = await buildInvoicePdf(data, node);
+  }
   triggerBlobDownload(result.blob, result.filename);
   return result;
 }
