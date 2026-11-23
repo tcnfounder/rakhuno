@@ -216,6 +216,20 @@ export function TaxCalculator() {
         Якщо дата припадає на вихідний, перевірте перенесення в календарі ДПС.
       </p>
 
+      {group > 1 ? (
+        <p className="mt-6 rounded-xl border border-white/10 bg-ink/60 p-4 text-sm text-mist">
+          Приймаєте оплату готівкою, карткою чи через LiqPay? ФОП {group} групи в такому разі потрібен ПРРО —
+          штраф без чека 100% суми.{" "}
+          <Link
+            href="/guides/prro-dlya-fop"
+            onClick={() => trackEvent("tax_cta_prro", { group })}
+            className="text-signal underline-offset-2 hover:underline"
+          >
+            Чи потрібен вам ПРРО →
+          </Link>
+        </p>
+      ) : null}
+
       <div className="mt-6 flex flex-col gap-3 rounded-xl border border-white/10 bg-ink/60 p-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="font-semibold text-paper">Потрібен рахунок для клієнта?</p>

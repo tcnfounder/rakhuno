@@ -94,6 +94,12 @@ const entries: Entry[] = [
     lastModified: "2026-11-13",
   },
   {
+    path: "/guides/prro-dlya-fop",
+    priority: 0.88,
+    changeFrequency: "monthly",
+    lastModified: "2026-11-23",
+  },
+  {
     path: "/guides/fop-3-grupa",
     priority: 0.88,
     changeFrequency: "monthly",

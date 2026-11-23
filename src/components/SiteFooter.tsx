@@ -27,6 +27,7 @@ const columns: { title: string; links: { href: string; label: string; hrefLang?:
     links: [
       { href: "/guides/vystavyty-rakhunok", label: "Як виставити рахунок" },
       { href: "/guides/fop-3-grupa", label: "ФОП 3 група" },
+      { href: "/guides/prro-dlya-fop", label: "ПРРО для ФОП" },
       { href: "/guides/yedynyy-podatok", label: "Єдиний податок" },
       { href: "/guides/podatky-fop", label: "Податки ФОП: чекліст" },
       { href: "/guides", label: "Усі гіди" },
