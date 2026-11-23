@@ -52,6 +52,7 @@ import { recordInvoiceCreated, recordReturnVisit } from "@/lib/usage";
 import { DEFAULT_INVOICE_HEADING, type InvoiceHeading } from "@/lib/invoice-headings";
 import {
   buildInvoicePdf,
+  buildWithFallback,
   downloadInvoicePdf,
   downloadPdfBlob,
   type PdfResult,
@@ -448,13 +449,27 @@ export default function InvoiceClient({
    * Document chain: after the invoice, the act (services) or the видаткова накладна (goods)
    * comes from the same parties, lines and sum. Offered after the email unlock.
    */
+  const nakladnaData = {
+    number: data.number,
+    date: actDate,
+    sellerName: data.sellerName,
+    sellerTaxId: data.sellerTaxId,
+    buyerName: data.buyerName,
+    buyerTaxId: data.buyerTaxId,
+    basis: `Рахунок-фактура № ${data.number || "—"} від ${formatDateUk(data.date)}`,
+    items: data.items,
+  };
+
   async function downloadFollowUp(kind: "akt" | "nakladna") {
     const node = kind === "akt" ? actRef.current : nakladnaRef.current;
     if (!node) return;
     setBusy(true);
     setError("");
     try {
-      const result = await buildInvoicePdf(data, node, kind);
+      const result = await buildWithFallback(
+        (m) => (kind === "akt" ? m.buildActVectorPdf(data, actDate) : m.buildNakladnaVectorPdf(nakladnaData)),
+        () => buildInvoicePdf(data, node, kind),
+      );
       downloadPdfBlob(result.blob, result.filename);
       setOkMsg(
         kind === "akt"
@@ -1746,16 +1761,7 @@ export default function InvoiceClient({
           <ActDocument ref={actRef} data={data} actDate={actDate} />
           <NakladnaDocument
             ref={nakladnaRef}
-            data={{
-              number: data.number,
-              date: actDate,
-              sellerName: data.sellerName,
-              sellerTaxId: data.sellerTaxId,
-              buyerName: data.buyerName,
-              buyerTaxId: data.buyerTaxId,
-              basis: `Рахунок-фактура № ${data.number || "—"} від ${formatDateUk(data.date)}`,
-              items: data.items,
-            }}
+            data={nakladnaData}
           />
         </div>
       ) : null}

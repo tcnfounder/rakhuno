@@ -15,7 +15,7 @@ const money = new Intl.NumberFormat("uk-UA", { minimumFractionDigits: 2, maximum
 function fopName(name: string) {
   const n = name.trim();
   if (!n) return "ФОП ____________________";
-  return /^фоп\b/i.test(n) ? n : `ФОП ${n}`;
+  return /^фоп(\s|$)/i.test(n) ? n : `ФОП ${n}`;
 }
 
 /**

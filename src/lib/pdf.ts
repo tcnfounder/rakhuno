@@ -227,22 +227,30 @@ export async function buildInvoicePdf(
 }
 
 /**
- * Invoice PDF with real, selectable text (pdf-vector.ts). If that fails (font did not load,
- * old browser), fall back to the image capture of the on-screen sheet.
+ * Text PDF first (pdf-vector.ts: selectable, small); if it throws (font did not load, old
+ * browser), the image capture of the on-screen sheet.
  */
+export async function buildWithFallback(
+  vector: (m: typeof import("./pdf-vector")) => Promise<PdfResult>,
+  fallback: () => Promise<PdfResult>,
+): Promise<PdfResult> {
+  try {
+    return await vector(await import("./pdf-vector"));
+  } catch (e) {
+    console.warn("[pdf] text PDF failed, using image capture", e);
+    return fallback();
+  }
+}
+
 export async function downloadInvoicePdf(
   data: InvoiceData,
   node: HTMLElement,
   qrDataUrl: string | null = null,
 ): Promise<PdfResult> {
-  let result: PdfResult;
-  try {
-    const { buildInvoiceVectorPdf } = await import("./pdf-vector");
-    result = await buildInvoiceVectorPdf(data, qrDataUrl);
-  } catch (e) {
-    console.warn("[pdf] vector PDF failed, using image capture", e);
-    result = await buildInvoicePdf(data, node);
-  }
+  const result = await buildWithFallback(
+    (m) => m.buildInvoiceVectorPdf(data, qrDataUrl),
+    () => buildInvoicePdf(data, node),
+  );
   triggerBlobDownload(result.blob, result.filename);
   return result;
 }
@@ -258,6 +266,18 @@ export async function downloadNodePdf(
   number: string,
 ): Promise<PdfResult> {
   const result = await buildInvoicePdf({ number } as InvoiceData, node, filePrefix);
+  triggerBlobDownload(result.blob, result.filename);
+  return result;
+}
+
+/** Act or накладна from a guide page: text PDF, falling back to the capture of `node`. */
+export async function downloadDocPdf(
+  vector: (m: typeof import("./pdf-vector")) => Promise<PdfResult>,
+  node: HTMLElement,
+  filePrefix: string,
+  number: string,
+): Promise<PdfResult> {
+  const result = await buildWithFallback(vector, () => buildInvoicePdf({ number } as InvoiceData, node, filePrefix));
   triggerBlobDownload(result.blob, result.filename);
   return result;
 }

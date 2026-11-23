@@ -22,7 +22,7 @@ const blank = "____________________";
 export function fopName(name: string) {
   const n = name.trim();
   if (!n) return `ФОП ${blank}`;
-  return /^фоп\b/i.test(n) ? n : `ФОП ${n}`;
+  return /^фоп(\s|$)/i.test(n) ? n : `ФОП ${n}`;
 }
 
 export type PartyData = {
