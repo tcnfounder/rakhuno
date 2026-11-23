@@ -46,6 +46,7 @@ import {
 } from "@/lib/history";
 import { ClientChips, RecentInvoices } from "@/components/InvoiceMemory";
 import { ProOffer } from "@/components/ProOffer";
+import { syncAccount } from "@/lib/cloud";
 import { recordInvoiceCreated, recordReturnVisit } from "@/lib/usage";
 import { DEFAULT_INVOICE_HEADING, type InvoiceHeading } from "@/lib/invoice-headings";
 import {
@@ -212,6 +213,28 @@ export default function InvoiceClient({
     recordReturnVisit(Boolean(profile?.sellerName?.trim()));
     setClients(loadClients());
     setHistory(loadHistory());
+    // Signed in: merge with the account, then refresh pickers and fill an empty seller block.
+    void syncAccount().then((account) => {
+      if (!account) return;
+      setClients(loadClients());
+      setHistory(loadHistory());
+      const p = account.profile;
+      if (!p?.sellerName?.trim()) return;
+      setData((prev) =>
+        prev.sellerName.trim()
+          ? prev
+          : {
+              ...prev,
+              sellerName: p.sellerName || "",
+              sellerTaxId: p.sellerTaxId || "",
+              sellerAddress: p.sellerAddress || "",
+              sellerIban: p.sellerIban || "",
+              sellerBank: p.sellerBank || "",
+              fopGroup: p.fopGroup || prev.fopGroup,
+              sellerLogo: p.sellerLogo || prev.sellerLogo,
+            },
+      );
+    });
     try {
       const meta = window.sessionStorage.getItem(LAST_PDF_META_KEY);
       if (meta) {
@@ -358,6 +381,11 @@ export default function InvoiceClient({
     rememberInvoice(data);
     setClients(loadClients());
     setHistory(loadHistory());
+    void syncAccount().then((account) => {
+      if (!account) return;
+      setClients(loadClients());
+      setHistory(loadHistory());
+    });
   }
 
   function resetForNewInvoice() {

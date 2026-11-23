@@ -6,8 +6,8 @@ import {
 } from "@/lib/invoice";
 
 /**
- * Saved clients and recent invoices. Like the seller profile, they stay in this browser's
- * localStorage and never reach the server.
+ * Saved clients and recent invoices, kept in this browser's localStorage. For a signed-in user,
+ * lib/cloud.ts also copies them to the account (more history than fits here).
  */
 const CLIENTS_KEY = "rakhuno.clients.v1";
 const HISTORY_KEY = "rakhuno.history.v1";
@@ -113,6 +113,13 @@ export function rememberInvoice(data: InvoiceData) {
     HISTORY_KEY,
     [entry, ...loadHistory().filter((h) => h.id !== id)].slice(0, MAX_HISTORY),
   );
+}
+
+/** Replace the local lists with the merged cloud copy (signed-in sync). */
+export function replaceLocalLists(clients: SavedClient[], invoices: SavedInvoice[]) {
+  if (typeof window === "undefined") return;
+  writeList(CLIENTS_KEY, clients.slice(0, MAX_CLIENTS));
+  writeList(HISTORY_KEY, invoices.slice(0, MAX_HISTORY));
 }
 
 /** Items with fresh ids, so a repeated invoice does not share React keys with the old one. */

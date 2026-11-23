@@ -36,6 +36,9 @@ export function SiteHeader({
         <Link href="/#yak-pratsyuye" className="hidden text-mist transition hover:text-paper md:inline">
           Як працює
         </Link>
+        <Link href="/account" className="text-mist transition hover:text-paper">
+          Кабінет
+        </Link>
         <LangSwitch current="uk" ukHref={ukHref} enHref={enHref} />
         <Link
           href="/invoice"

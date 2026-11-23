@@ -71,8 +71,8 @@ export function RecentInvoices({
       </p>
       <p className="mt-1 text-sm text-mist">
         {en
-          ? "Stored only in your browser. “Repeat” copies the client and items under a new number."
-          : "Зберігаються лише у вашому браузері. «Повторити» — той самий клієнт і позиції з новим номером."}
+          ? "Stored in your browser, and in your account if you are signed in. “Repeat” copies the client and items under a new number."
+          : "Зберігаються у вашому браузері, а після входу — і в кабінеті. «Повторити» — той самий клієнт і позиції з новим номером."}
       </p>
       <ul className="mt-3 divide-y divide-white/10 rounded-xl border border-white/10 bg-ink-2/60">
         {history.slice(0, limit).map((invoice) => (
