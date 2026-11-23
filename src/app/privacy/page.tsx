@@ -28,7 +28,7 @@ export default function PrivacyPage() {
             <h2 className="font-display text-xl text-paper">1. Хто ми</h2>
             <p className="mt-3">
               Rakhuno (rakhuno.com) — вебсервіс для створення рахунку-фактури та email-нагадувань
-              про типові строки податків для ФОП. Контакт:{" "}
+              про типові строки податків для ФОП. Сервіс надає Atakan Dindar (фізична особа). Контакт:{" "}
               <a href="mailto:info@rakhuno.com" className="text-signal hover:underline">
                 info@rakhuno.com
               </a>
@@ -66,8 +66,10 @@ export default function PrivacyPage() {
           <section>
             <h2 className="font-display text-xl text-paper">4. Де обробляємо</h2>
             <p className="mt-3">
-              Хостинг — Cloudflare. Email-розсилка — Brevo (Sendinblue). Дані можуть оброблятися в
-              ЄС / відповідно до політик цих провайдерів.
+              Хостинг — Vercel. База даних кабінету — Neon. Email-розсилка — Brevo (Sendinblue).
+              Оплату платних тарифів приймає Paddle.com (Merchant of Record): дані картки отримує
+              Paddle, ми їх не бачимо й не зберігаємо. Дані можуть оброблятися в ЄС / відповідно до
+              політик цих провайдерів.
             </p>
           </section>
 

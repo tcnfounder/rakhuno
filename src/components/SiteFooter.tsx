@@ -37,8 +37,10 @@ const columns: { title: string; links: { href: string; label: string; hrefLang?:
     links: [
       { href: "/#yak-pratsyuye", label: "Як це працює" },
       { href: "/en", label: "English", hrefLang: "en" },
+      { href: "/pro", label: "Тарифи" },
       { href: "/privacy", label: "Конфіденційність" },
       { href: "/terms", label: "Умови використання" },
+      { href: "/refund", label: "Повернення коштів" },
     ],
   },
 ];
@@ -90,7 +92,7 @@ export function SiteFooter() {
         </div>
 
         <div className="mt-12 flex flex-col gap-3 border-t border-line pt-6 text-xs text-muted sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} Rakhuno</p>
+          <p>© {new Date().getFullYear()} Rakhuno · Atakan Dindar</p>
           <p className="max-w-xl sm:text-right">
             Не є податковою консультацією. Строки загальні — перевіряйте актуальні вимоги ДПС.
           </p>

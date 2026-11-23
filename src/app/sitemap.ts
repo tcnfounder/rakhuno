@@ -117,8 +117,9 @@ const entries: Entry[] = [
     changeFrequency: "weekly",
     lastModified: "2026-09-29",
   },
-  { path: "/privacy", priority: 0.3, changeFrequency: "yearly", lastModified: "2026-09-20" },
-  { path: "/terms", priority: 0.3, changeFrequency: "yearly", lastModified: "2026-09-20" },
+  { path: "/privacy", priority: 0.3, changeFrequency: "yearly", lastModified: "2026-11-23" },
+  { path: "/terms", priority: 0.3, changeFrequency: "yearly", lastModified: "2026-11-23" },
+  { path: "/refund", priority: 0.3, changeFrequency: "yearly", lastModified: "2026-11-23" },
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
