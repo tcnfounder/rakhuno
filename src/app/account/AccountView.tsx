@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { trackEvent } from "@/lib/analytics";
 import { isSignedIn, syncAccount, type AccountSnapshot } from "@/lib/cloud";
 import { formatDateUk, formatUah } from "@/lib/invoice";
+import { InvoiceLinks } from "./InvoiceLinks";
 
 const card = "rounded-2xl border border-white/10 bg-ink/60 p-5";
 
@@ -65,6 +66,8 @@ export function AccountView() {
           <p className="mt-1 font-display text-3xl text-paper">{account.clients.length}</p>
         </section>
       </div>
+
+      <InvoiceLinks />
 
       <section className={`${card} mt-6`}>
         <h2 className="font-display text-xl text-paper">Останні рахунки</h2>

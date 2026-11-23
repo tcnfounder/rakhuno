@@ -46,6 +46,7 @@ import {
 } from "@/lib/history";
 import { ClientChips, RecentInvoices } from "@/components/InvoiceMemory";
 import { ProOffer } from "@/components/ProOffer";
+import { InvoiceLinkShare } from "@/components/InvoiceLinkShare";
 import { syncAccount } from "@/lib/cloud";
 import { recordInvoiceCreated, recordReturnVisit } from "@/lib/usage";
 import { DEFAULT_INVOICE_HEADING, type InvoiceHeading } from "@/lib/invoice-headings";
@@ -1028,6 +1029,7 @@ export default function InvoiceClient({
                       {busy ? "…" : L("Завантажити PDF", "Download PDF")}
                     </button>
                     {unlocked ? actPanel : null}
+                    {unlocked ? <InvoiceLinkShare data={data} email={email} lang={lang} /> : null}
                     {unlocked ? <ProOffer email={email} lang={lang} /> : null}
                   </div>
                 ) : null}
@@ -1537,6 +1539,7 @@ export default function InvoiceClient({
                     </div>
                   ) : null}
                   {unlocked ? actPanel : null}
+                    {unlocked ? <InvoiceLinkShare data={data} email={email} lang={lang} /> : null}
                     {unlocked ? <ProOffer email={email} lang={lang} /> : null}
                 </div>
               ) : null}

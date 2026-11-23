@@ -71,7 +71,11 @@ export async function redeemLoginToken(token: string) {
 }
 
 export async function getSessionUser(req: NextRequest): Promise<SessionUser | null> {
-  const token = req.cookies.get(SESSION_COOKIE)?.value;
+  return userForSessionToken(req.cookies.get(SESSION_COOKIE)?.value);
+}
+
+/** For server components, which read cookies() instead of a request. */
+export async function userForSessionToken(token: string | undefined): Promise<SessionUser | null> {
   if (!token) return null;
   const sql = await db();
   const rows = await sql<SessionUser[]>`

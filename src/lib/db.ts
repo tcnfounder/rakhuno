@@ -23,6 +23,8 @@ function connect(): Sql {
       max: 3,
       idle_timeout: 20,
       connect_timeout: 10,
+      // CREATE ... IF NOT EXISTS raises a NOTICE per existing table on every cold start.
+      onnotice: () => {},
     });
   }
   return client;
@@ -59,6 +61,22 @@ CREATE TABLE IF NOT EXISTS user_data (
   invoice_counter integer NOT NULL DEFAULT 1,
   updated_at timestamptz NOT NULL DEFAULT now()
 );
+CREATE TABLE IF NOT EXISTS invoice_links (
+  id text PRIMARY KEY,
+  user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  invoice_key text NOT NULL,
+  data jsonb NOT NULL,
+  total numeric(14,2) NOT NULL DEFAULT 0,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now(),
+  first_viewed_at timestamptz,
+  last_viewed_at timestamptz,
+  views integer NOT NULL DEFAULT 0,
+  paid_at timestamptz,
+  revoked_at timestamptz,
+  UNIQUE (user_id, invoice_key)
+);
+CREATE INDEX IF NOT EXISTS invoice_links_user_idx ON invoice_links (user_id, created_at DESC);
 `;
 
 /** The database, with the schema created once per server instance. */
