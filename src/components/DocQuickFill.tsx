@@ -32,7 +32,7 @@ import {
   todayIso,
 } from "@/lib/invoice";
 import { markPendingLead, submitInvoiceLead, takePendingLead } from "@/lib/invoice-lead";
-import { PdfResult, downloadDocPdf, downloadNodePdf, downloadPdfBlob } from "@/lib/pdf";
+import { PdfResult, downloadDocPdf, downloadPdfBlob } from "@/lib/pdf";
 
 export type DocKind = "nakladna" | "akt" | "akt-zvirky";
 
@@ -171,15 +171,17 @@ export function DocQuickFill({ kind }: { kind: DocKind }) {
   async function makePdf() {
     const node = docRef.current;
     if (!node) throw new Error("doc_missing");
-    const result =
-      kind === "akt-zvirky"
-        ? await downloadNodePdf(node, doc.prefix, number)
-        : await downloadDocPdf(
-            (m) => (kind === "akt" ? m.buildActVectorPdf(actData, date, basis) : m.buildNakladnaVectorPdf({ ...party, items })),
-            node,
-            doc.prefix,
-            number,
-          );
+    const result = await downloadDocPdf(
+      (m) =>
+        kind === "akt-zvirky"
+          ? m.buildZvirkaVectorPdf(zvirka)
+          : kind === "akt"
+            ? m.buildActVectorPdf(actData, date, basis)
+            : m.buildNakladnaVectorPdf({ ...party, items }),
+      node,
+      doc.prefix,
+      number,
+    );
     setDone(result);
     return result;
   }

@@ -259,18 +259,7 @@ export function downloadPdfBlob(blob: Blob, filename: string) {
   triggerBlobDownload(blob, filename);
 }
 
-/** Any A4 document node (накладна, акт, акт звірки) → PDF download. */
-export async function downloadNodePdf(
-  node: HTMLElement,
-  filePrefix: string,
-  number: string,
-): Promise<PdfResult> {
-  const result = await buildInvoicePdf({ number } as InvoiceData, node, filePrefix);
-  triggerBlobDownload(result.blob, result.filename);
-  return result;
-}
-
-/** Act or накладна from a guide page: text PDF, falling back to the capture of `node`. */
+/** A guide-page document (акт, накладна, акт звірки): text PDF, falling back to the capture of `node`. */
 export async function downloadDocPdf(
   vector: (m: typeof import("./pdf-vector")) => Promise<PdfResult>,
   node: HTMLElement,

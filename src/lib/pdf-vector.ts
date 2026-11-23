@@ -8,6 +8,7 @@ import {
   type InvoiceData,
   type InvoiceItem,
 } from "./invoice";
+import { zvirkaConclusion, zvirkaTotals, type ZvirkaData } from "@/components/DocDocuments";
 
 /**
  * Documents drawn as real text (pdf-lib + Roboto with Cyrillic, subset into the file): every
@@ -178,7 +179,8 @@ async function openSheet() {
       }
     },
     /** Bordered table, full content width; the flexible column (w: 0) takes the rest. Header repeats on each page. */
-    table(cols: Column[], rows: string[][], size = 8.5) {
+    /** A row is its cells, or `{ cells, bold }` for totals. */
+    table(cols: Column[], rows: (string[] | { cells: string[]; bold?: boolean })[], size = 8.5) {
       const fixed = cols.reduce((sum, c) => sum + c.w, 0);
       const widths = cols.map((c) => (c.w ? c.w : CONTENT_W - fixed));
       const xs: number[] = [];
@@ -199,8 +201,10 @@ async function openSheet() {
       };
       s.ensure(18 + 22);
       header();
-      for (const row of rows) {
-        const lines = s.wrap(row[flex] ?? "", widths[flex] - pad * 2, size);
+      for (const entry of rows) {
+        const row = Array.isArray(entry) ? entry : entry.cells;
+        const font = !Array.isArray(entry) && entry.bold ? bold : regular;
+        const lines = s.wrap(row[flex] ?? "", widths[flex] - pad * 2, size, font);
         const h = Math.max(18, lines.length * (size + 3) + 9);
         if (s.y + h > A4.h - BOTTOM) {
           s.newPage();
@@ -209,8 +213,8 @@ async function openSheet() {
         s.box(M, s.y, CONTENT_W, h);
         cols.forEach((c, i) => {
           if (i > 0) s.vline(xs[i], s.y, s.y + h);
-          if (i === flex) lines.forEach((line, li) => s.text(line, tx(i), s.y + 5 + li * (size + 3), size));
-          else s.text(row[i] ?? "", tx(i), s.y + 5, size, regular, c.color || C.ink, c.align);
+          if (i === flex) lines.forEach((line, li) => s.text(line, tx(i), s.y + 5 + li * (size + 3), size, font));
+          else s.text(row[i] ?? "", tx(i), s.y + 5, size, font, c.color || C.ink, c.align);
         });
         s.y += h;
       }
@@ -219,14 +223,18 @@ async function openSheet() {
     signatures(left: { title: string; lines: string[]; caption: string }, right: { title: string; lines: string[]; caption: string }) {
       const colW = (CONTENT_W - 30) / 2;
       const blocks = [left, right];
-      const heights = blocks.map((b) => 14 + b.lines.reduce((h, l) => h + s.wrap(l, colW, 9.5).length * 13, 0) + 40);
+      const heights = blocks.map(
+        (b) => s.wrap(b.title, colW, 9.5, bold).length * 14 + b.lines.reduce((h, l) => h + s.wrap(l, colW, 9.5).length * 13, 0) + 40,
+      );
       s.ensure(Math.max(...heights) + 10);
       const top = s.y;
       blocks.forEach((b, i) => {
         const x = M + i * (colW + 30);
         let y = top;
-        s.text(b.title, x, y, 9.5, bold);
-        y += 14;
+        for (const t of s.wrap(b.title, colW, 9.5, bold)) {
+          s.text(t, x, y, 9.5, bold);
+          y += 14;
+        }
         for (const l of b.lines) {
           for (const w of s.wrap(l, colW, 9.5)) {
             s.text(w, x, y, 9.5);
@@ -559,5 +567,68 @@ export async function buildNakladnaVectorPdf(data: NakladnaPdfData): Promise<Vec
     `Видаткова накладна № ${data.number || "—"} від ${formatDateUk(data.date)}`,
     data.sellerName,
     `nakladna-${fileNumber(data.number)}.pdf`,
+  );
+}
+
+// ── Акт звірки взаєморозрахунків ─────────────────────────────────────────────
+
+export async function buildZvirkaVectorPdf(data: ZvirkaData): Promise<VectorPdf> {
+  const s = await openSheet();
+  const { bold, regular, C } = s;
+  const { rows, debit, credit, opening, closing } = zvirkaTotals(data);
+  const side = (v: number) => (v > 0 ? money(v) : "");
+  const buyer = data.buyerName.trim() || BLANK;
+
+  s.paragraph(`АКТ ЗВІРКИ ВЗАЄМОРОЗРАХУНКІВ № ${data.number || "—"}`, 14, bold, C.ink, "center");
+  s.y += 2;
+  s.text(
+    `за період з ${formatDateUk(data.periodFrom)} по ${formatDateUk(data.periodTo)}`,
+    A4.w / 2,
+    s.y,
+    10,
+    regular,
+    C.ink,
+    "center",
+  );
+  s.y += 18;
+  s.text(`від ${formatDateUk(data.date)}`, A4.w - M, s.y, 10, regular, C.ink, "right");
+  s.y += 24;
+
+  s.paragraph(
+    `Ми, що нижче підписалися, ${fopName(data.sellerName)}` +
+      `${data.sellerTaxId ? `, РНОКПП ${data.sellerTaxId}` : ""}, з одного боку, і ${buyer}` +
+      `${data.buyerTaxId ? `, код ${data.buyerTaxId}` : ""}, з іншого боку, склали цей акт про те, що стан ` +
+      `взаєморозрахунків${data.basis.trim() ? ` за ${data.basis.trim()}` : ""} за даними ${fopName(data.sellerName)} такий:`,
+  );
+  s.y += 6;
+
+  s.table(
+    [
+      { title: "Дата", w: 72, align: "left" },
+      { title: "Документ", w: 0, align: "left" },
+      { title: "Дебет, грн", w: 90, align: "right" },
+      { title: "Кредит, грн", w: 90, align: "right" },
+    ],
+    [
+      [formatDateUk(data.periodFrom), "Сальдо на початок періоду", side(opening), side(-opening)],
+      ...rows.map((r) => [r.date ? formatDateUk(r.date) : "", r.doc || "—", side(parseAmount(r.debit)), side(parseAmount(r.credit))]),
+      { cells: ["", "Обороти за період", money(debit), money(credit)], bold: true },
+      { cells: [formatDateUk(data.periodTo), "Сальдо на кінець періоду", side(closing), side(-closing)], bold: true },
+    ],
+    9,
+  );
+  s.y += 12;
+  s.paragraph(zvirkaConclusion(data));
+  s.y += 26;
+
+  s.signatures(
+    { title: `Від ${fopName(data.sellerName)}`, lines: [], caption: "підпис" },
+    { title: `Від ${buyer}`, lines: [], caption: "підпис, ПІБ" },
+  );
+
+  return s.finish(
+    `Акт звірки № ${data.number || "—"} від ${formatDateUk(data.date)}`,
+    data.sellerName,
+    `akt-zvirky-${fileNumber(data.number)}.pdf`,
   );
 }
