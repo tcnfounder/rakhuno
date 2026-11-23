@@ -34,6 +34,15 @@ export function TaxCalculator() {
   const r = useMemo(() => calcMonthly(group, income, vat), [group, income, vat]);
   const deadlines = useMemo(() => (now ? upcomingDeadlines(group, now, 5) : []), [group, now]);
 
+  const next = deadlines[0];
+  const [reminderStarted, setReminderStarted] = useState(false);
+
+  function startReminder() {
+    if (reminderStarted) return;
+    setReminderStarted(true);
+    trackEvent("tax_reminder_start", { group });
+  }
+
   function pickGroup(g: FopGroup) {
     setGroup(g);
     trackEvent("tax_calc_group", { group: g });
@@ -147,6 +156,51 @@ export function TaxCalculator() {
         </p>
       )}
 
+      <div className="mt-5 rounded-xl border border-signal/60 bg-ink/80 p-4">
+        <p className="font-display text-lg text-paper">
+          Нагадаємо, коли платити
+        </p>
+        <p className="mt-1 text-sm text-mist">
+          {next ? (
+            <>
+              Наступний платіж: <span className="text-paper">{next.title}</span> до{" "}
+              <span className="text-paper">{dateFmt.format(next.date)}</span>{" "}
+            </>
+          ) : null}
+          Надішлемо лист за 3 дні до кожного терміну для {group} групи. Безкоштовно, відписка в один клік.
+        </p>
+        {leadState === "done" ? (
+          <p className="mt-3 text-sm text-signal">Готово. Перевірте пошту — там найближчі дати.</p>
+        ) : (
+          <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+            <input
+              type="email"
+              autoComplete="email"
+              placeholder="you@email.com"
+              aria-label="Email для нагадувань"
+              value={email}
+              onFocus={startReminder}
+              onChange={(e) => setEmail(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") void subscribe();
+              }}
+              className="min-w-0 flex-1 rounded-xl border border-white/15 bg-ink px-4 py-3 text-paper outline-none focus:border-signal"
+            />
+            <button
+              type="button"
+              disabled={leadState === "busy"}
+              onClick={() => void subscribe()}
+              className="rounded-xl bg-signal px-5 py-3 font-semibold text-ink disabled:opacity-60"
+            >
+              {leadState === "busy" ? "…" : "Нагадати мені"}
+            </button>
+          </div>
+        )}
+        {leadState === "error" ? (
+          <p className="mt-2 text-sm text-red-300">Перевірте email і спробуйте ще раз.</p>
+        ) : null}
+      </div>
+
       <p className="mt-6 font-display text-lg text-paper">Найближчі терміни сплати</p>
       <ul className="mt-2 space-y-2">
         {deadlines.map((d) => (
@@ -162,45 +216,19 @@ export function TaxCalculator() {
         Якщо дата припадає на вихідний, перевірте перенесення в календарі ДПС.
       </p>
 
-      <div className="mt-6 rounded-xl border border-white/10 bg-ink/60 p-4">
-        <p className="font-semibold text-paper">Нагадувати про терміни на email</p>
-        <p className="mt-1 text-sm text-mist">
-          Лист за 3 дні до кожного терміну для {group} групи. Безкоштовно, відписка в один клік.
-        </p>
-        {leadState === "done" ? (
-          <p className="mt-3 text-sm text-signal">Готово. Перевірте пошту — там найближчі дати.</p>
-        ) : (
-          <div className="mt-3 flex flex-col gap-2 sm:flex-row">
-            <input
-              type="email"
-              autoComplete="email"
-              placeholder="you@email.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="min-w-0 flex-1 rounded-xl border border-white/15 bg-ink px-4 py-3 text-paper outline-none focus:border-signal"
-            />
-            <button
-              type="button"
-              disabled={leadState === "busy"}
-              onClick={() => void subscribe()}
-              className="rounded-xl bg-signal px-5 py-3 font-semibold text-ink disabled:opacity-60"
-            >
-              {leadState === "busy" ? "…" : "Нагадувати"}
-            </button>
-          </div>
-        )}
-        {leadState === "error" ? (
-          <p className="mt-2 text-sm text-red-300">Перевірте email і спробуйте ще раз.</p>
-        ) : null}
+      <div className="mt-6 flex flex-col gap-3 rounded-xl border border-white/10 bg-ink/60 p-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p className="font-semibold text-paper">Потрібен рахунок для клієнта?</p>
+          <p className="mt-1 text-sm text-mist">Рахунок-фактура з QR для оплати за 2 хвилини. Безкоштовно.</p>
+        </div>
+        <Link
+          href="/invoice"
+          onClick={() => trackEvent("tax_cta_invoice", { group })}
+          className="shrink-0 rounded-xl border border-signal px-5 py-3 text-center font-semibold text-signal hover:bg-signal hover:text-ink"
+        >
+          Створити рахунок
+        </Link>
       </div>
-
-      <p className="mt-5 text-sm text-mist">
-        Потрібен рахунок для клієнта?{" "}
-        <Link href="/invoice" className="text-signal underline-offset-2 hover:underline">
-          Зробіть рахунок-фактуру з QR для оплати
-        </Link>{" "}
-        за 2 хвилини.
-      </p>
     </div>
   );
 }
