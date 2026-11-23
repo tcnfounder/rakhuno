@@ -2,6 +2,35 @@ import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
 import { InvoiceData, formatDateUk } from "./invoice";
 
+/** «18500» → «18 500,00»: prices print like the sums next to them. */
+function formatMoneyPlain(raw: string) {
+  const n = Number(raw.replace(/\s/g, "").replace(",", "."));
+  if (!Number.isFinite(n)) return raw;
+  return new Intl.NumberFormat("uk-UA", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
+}
+
+/** IBAN in groups of four, as banks print it. */
+function groupIban(raw: string) {
+  return raw.replace(/\s+/g, "").toUpperCase().replace(/(.{4})/g, "$1 ").trim();
+}
+
+/** jsPDF's built-in fonts have no Cyrillic, so the page footer is drawn as an image. */
+function footerImage(text: string) {
+  const canvas = document.createElement("canvas");
+  canvas.width = 600;
+  canvas.height = 60;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return null;
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "#787878";
+  ctx.font = "34px Arial, Helvetica, sans-serif";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+  return canvas.toDataURL("image/png");
+}
+
 /** html2canvas clips <input>/<textarea> text — flatten to plain nodes first. */
 function flattenFormControls(root: HTMLElement) {
   const controls = root.querySelectorAll("input, textarea, select");
@@ -17,8 +46,14 @@ function flattenFormControls(root: HTMLElement) {
       text = control.options[control.selectedIndex]?.text || text;
     }
 
+    const format = control.getAttribute("data-pdf-format");
+    if (format === "money" && text) text = formatMoneyPlain(text);
+    if (format === "iban" && text) text = groupIban(text);
+
     replacement.textContent = text || "—";
     const isCell = control.hasAttribute("data-pdf-cell");
+    // Keep the field's own alignment (numbers right, units centred); a plain div would reset it.
+    const align = getComputedStyle(control).textAlign;
     // Fields that sit side by side on one line (invoice № and date) keep their own width.
     const width = control.getBoundingClientRect().width;
     const parentWidth = control.parentElement?.getBoundingClientRect().width ?? width;
@@ -31,7 +66,9 @@ function flattenFormControls(root: HTMLElement) {
         "margin:0",
         isCell ? "padding:4px 6px" : "padding:4px 0",
         "border:0",
-        isCell ? "border-bottom:0" : "border-bottom:1px solid #d4d4d4",
+        // A finished document, not a filled-in form: no input underlines in the PDF.
+        "border-bottom:0",
+        `text-align:${align === "start" || !align ? "left" : align}`,
         "background:transparent",
         "color:#171717",
         "font:inherit",
@@ -50,8 +87,14 @@ function flattenFormControls(root: HTMLElement) {
       replacement.style.fontFamily = "ui-monospace, SFMono-Regular, Menlo, monospace";
       replacement.style.letterSpacing = "0.04em";
     }
+    if (format === "iban") {
+      // 34 characters with spaces: keep it on one line, a split IBAN is easy to mistype.
+      replacement.style.whiteSpace = "nowrap";
+      replacement.style.letterSpacing = "0";
+      replacement.style.fontSize = "12.5px";
+    }
     if (control.className.includes("text-xl") || control.className.includes("font-bold")) {
-      replacement.style.fontSize = "20px";
+      replacement.style.fontSize = "16px";
       replacement.style.fontWeight = "700";
     } else if (control.className.includes("text-lg") || control.className.includes("font-semibold")) {
       replacement.style.fontSize = "17px";
@@ -109,9 +152,16 @@ export async function buildInvoicePdf(
 
   flattenFormControls(clone);
 
+  const SCALE = 2;
+  // Where a page may end: below a table row or a block marked data-pdf-keep, so no row is cut in half.
+  const top = clone.getBoundingClientRect().top;
+  const cutPoints = Array.from(clone.querySelectorAll("tr, [data-pdf-keep]"))
+    .map((el) => Math.round((el.getBoundingClientRect().bottom - top) * SCALE))
+    .sort((a, b) => a - b);
+
   try {
     const canvas = await html2canvas(clone, {
-      scale: 2,
+      scale: SCALE,
       backgroundColor: "#ffffff",
       useCORS: true,
       allowTaint: true,
@@ -141,12 +191,19 @@ export async function buildInvoicePdf(
       if (!pageCtx) throw new Error("no_canvas");
 
       const slicePx = Math.floor((usableH / imgH) * canvas.height);
-      const totalPages = Math.max(1, Math.ceil(canvas.height / slicePx));
+      // Plan the page breaks first, so «Аркуш N з M» knows M.
+      const slices: { y: number; h: number }[] = [];
+      for (let y = 0; y < canvas.height; ) {
+        let h = Math.min(slicePx, canvas.height - y);
+        if (y + h < canvas.height) {
+          const cut = cutPoints.filter((c) => c > y + slicePx * 0.5 && c <= y + slicePx).pop();
+          if (cut) h = cut - y;
+        }
+        slices.push({ y, h });
+        y += h;
+      }
       pageCanvas.width = canvas.width;
-      let y = 0;
-      let page = 0;
-      while (y < canvas.height) {
-        const h = Math.min(slicePx, canvas.height - y);
+      slices.forEach(({ y, h }, page) => {
         pageCanvas.height = h;
         pageCtx.fillStyle = "#ffffff";
         pageCtx.fillRect(0, 0, pageCanvas.width, h);
@@ -155,15 +212,9 @@ export async function buildInvoicePdf(
         const sliceHmm = (h * imgW) / canvas.width;
         if (page > 0) pdf.addPage();
         pdf.addImage(sliceData, "JPEG", margin, margin, imgW, sliceHmm);
-        pdf.setFont("helvetica", "normal");
-        pdf.setFontSize(8);
-        pdf.setTextColor(120);
-        pdf.text(`Аркуш ${page + 1} з ${totalPages}`, pageW / 2, pageH - 6, {
-          align: "center",
-        });
-        y += h;
-        page += 1;
-      }
+        const footer = footerImage(`Аркуш ${page + 1} з ${slices.length}`);
+        if (footer) pdf.addImage(footer, "PNG", pageW / 2 - 20, pageH - 9, 40, 4);
+      });
     }
 
     const safeNum = (data.number || "draft").replace(/[^\w\-]+/g, "_");

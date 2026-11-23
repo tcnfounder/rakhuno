@@ -84,7 +84,11 @@ function SoftField({
             </span>
           ) : null}
         </span>
-        {hint ? <span className="normal-case tracking-normal text-neutral-400">{hint}</span> : null}
+        {hint ? (
+          <span data-pdf-hide className="normal-case tracking-normal text-neutral-400">
+            {hint}
+          </span>
+        ) : null}
       </span>
       {children}
     </label>
@@ -1225,6 +1229,7 @@ export default function InvoiceClient({
                   <SoftField label="IBAN" en={E("required")} hint="обовʼязково" className="mt-2">
                     <input
                       className={`${lineInput} font-mono text-[12px] tracking-wide`}
+                      data-pdf-format="iban"
                       placeholder="UA00 0000 …"
                       value={data.sellerIban}
                       onChange={(e) => update("sellerIban", formatIban(e.target.value))}
@@ -1278,7 +1283,7 @@ export default function InvoiceClient({
                 <div className="mb-1 flex items-center justify-between gap-2">
                   <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-neutral-600">
                     Перелік товарів / послуг
-                    <span className="ml-2 font-normal normal-case tracking-normal text-neutral-400">
+                    <span data-pdf-hide className="ml-2 font-normal normal-case tracking-normal text-neutral-400">
                       ({data.items.length}{" "}
                       {data.items.length === 1
                         ? "позиція"
@@ -1318,7 +1323,7 @@ export default function InvoiceClient({
                       <th className="w-16 border border-neutral-800 px-1 py-1.5 text-center font-semibold">
                         Од.
                       </th>
-                      <th className="w-14 border border-neutral-800 px-1 py-1.5 text-center font-semibold">
+                      <th className="w-14 border border-neutral-800 px-1 py-1.5 text-right font-semibold">
                         К-сть
                       </th>
                       <th className="w-[72px] border border-neutral-800 px-1 py-1.5 text-right font-semibold">
@@ -1363,7 +1368,7 @@ export default function InvoiceClient({
                         <td className="border border-neutral-800 p-0">
                           <input
                             data-pdf-cell
-                            className={`${cellInput} text-center`}
+                            className={`${cellInput} text-right`}
                             inputMode="decimal"
                             placeholder="1"
                             aria-label={L("Кількість", "Quantity")}
@@ -1379,6 +1384,7 @@ export default function InvoiceClient({
                           <input
                             data-pdf-cell
                             className={`${cellInput} text-right`}
+                            data-pdf-format="money"
                             inputMode="decimal"
                             placeholder="0"
                             aria-label={L("Ціна", "Price")}
