@@ -45,6 +45,7 @@ import {
   type SavedInvoice,
 } from "@/lib/history";
 import { ClientChips, RecentInvoices } from "@/components/InvoiceMemory";
+import { ProOffer } from "@/components/ProOffer";
 import { recordInvoiceCreated, recordReturnVisit } from "@/lib/usage";
 import { DEFAULT_INVOICE_HEADING, type InvoiceHeading } from "@/lib/invoice-headings";
 import {
@@ -999,6 +1000,7 @@ export default function InvoiceClient({
                       {busy ? "…" : L("Завантажити PDF", "Download PDF")}
                     </button>
                     {unlocked ? actPanel : null}
+                    {unlocked ? <ProOffer email={email} lang={lang} /> : null}
                   </div>
                 ) : null}
                 <MobileField label="Email" hint={L("податкові нагадування", "tax reminders, in Ukrainian")}>
@@ -1507,6 +1509,7 @@ export default function InvoiceClient({
                     </div>
                   ) : null}
                   {unlocked ? actPanel : null}
+                    {unlocked ? <ProOffer email={email} lang={lang} /> : null}
                 </div>
               ) : null}
 
